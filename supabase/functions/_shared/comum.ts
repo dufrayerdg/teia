@@ -22,6 +22,15 @@ export async function contexto(req: Request) {
   return { user: data.user, usuario, admin };
 }
 
+/** Conta cujos dados a pessoa usa: a própria ou a de quem a convidou (família). */
+export async function donoDe(admin: SupabaseClient, userId: string): Promise<string> {
+  const { data } = await admin.from("acessos").select("dono").eq("convidado", userId).order("criado_em").limit(1).maybeSingle();
+  return (data && data.dono) || userId;
+}
+
+export const fusoHoje = (d = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+export const fusoHora = (d = new Date()) => new Intl.DateTimeFormat("en-GB", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).format(d);
+
 export const LIMITE = { leitura: 3, pergunta: 5 } as const;
 export const mesAtual = () =>
   new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit" }).format(new Date()).slice(0, 7);

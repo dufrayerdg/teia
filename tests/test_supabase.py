@@ -6,7 +6,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp"
 MOCK = r"""
 window.TEIA_CONFIG_FORCE = true;
 (() => {
- const salvo = sessionStorage.getItem("__db"); const db = window.__db = salvo ? JSON.parse(salvo) : { perfis: [], medicamentos: [], tratamentos: [], tarefas: [], marcacoes: [], documentos: [], registros: [], rede: [], notas_consulta: [], membros: [], consultas: [], assinaturas: [{ user_id: "u1", plano: "gratis", status: "ativa" }], uso_ia: [], conteudos: [{ id: "c1", categoria: "artigo", titulo: "Artigo do banco", minutos: 2, autor: "Equipe teia", corpo: [{ p: "Texto" }, { h: "Título" }, { ul: ["a", "b"] }], destaque: true, publicado: true }] };
+ const salvo = sessionStorage.getItem("__db"); const db = window.__db = salvo ? JSON.parse(salvo) : { perfis: [], medicamentos: [], tratamentos: [], tarefas: [], marcacoes: [], documentos: [], registros: [], rede: [], notas_consulta: [], membros: [], consultas: [], marcos: [], acessos: [], convites: [], links_profissional: [], push_inscricoes: [], assinaturas: [{ user_id: "u1", plano: "gratis", status: "ativa" }], uso_ia: [], conteudos: [{ id: "c1", categoria: "artigo", titulo: "Artigo do banco", minutos: 2, autor: "Equipe teia", corpo: [{ p: "Texto" }, { h: "Título" }, { ul: ["a", "b"] }], destaque: true, publicado: true }] };
  const files = window.__files = JSON.parse(sessionStorage.getItem("__files") || "[]");
  const persist = () => { sessionStorage.setItem("__db", JSON.stringify(db)); sessionStorage.setItem("__files", JSON.stringify(files)); };
  const user = { id: "u1", email: "", is_anonymous: true };
@@ -15,11 +15,12 @@ window.TEIA_CONFIG_FORCE = true;
   let rows = () => db[t], filtros = [], op = "select", payload = null, single = false;
   const api = {
    select() { return api; }, eq(k, v) { filtros.push(r => r[k] === v); return api; }, gte(k, v) { filtros.push(r => String(r[k]) >= v); return api; },
-   in(k, vs) { filtros.push(r => vs.includes(r[k])); return api; }, match(o) { filtros.push(r => Object.entries(o).every(([k, v]) => r[k] === v)); return api; },
+   in(k, vs) { filtros.push(r => vs.includes(r[k])); return api; }, is(k, v) { filtros.push(r => (r[k] ?? null) === v); return api; }, gt(k, v) { filtros.push(r => String(r[k]) > v); return api; },
+   insert(p) { op = "upsert"; payload = Array.isArray(p) ? p : [p]; return api; }, match(o) { filtros.push(r => Object.entries(o).every(([k, v]) => r[k] === v)); return api; },
    order() { return api; }, limit() { return api; }, maybeSingle() { single = true; return api; },
    upsert(p, o) { op = "upsert"; payload = Array.isArray(p) ? p : [p]; return api; }, delete() { op = "delete"; return api; },
    then(ok, ko) { try {
-     const pass = r => filtros.every(f => f(r)) && (!r.user_id || r.user_id === "u1" || t === "conteudos");
+     const pass = r => filtros.every(f => f(r)) && (!r.user_id || r.user_id === "u1" || t === "conteudos" || t === "convites" || t === "acessos");
      if (op === "select") { const d = db[t].filter(pass).map(r => JSON.parse(JSON.stringify(r))); return Promise.resolve({ data: single ? (d[0] || null) : d, error: null }).then(ok, ko); }
      if (op === "upsert") { for (const r of payload) { const key = t === "marcacoes" ? (x => x.dia === r.dia && x.chave === r.chave) : t === "perfis" ? (x => x.user_id === r.user_id) : (x => x.id === r.id); const i = db[t].findIndex(key); if (i >= 0) db[t][i] = { ...db[t][i], ...r }; else db[t].push({ ...r }); } window.__ops = (window.__ops || 0) + payload.length; persist(); return Promise.resolve({ data: null, error: null }).then(ok, ko); }
      if (op === "delete") { db[t] = db[t].filter(r => !pass(r)); persist(); return Promise.resolve({ data: null, error: null }).then(ok, ko); }
@@ -36,6 +37,7 @@ window.TEIA_CONFIG_FORCE = true;
    async signOut() { logged = false; sessionStorage.removeItem("logado"); cbs.forEach(c => c("SIGNED_OUT", null)); return { error: null }; },
   },
   from: q,
+  async rpc(nome, args) { window.__rpc = [nome, args]; return { data: null, error: { message: "convite_invalido" } }; },
   functions: { async invoke(nome, { body }) {
     window.__inv = (window.__inv || []).concat([[nome, body.tarefa || body.acao]]);
     if (nome === "assinatura") { db.assinaturas[0] = { user_id: "u1", plano: body.acao === "assinar" ? "plus" : "gratis", status: body.acao === "assinar" ? "teste" : "cancelada", ciclo: body.ciclo }; persist(); return { data: { ok: true }, error: null }; }
@@ -75,7 +77,7 @@ with sync_playwright() as p:
     pg.click("text=Começar"); pg.wait_for_timeout(500); assert pg.evaluate("TELA.nome") == "cadastro", pg.evaluate("TELA.nome")
     pg.fill('input[name="mae"]', "Camila"); pg.click('form button[type="submit"]')
     pg.fill('input[name="crianca"]', "Theo"); pg.fill('input[name="nascimento"]', "2023-03-10"); pg.click('form button[type="submit"]')
-    pg.click('label.opt:has(input[value="TEA"]) span'); pg.check('input[name="consent"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(600)
+    pg.click('label.opt:has(input[value="TEA"]) span'); pg.check('input[name="consent"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(400); pg.click('button[data-a="tour-fim"] >> nth=0'); pg.wait_for_timeout(300); pg.wait_for_timeout(600)
     assert pg.evaluate("__db.perfis.length") == 1 and pg.evaluate("__db.perfis[0].crianca") == "Theo"
     pg.click("text=Terapia fixa")
     for d in ["1", "3"]: pg.click(f'label.opt:has(input[name="dias"][value="{d}"]) span')
@@ -124,7 +126,22 @@ with sync_playwright() as p:
     pg.click('button[data-a="plus-assinar"]'); pg.wait_for_timeout(600); assert pg.evaluate("S.plano.plus") is True
     pg.evaluate("go('perfil',{},true)"); pg.wait_for_timeout(500); pg.screenshot(path=f"{OUT}/s_perfil.png", full_page=True)
     assert pg.evaluate("!!document.querySelector('[data-a=sair]')") is False and "Acesso livre" in pg.evaluate("document.body.innerText")
+    # link para o profissional (com servidor)
+    pg.evaluate("go('relatorio',{},true)"); pg.wait_for_timeout(400)
+    pg.evaluate("navigator.clipboard && (navigator.clipboard.writeText = async t => { window.__clip = t; })")
+    pg.click('button[data-a="rel-link"]'); pg.wait_for_timeout(500)
+    assert pg.evaluate("__db.links_profissional.length") == 1 and len(pg.evaluate("__db.links_profissional[0].token")) == 32
+    # convite (teia+ ativo neste ponto do teste)
+    pg.evaluate("go('conta',{},true)"); pg.wait_for_timeout(400); pg.click('button[data-a="convidar"]'); pg.wait_for_timeout(500)
+    assert pg.evaluate("__db.convites.length") == 1 and len(pg.evaluate("__db.convites[0].codigo")) == 8
+    pg.fill('form[data-f="aceitar-convite"] input', "ABCDEFGH"); pg.click('form[data-f="aceitar-convite"] button'); pg.wait_for_timeout(400)
+    assert pg.evaluate("window.__rpc[0]") == "aceitar_convite"
+    # marco com foto vai para o Storage
+    pg.evaluate("go('marcos',{},true)"); pg.wait_for_timeout(300); pg.click('button[data-a="marco-novo"] >> nth=0'); pg.wait_for_timeout(300)
+    pg.fill('form[data-f="marco"] input[name="titulo"]', "Primeira palavra"); pg.set_input_files('form[data-f="marco"] input[name="foto"]', img); pg.click('form[data-f="marco"] button[type="submit"]'); pg.wait_for_timeout(900)
+    assert pg.evaluate("__db.marcos.length") == 1 and pg.evaluate("__db.marcos[0].foto").startswith("u1/"), pg.evaluate("__db.marcos")
     # apagar tudo
+    pg.evaluate("go('perfil',{},true)"); pg.wait_for_timeout(500)
     pg.click('button[data-a="apagar-tudo"]'); pg.wait_for_timeout(400); pg.click('button[data-a="confirmar-ok"]'); pg.wait_for_timeout(800)
     assert pg.evaluate("__db.documentos.length + __db.tratamentos.length + __db.perfis.length + __db.membros.length + __db.consultas.length + __files.length") == 0
     # sair

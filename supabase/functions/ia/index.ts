@@ -1,7 +1,7 @@
 // teia · IA no servidor
 // Tarefas: "receita" e "laudo" (leitura de imagens), "pergunta" (assistente) e "resumo" (relatório do mês).
 // A chave ANTHROPIC_API_KEY fica só aqui. Limites do plano grátis são conferidos antes de cada chamada.
-import { CORS, json, contexto, LIMITE, ehPlus, usoDoMes, mesAtual } from "../_shared/comum.ts";
+import { CORS, json, contexto, LIMITE, ehPlus, usoDoMes, mesAtual, donoDe } from "../_shared/comum.ts";
 import { P_RECEITA, P_LAUDO } from "../_shared/prompts.ts";
 
 const MODELO_LEITURA = Deno.env.get("MODELO_LEITURA") ?? "claude-sonnet-5-5";
@@ -38,16 +38,16 @@ const DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HUMOR = ["Difícil", "Ruim", "Ok", "Bom", "Ótimo"];
 
 /** Dados de UMA pessoa cuidada (membro). Itens antigos sem membro_id pertencem à primeira pessoa. */
-async function dadosDaFamilia(usuario: any, membroPedido?: string) {
+async function dadosDaFamilia(usuario: any, dono: string, membroPedido?: string) {
   const desde = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10);
   const [perfil, membros] = await Promise.all([
-    usuario.from("perfis").select("mae,papel,crianca,nascimento,diagnosticos,plano_saude").maybeSingle(),
-    usuario.from("membros").select("id,nome,relacao,nascimento,diagnosticos,plano_saude").order("criado_em"),
+    usuario.from("perfis").select("mae,papel,crianca,nascimento,diagnosticos,plano_saude").eq("user_id", dono).maybeSingle(),
+    usuario.from("membros").select("id,nome,relacao,nascimento,diagnosticos,plano_saude").eq("user_id", dono).order("criado_em"),
   ]);
   const lista = membros.data ?? [];
   const membro = lista.find((m: any) => m.id === membroPedido) ?? lista[0] ?? null;
   const primeiro = !membro || (lista[0] && membro.id === lista[0].id);
-  const filtro = (q: any) => membro ? (primeiro ? q.or(`membro_id.eq.${membro.id},membro_id.is.null`) : q.eq("membro_id", membro.id)) : q;
+  const filtro = (q0: any) => { const q = q0.eq("user_id", dono); return membro ? (primeiro ? q.or(`membro_id.eq.${membro.id},membro_id.is.null`) : q.eq("membro_id", membro.id)) : q; };
   const hoje = new Date().toISOString().slice(0, 10);
   const [meds, trat, tar, docs, regs, cons] = await Promise.all([
     filtro(usuario.from("medicamentos").select("nome,dose,horarios,inicio,fim,medico")),
@@ -78,12 +78,13 @@ Deno.serve(async (req) => {
   const ctx = await contexto(req);
   if (!ctx) return json({ erro: "nao_autenticado" }, 401);
   const { user, usuario, admin } = ctx;
+  const dono = await donoDe(admin, user.id);
 
   let corpo: any;
   try { corpo = await req.json(); } catch { return json({ erro: "corpo_invalido" }, 400); }
   const tarefa = String(corpo?.tarefa || "");
-  const plus = await ehPlus(admin, user.id);
-  const uso = await usoDoMes(admin, user.id);
+  const plus = await ehPlus(admin, dono);
+  const uso = await usoDoMes(admin, dono);
 
   try {
     if (tarefa === "receita" || tarefa === "laudo") {
@@ -93,7 +94,7 @@ Deno.serve(async (req) => {
       const blocos = [...imagens.map(imagemParaBloco), { type: "text", text: tarefa === "receita" ? P_RECEITA : P_LAUDO }];
       const texto = await claude(MODELO_LEITURA, [{ role: "user", content: blocos }], undefined, 2500);
       const resultado = extrairJSON(texto);
-      await admin.rpc("registrar_uso_ia", { p_user: user.id, p_tipo: "leitura" });
+      await admin.rpc("registrar_uso_ia", { p_user: dono, p_tipo: "leitura" });
       return json({ resultado });
     }
 
@@ -104,7 +105,7 @@ Deno.serve(async (req) => {
         .slice(-10).map((m: any) => ({ role: m.role, content: m.content.slice(0, 2000) }));
       while (historico.length && historico[0].role !== "user") historico.shift();
       if (!historico.length || historico[historico.length - 1].role !== "user") return json({ erro: "sem_pergunta" }, 400);
-      const dados = await dadosDaFamilia(usuario, String(corpo.membro || ""));
+      const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
       const pessoa = dados.pessoa_cuidada?.nome || "a pessoa cuidada";
       const quem = dados.quem_pergunta.nome ? `${dados.quem_pergunta.nome}${dados.quem_pergunta.papel ? ` (${dados.quem_pergunta.papel})` : ""}` : "quem cuida";
       const sistema = `Você é o assistente da teia, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
@@ -116,23 +117,23 @@ Responda APENAS com JSON: {"resposta":string,"anotacao":null|{"titulo":string (a
 DADOS: ${JSON.stringify(dados)}`;
       const texto = await claude(MODELO_CONVERSA, historico, sistema, 500);
       let resultado: any; try { resultado = extrairJSON(texto); } catch { resultado = { resposta: texto, anotacao: null }; }
-      await admin.rpc("registrar_uso_ia", { p_user: user.id, p_tipo: "pergunta" });
+      await admin.rpc("registrar_uso_ia", { p_user: dono, p_tipo: "pergunta" });
       return json({ resultado });
     }
 
     if (tarefa === "resumo") {
       if (!plus) return json({ erro: "limite", motivo: "relatorio" }, 402);
-      const dados = await dadosDaFamilia(usuario, String(corpo.membro || ""));
+      const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
       const mes = mesAtual();
       const regs = dados.registros.filter((r: any) => String(r.data).startsWith(mes));
-      const { data: notas } = await usuario.from("notas_consulta").select("titulo,texto,para").eq("feito", false).limit(10);
+      const { data: notas } = await usuario.from("notas_consulta").select("titulo,texto,para").eq("user_id", dono).eq("feito", false).limit(10);
       const prompt = `Escreva em português do Brasil um resumo curto (até 170 palavras) do mês de ${dados.pessoa_cuidada?.nome || ""}, para ${dados.quem_pergunta.nome || "a família"} levar aos profissionais. Tom acolhedor e objetivo. Chame as pessoas pelo nome. Organize em: Presença nas terapias; Como foram os dias; Conquistas; Pontos para conversar. Sem diagnósticos nem recomendações clínicas. Use só os dados abaixo.
 Tratamentos: ${JSON.stringify(dados.tratamentos)}\nConsultas: ${JSON.stringify(dados.consultas)}
 Sessões do mês (marcadas): ${JSON.stringify(corpo.sessoes ?? [])}
 Registros do mês: ${JSON.stringify(regs)}
 Anotações pendentes para a consulta: ${JSON.stringify(notas ?? [])}`;
       const texto = await claude(MODELO_CONVERSA, [{ role: "user", content: prompt }], undefined, 700);
-      await admin.rpc("registrar_uso_ia", { p_user: user.id, p_tipo: "resumo" });
+      await admin.rpc("registrar_uso_ia", { p_user: dono, p_tipo: "resumo" });
       return json({ resultado: { texto } });
     }
 

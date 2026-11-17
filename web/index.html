@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icones/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="teia">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="config.js"></script>
 <title>teia</title>
@@ -267,6 +273,60 @@ html,body{background:#fff}
 .pessoa .pa{width:28px;height:28px;border-radius:50%;background:#F1EDFF;color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px}
 .pessoa.on{background:var(--navy);border-color:var(--navy);color:#fff}.pessoa.on .pa{background:rgba(255,255,255,.22);color:#fff}
 .pessoa.add{padding:0 12px;gap:6px;color:var(--navy);border-style:dashed}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .dw{font-size:10.5px;font-weight:600;color:var(--muted);text-align:center;padding:4px 0}
+.cal button{aspect-ratio:1/1.05;border:none;border-radius:12px;background:rgba(255,255,255,.75);font-family:inherit;color:var(--ink);font-size:13px;font-weight:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0}
+.cal button.fora{opacity:.35}.cal button.hoje{box-shadow:inset 0 0 0 1.5px var(--navy)}.cal button.sel{background:var(--navy);color:#fff}
+.cal .pts{display:flex;gap:2px;height:5px}.cal .pts i{width:5px;height:5px;border-radius:50%}
+.pt-consulta{background:#5B2EE8}.pt-terapia{background:#9C82F5}.pt-receita{background:#F5A524}.pt-marco{background:#4FC3A1}
+.cal button.sel .pts i{box-shadow:0 0 0 1px #fff}
+.legenda{display:flex;flex-wrap:wrap;gap:12px;font-size:11.5px;color:var(--muted)}.legenda span{display:inline-flex;align-items:center;gap:5px}.legenda i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.marcos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.marco{border:none;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--sh);text-align:left;font-family:inherit;color:var(--ink);padding:0}
+.marco .ft{aspect-ratio:4/3;background:linear-gradient(135deg,#EFE9FF,#DCD2FA);display:flex;align-items:center;justify-content:center;color:var(--navy)}
+.marco .ft img{width:100%;height:100%;object-fit:cover;display:block}
+.marco .tx{padding:10px 12px}.marco b{display:block;font-size:13px;font-weight:600;line-height:1.3}.marco small{font-size:11px;color:var(--muted)}
+.crise-extra{display:none}
+form:has(input[name="crise"][value="Sim"]:checked) .crise-extra{display:flex}
+.hoje-card{display:flex;flex-direction:column;gap:8px}
+.hoje-it{display:flex;align-items:center;gap:10px;font-size:13px}
+.hoje-it .ib{width:30px;height:30px}
+.festa{position:fixed;inset:0;pointer-events:none;z-index:80;overflow:hidden}
+.festa i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:cai 2s cubic-bezier(.2,.6,.4,1) forwards}
+@keyframes cai{to{transform:translateY(105vh) rotate(540deg);opacity:.9}}
+.resp{margin-top:8px;padding:8px 10px;border-radius:10px;background:#F4F1FD;font-size:12.5px;line-height:1.45;color:#3A3566}
+.empty{padding:30px 20px 24px;position:relative;overflow:hidden}
+.empty>.ib:first-child{width:64px!important;height:64px!important;border-radius:22px!important;background:linear-gradient(135deg,#F3EEFF,#E2D8FC)!important;color:var(--navy)!important;box-shadow:0 10px 24px -12px rgba(91,46,232,.45)!important;position:relative}
+.empty>.ib:first-child svg{width:28px;height:28px}
+.empty:before{content:"";position:absolute;left:50%;top:18px;width:120px;height:90px;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(156,130,245,.18),transparent);pointer-events:none}
+.tour{min-height:calc(100vh - 20px);display:flex;flex-direction:column;padding:26px 22px 24px;gap:14px}
+.tour .pg{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:14px}
+.tour .big{width:96px;height:96px;border-radius:30px;background:linear-gradient(135deg,#F3EEFF,#DCD0FA);display:flex;align-items:center;justify-content:center;color:var(--navy);box-shadow:0 18px 36px -18px rgba(91,46,232,.6)}
+.tour .big svg{width:44px;height:44px}
+.tour .dots{justify-content:center}
+.rel{background:#fff;border-radius:18px;padding:18px;box-shadow:var(--sh);font-size:13px;line-height:1.5;color:#1F1B3A}
+.rel h3{font-size:13px;font-weight:700;margin:16px 0 6px;color:var(--navy);text-transform:uppercase;letter-spacing:.6px}
+.rel table{width:100%;border-collapse:collapse}.rel td{padding:5px 0;border-bottom:1px solid #EEE;vertical-align:top}.rel td:first-child{color:#6E6A8C;width:38%;padding-right:8px}
+.rel ul{margin:4px 0;padding-left:18px}
+@media print{html,body{background:#fff!important}.app{background:#fff!important;padding:0!important}.app:before,.dock-wrap,.top,.noprint,.toast,.banner,#layer{display:none!important}.rel{box-shadow:none!important;padding:0!important}.wrap{padding:0!important}@page{margin:14mm}}
+/* modo escuro */
+html.escuro,html.escuro body{background:#0F0D18!important;color:#ECE9F7}
+html.escuro{--ink:#ECE9F7;--muted:#A9A3C6;--soft:#221E33;--line:#2B2640;--card:#1A1727}
+html.escuro .app{background:linear-gradient(180deg,#14111F 0%,#120F1C 100%)!important}
+html.escuro .app:before{opacity:.18}
+html.escuro .card,html.escuro .list,html.escuro .qt,html.escuro .art,html.escuro .dc,html.escuro .pc,html.escuro .empty,html.escuro .week,html.escuro .seg,html.escuro .meta-grid div,html.escuro .input,html.escuro .chip,html.escuro .opt span,html.escuro .notacard,html.escuro .bubble.ai,html.escuro .au-indigo,html.escuro .hero,html.escuro .marco,html.escuro .plan,html.escuro .pessoa,html.escuro .cat button,html.escuro .cal button,html.escuro .rel{background:rgba(30,26,46,.92)!important;color:var(--ink)!important;border-color:#2E2944!important;box-shadow:none!important}
+html.escuro .au-sol,html.escuro .au-ceu,html.escuro .au-rosa,html.escuro .au-menta,html.escuro .au-lilas{background:#1E1A2E!important}
+html.escuro .ib,html.escuro .qt .qi,html.escuro .dc .th,html.escuro .art .th,html.escuro .tg,html.escuro .tag,html.escuro .av,html.escuro .resp{background:#2A2540!important;color:#C9BCFF!important}
+html.escuro .dock,html.escuro .composer{background:rgba(24,21,38,.95)!important}
+html.escuro .sheet{background:#17142A!important}
+html.escuro .circle{background:#221E33!important;color:var(--ink)!important}
+html.escuro .opt input:checked+span,html.escuro .chip.on,html.escuro .cat button.on,html.escuro .pessoa.on,html.escuro .day.on,html.escuro .seg button.on,html.escuro .cal button.sel{background:#7B5CF5!important;color:#fff!important}
+html.escuro .btn.sec,html.escuro .btn.danger,html.escuro .bn.g{background:#221E33!important;color:var(--ink)!important}
+html.escuro .muted,html.escuro .note,html.escuro .xs.muted{color:var(--muted)!important}
+html.escuro .hero-track,html.escuro .bar{background:#2B2640!important}
+html.escuro .prose p,html.escuro .prose ul{color:#D9D4EE}
+html.escuro .rel td{border-color:#2E2944}html.escuro .rel h2{color:var(--ink)}
+html.escuro .banner{background:#3A2A12;color:#F7C77B}
 /* estados selecionados e textos claros sobre cards agora brancos */
 .opt input:checked+span,.chip.on{background:var(--navy) !important;color:#fff !important;border-color:var(--navy) !important;box-shadow:0 6px 14px -6px rgba(91,46,232,.5) !important}
 .opt input:checked+span svg{color:#fff}
@@ -310,9 +370,9 @@ const HUMOR = [["humor1","Difícil"],["humor2","Ruim"],["humor3","Ok"],["humor4"
 const DIAGS = ["TEA","TDAH","Síndrome de Down","Atraso de fala","Paralisia cerebral","TOD","Deficiência intelectual","Em investigação"];
 
 /* ---------- Estado e armazenamento ---------- */
-const DOCS = ["perfil","meds","trat","docs","checks","regs","rede","tarefas","notas","plano","membros","consultas"];
+const DOCS = ["perfil","meds","trat","docs","checks","regs","rede","tarefas","notas","plano","membros","consultas","marcos"];
 /* Coleções ligadas a uma pessoa cuidada ficam em ALL; S.x.items mostra só as da pessoa ativa. */
-const POR_MEMBRO = ["meds","trat","tarefas","docs","regs","notas","consultas"];
+const POR_MEMBRO = ["meds","trat","tarefas","docs","regs","notas","consultas","marcos"];
 const ALL = Object.fromEntries(POR_MEMBRO.map(n => [n, []]));
 let ATIVO = "";
 try { ATIVO = localStorage.getItem("teia.membro") || ""; } catch (e) {}
@@ -334,28 +394,34 @@ function prepararMembros() {
 /* quem está usando o app neste aparelho (para "marcado por") */
 let QUEM = ""; try { QUEM = localStorage.getItem("teia.quem") || ""; } catch (e) {}
 const nomeQuem = () => { const r = S.rede.items.find(x => x.id === QUEM); return r ? r.nome : ((S.perfil && S.perfil.mae) || "Você"); };
+let TEMA = "auto"; try { TEMA = localStorage.getItem("teia.tema") || "auto"; } catch (e) {}
+function aplicarTema() { const esc_ = TEMA === "escuro" || (TEMA === "auto" && window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.classList.toggle("escuro", esc_); }
+aplicarTema(); try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", aplicarTema); } catch (e) {}
 const PAPEIS = ["Mãe","Pai","Avó","Avô","Tia","Tio","Irmã","Irmão","Cuidador(a)","Outro"];
 const RELACOES = ["Filho(a)","Neto(a)","Sobrinho(a)","Irmão(ã)","Pai/Mãe","Avô/Avó","Outro"];
 const CFG = window.TEIA_CONFIG || {};
 const SB = (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY) ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }) : null;
+let DONO_ID = null; const DONO = () => DONO_ID || (USER && USER.id);
 let USER = null, MODO_DEMO = !SB, SAMPLE = SB ? {} : null, SAMPLE_IMG = !!SB;
 const nul = v => (v === "" || v === undefined ? null : v);
 /* coleção do app -> tabela do banco */
 const MAPA = {
-  meds: ["medicamentos", m => ({ membro_id: nul(m.membroId), nome: m.nome, dose: m.dose || "", horarios: m.horarios || [], inicio: nul(m.inicio), fim: nul(m.fim), receita_id: nul(m.receitaId), medico: m.medico || "" }),
-         r => ({ id: r.id, membroId: r.membro_id || "", nome: r.nome, dose: r.dose, horarios: r.horarios || [], inicio: r.inicio || "", fim: r.fim || "", receitaId: r.receita_id || "", medico: r.medico })],
+  meds: ["medicamentos", m => ({ membro_id: nul(m.membroId), nome: m.nome, dose: m.dose || "", horarios: m.horarios || [], inicio: nul(m.inicio), fim: nul(m.fim), receita_id: nul(m.receitaId), medico: m.medico || "", estoque: m.estoque === "" || m.estoque == null ? null : Number(m.estoque), por_tomada: Number(m.porTomada) || 1 }),
+         r => ({ id: r.id, membroId: r.membro_id || "", nome: r.nome, dose: r.dose, horarios: r.horarios || [], inicio: r.inicio || "", fim: r.fim || "", receitaId: r.receita_id || "", medico: r.medico, estoque: r.estoque == null ? "" : Number(r.estoque), porTomada: Number(r.por_tomada) || 1 })],
   trat: ["tratamentos", t => ({ membro_id: nul(t.membroId), tipo: t.tipo, profissional: t.profissional || "", local: t.local || "", dias: t.dias || [], hora: t.hora || "", meta: t.meta || "", progresso: Number(t.progresso || 0) }),
          r => ({ id: r.id, membroId: r.membro_id || "", tipo: r.tipo, profissional: r.profissional, local: r.local, dias: r.dias || [], hora: r.hora, meta: r.meta, progresso: r.progresso })],
   tarefas: ["tarefas", t => ({ membro_id: nul(t.membroId), titulo: t.titulo, dias: t.dias || [], hora: t.hora || "" }), r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, dias: r.dias || [], hora: r.hora })],
   docs: ["documentos", d => ({ membro_id: nul(d.membroId), tipo: d.tipo || "outro", titulo: d.titulo || "", data: nul(d.data), profissional: d.profissional || "", registro: d.registro || "", especialidade: d.especialidade || "", origem: d.origem || "", resumo: d.resumo || "", pontos: d.pontos || [], termos: d.termos || [], recomendacoes: d.recomendacoes || [], perguntas: d.perguntas || [], medicamentos: d.medicamentos || [], arquivos: d.assetIds || [], mime: d.mime || "", lido_por_ia: !!d.resumo }),
          r => ({ id: r.id, membroId: r.membro_id || "", tipo: r.tipo, titulo: r.titulo, data: r.data || "", profissional: r.profissional, registro: r.registro, especialidade: r.especialidade, origem: r.origem, resumo: r.resumo, pontos: r.pontos, termos: r.termos, recomendacoes: r.recomendacoes, perguntas: r.perguntas, medicamentos: r.medicamentos, assetIds: r.arquivos || [], assetId: (r.arquivos || [])[0] || null, mime: r.mime, criadoEm: r.criado_em })],
-  regs: ["registros", x => ({ membro_id: nul(x.membroId), data: x.data, humor: Number(x.humor || 3), sono: x.sono || "", crise: !!x.crise, tratamento_id: nul(x.tratId), conquista: x.conquista || "", nota: x.nota || "" }),
-         r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, humor: r.humor, sono: r.sono, crise: r.crise, tratId: r.tratamento_id || "", conquista: r.conquista, nota: r.nota })],
+  regs: ["registros", x => ({ membro_id: nul(x.membroId), data: x.data, humor: Number(x.humor || 3), sono: x.sono || "", crise: !!x.crise, crise_info: x.criseInfo || null, tratamento_id: nul(x.tratId), conquista: x.conquista || "", nota: x.nota || "" }),
+         r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, humor: r.humor, sono: r.sono, crise: r.crise, criseInfo: r.crise_info || null, tratId: r.tratamento_id || "", conquista: r.conquista, nota: r.nota })],
   rede: ["rede", x => ({ nome: x.nome, papel: x.papel || "", contato: x.contato || "", obs: x.obs || "" }), r => ({ id: r.id, nome: r.nome, papel: r.papel, contato: r.contato, obs: r.obs })],
-  notas: ["notas_consulta", n => ({ membro_id: nul(n.membroId), data: n.data, titulo: n.titulo, texto: n.texto, para: n.para || "", feito: !!n.feito, origem: n.origem || "manual", pergunta: n.pergunta || "" }),
-          r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, titulo: r.titulo, texto: r.texto, para: r.para, feito: r.feito, origem: r.origem, pergunta: r.pergunta })],
+  notas: ["notas_consulta", n => ({ membro_id: nul(n.membroId), data: n.data, titulo: n.titulo, texto: n.texto, para: n.para || "", feito: !!n.feito, origem: n.origem || "manual", pergunta: n.pergunta || "", resposta: n.resposta || "", respondida_em: nul(n.respondidaEm) }),
+          r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, titulo: r.titulo, texto: r.texto, para: r.para, feito: r.feito, origem: r.origem, pergunta: r.pergunta, resposta: r.resposta || "", respondidaEm: r.respondida_em || "" })],
   consultas: ["consultas", c => ({ membro_id: nul(c.membroId), titulo: c.titulo, data: c.data, hora: c.hora || "", profissional: c.profissional || "", local: c.local || "", obs: c.obs || "" }),
           r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, hora: r.hora, profissional: r.profissional, local: r.local, obs: r.obs })],
+  marcos: ["marcos", x => ({ membro_id: nul(x.membroId), titulo: x.titulo, data: x.data, nota: x.nota || "", foto: x.foto || "" }),
+          r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, nota: r.nota, foto: r.foto })],
   membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "" }),
           r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude })],
 };
@@ -366,10 +432,10 @@ function linhasDe(nome) {
 }
 async function sincronizar(nome) {
   if (nome === "plano") return;
-  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: USER.id, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
+  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: DONO(), tour: !!p.tour, lembretes: p.lembretes || {}, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
   const tabela = nome === "checks" ? "marcacoes" : MAPA[nome][0];
   const atual = linhasDe(nome), antes = SINC[nome] || new Map();
-  const mudou = [...atual].filter(([k, v]) => antes.get(k) !== JSON.stringify(v)).map(([, v]) => ({ ...v, user_id: USER.id }));
+  const mudou = [...atual].filter(([k, v]) => antes.get(k) !== JSON.stringify(v)).map(([, v]) => ({ ...v, user_id: DONO() }));
   const sairam = [...antes.keys()].filter(k => !atual.has(k));
   if (mudou.length) { const { error } = await SB.from(tabela).upsert(mudou, nome === "checks" ? { onConflict: "user_id,dia,chave" } : undefined); if (error) throw error; }
   if (sairam.length) {
@@ -384,12 +450,13 @@ function salvar(nome) {
   filas[nome] = p; return p;
 }
 async function carregar() {
-  const pega = t => SB.from(t).select("*");
+  const ac = await SB.from("acessos").select("dono").eq("convidado", USER.id).order("criado_em").limit(1).maybeSingle(); DONO_ID = (ac.data && ac.data.dono) || USER.id;
+  const pega = t => SB.from(t).select("*").eq("user_id", DONO());
   const [perfil, assin, uso, ...cols] = await Promise.all([
-    SB.from("perfis").select("*").maybeSingle(), SB.from("assinaturas").select("*").maybeSingle(), SB.from("uso_ia").select("*").eq("mes", mesAtual()).maybeSingle(),
-    ...Object.values(MAPA).map(([t]) => pega(t)), SB.from("marcacoes").select("dia,chave,por,hora").gte("dia", iso(addDays(new Date(), -150)))]);
+    SB.from("perfis").select("*").eq("user_id", DONO()).maybeSingle(), SB.from("assinaturas").select("*").eq("user_id", DONO()).maybeSingle(), SB.from("uso_ia").select("*").eq("user_id", DONO()).eq("mes", mesAtual()).maybeSingle(),
+    ...Object.values(MAPA).map(([t]) => pega(t)), SB.from("marcacoes").select("dia,chave,por,hora").eq("user_id", DONO()).gte("dia", iso(addDays(new Date(), -150)))]);
   const err = [perfil, assin, uso, ...cols].find(r => r.error); if (err) throw err.error;
-  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em } : null;
+  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em, tour: !!r.tour, lembretes: r.lembretes || {} } : null;
   Object.keys(MAPA).forEach((n, i) => { S[n] = { items: (cols[i].data || []).map(MAPA[n][2]) }; });
   S.checks = { d: {} }; for (const m of cols[cols.length - 1].data || []) { (S.checks.d[m.dia] = S.checks.d[m.dia] || {})[m.chave] = { by: m.por, at: m.hora }; }
   prepararMembros();
@@ -399,11 +466,50 @@ async function carregar() {
   carregarConteudos();
 }
 function aplicarPlano(a, u) { S.plano = { plus: !!a && a.plano === "plus" && ["ativa", "teste"].includes(a.status), ciclo: a && a.ciclo, desde: a && a.desde, uso: { [mesAtual()]: { leitura: (u && u.leituras) || 0, pergunta: (u && u.perguntas) || 0 } } }; }
-async function atualizarPlano() { if (!SB || !USER) return; const [a, u] = await Promise.all([SB.from("assinaturas").select("*").maybeSingle(), SB.from("uso_ia").select("*").eq("mes", mesAtual()).maybeSingle()]); aplicarPlano(a.data, u.data); }
+async function atualizarPlano() { if (!SB || !USER) return; const [a, u] = await Promise.all([SB.from("assinaturas").select("*").eq("user_id", DONO()).maybeSingle(), SB.from("uso_ia").select("*").eq("user_id", DONO()).eq("mes", mesAtual()).maybeSingle()]); aplicarPlano(a.data, u.data); }
 async function carregarConteudos() {
   try { const { data } = await SB.from("conteudos").select("id,categoria,titulo,minutos,autor,corpo,destaque,publicado_em").eq("publicado", true).order("destaque", { ascending: false }).order("publicado_em", { ascending: false });
     if (data && data.length) { CONTEUDOS.splice(0, CONTEUDOS.length, ...data.map(c => ({ id: c.id, cat: c.categoria, titulo: c.titulo, min: c.minutos, autor: c.autor, corpo: (c.corpo || []).map(b => b.p != null ? b.p : b.h != null ? ["h", b.h] : ["ul", b.ul || []]) }))); if (["conteudos", "inicio"].includes(TELA.nome)) render(); } } catch (e) {}
 }
+/* ---------- recursos da nuvem ---------- */
+const VAPID_PUBLICA = "BJyR4Bf9lmad5nsTOZkb82JCG_rja1rfBo_n0BfpwaLL9SPdCAuMt5lxyr6vMqeAWVK55VXChIEmnNurKX0P0xM";
+const tokenAleatorio = (n = 32) => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, b => "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"[b % 62]).join(""); };
+const codigoConvite = () => { const a = new Uint8Array(8); crypto.getRandomValues(a); return Array.from(a, b => "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"[b % 32]).join(""); };
+let ACESSOS = [], PUSH_ON = false, INSTALAR = null;
+function ligarNuvem() {
+  if (!SB) return;
+  NUVEM.ativo = true;
+  NUVEM.conta = () => USER ? { email: USER.is_anonymous ? (USER.new_email || "") : (USER.email || ""), anonimo: !!USER.is_anonymous, convidado: DONO() !== USER.id } : null;
+  NUVEM.entrarEmail = async (email, converter) => {
+    const volta = location.origin + location.pathname;
+    if (converter && USER && USER.is_anonymous) { const { error } = await SB.auth.updateUser({ email }, { emailRedirectTo: volta }); if (error) throw error; return true; }
+    const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: volta, shouldCreateUser: true } }); if (error) throw error; return true; };
+  NUVEM.compartilhar = async () => { const token = tokenAleatorio(32); const { error } = await SB.from("links_profissional").insert({ token, user_id: DONO(), membro_id: ATIVO || null }); if (error) throw error; return `${location.origin}/r?t=${token}`; };
+  NUVEM.convidar = async () => { const codigo = codigoConvite(); const { error } = await SB.from("convites").insert({ codigo, dono: USER.id }); if (error) throw error; await carregarAcessos(); return { codigo, link: `${location.origin}/?convite=${codigo}` }; };
+  NUVEM.acessos = () => ACESSOS;
+  NUVEM.aceitarConvite = async (codigo) => { const { error } = await SB.rpc("aceitar_convite", { p_codigo: codigo, p_nome: nomeUsuario() || "" });
+    if (error) { const m = error.message || ""; return /convite_proprio/.test(m) ? "Esse convite é seu." : /sem_plus/.test(m) ? "Quem convidou precisa ter o teia+." : "Código inválido ou vencido."; }
+    for (const k of Object.keys(SINC)) delete SINC[k]; await carregar(); go(S.perfil ? "inicio" : "boasvindas", {}, true); return true; };
+  NUVEM.pushAtivo = () => PUSH_ON;
+  NUVEM.pushAtivar = async () => {
+    if (!("serviceWorker" in navigator) || !("PushManager" in window)) return /iPhone|iPad/.test(navigator.userAgent) ? "No iPhone, adicione o app à tela de início primeiro (Compartilhar, depois Adicionar à Tela de Início)." : "Este navegador não recebe notificações.";
+    const perm = await Notification.requestPermission(); if (perm !== "granted") return "Você não permitiu as notificações. Dá para mudar nas configurações do celular.";
+    const reg = await navigator.serviceWorker.ready;
+    const b64 = VAPID_PUBLICA.replace(/-/g, "+").replace(/_/g, "/"); const chave = Uint8Array.from(atob(b64 + "=".repeat((4 - b64.length % 4) % 4)), c => c.charCodeAt(0));
+    const sub = (await reg.pushManager.getSubscription()) || (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: chave })); const j = sub.toJSON();
+    const { error } = await SB.from("push_inscricoes").upsert({ endpoint: j.endpoint, user_id: USER.id, dono: DONO(), p256dh: j.keys.p256dh, auth: j.keys.auth }); if (error) throw error; PUSH_ON = true; return true; };
+  NUVEM.pushDesativar = async () => { const reg = await navigator.serviceWorker.ready; const sub = await reg.pushManager.getSubscription(); if (sub) { await SB.from("push_inscricoes").delete().eq("endpoint", sub.endpoint); await sub.unsubscribe(); } PUSH_ON = false; };
+  obterURL = id => { SB.storage.from("documentos").createSignedUrl(id, 3600).then(({ data }) => { if (data && data.signedUrl) { URLS[id] = data.signedUrl; if (["marcos", "linha"].includes(TELA.nome) || document.querySelector("#layer .sheet")) render(); } }).catch(() => {}); };
+}
+async function carregarAcessos() { if (!SB || !USER) return; const { data } = await SB.from("acessos").select("convidado,nome,papel,criado_em").eq("dono", USER.id);
+  const { data: cv } = await SB.from("convites").select("codigo,expira_em,usado_por").eq("dono", USER.id).is("usado_por", null).gt("expira_em", new Date().toISOString());
+  ACESSOS = [...(data || []).map(a => ({ nome: a.nome || "Pessoa da família", status: "Com acesso" + (a.papel ? " · " + a.papel : "") })), ...(cv || []).map(c => ({ nome: "Convite " + c.codigo, status: "Aguardando · vence " + fmtData(String(c.expira_em || "").slice(0, 10)) }))]; }
+async function estadoPush() { try { if (!("serviceWorker" in navigator)) return; const reg = await navigator.serviceWorker.getRegistration(); const sub = reg && await reg.pushManager.getSubscription(); PUSH_ON = !!sub && Notification.permission === "granted"; } catch (e) {} }
+if ("serviceWorker" in navigator && location.protocol === "https:") window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); INSTALAR = e; if (TELA.nome === "inicio") render(); });
+const instalado = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+let SEM_INSTALAR = false; try { SEM_INSTALAR = !!localStorage.getItem("teia.semInstalar"); } catch (e) {}
+
 /* IA no servidor (Edge Function "ia") */
 async function ia(tarefa, dados) {
   const { data, error } = await SB.functions.invoke("ia", { body: { tarefa, ...dados } });
@@ -413,6 +519,7 @@ async function ia(tarefa, dados) {
 const blobParaDataURL = b => new Promise((ok, erro) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = erro; fr.readAsDataURL(b); });
 let ENTRANDO = false;
 async function iniciar() {
+  ligarNuvem();
   { const lm = document.getElementById("loadmark"); if (lm) lm.innerHTML = simbolo(64); }
   if (!SB) { go(S.perfil ? "inicio" : "boasvindas", {}, true); return; }
   SB.auth.onAuthStateChange((ev, sess) => { if (ev === "SIGNED_IN" && sess && (!USER || USER.id !== sess.user.id)) { USER = sess.user; entrou(); } if (ev === "SIGNED_OUT") { USER = null; go("boasvindas", {}, true); } });
@@ -425,7 +532,8 @@ async function iniciar() {
 }
 async function entrou() {
   if (ENTRANDO) return; ENTRANDO = true;
-  try { await carregar(); go(S.perfil ? "inicio" : "boasvindas", {}, true); }
+  try { await carregar(); const cv = new URLSearchParams(location.search).get("convite"); if (cv) { history.replaceState(null, "", location.pathname); const r = await NUVEM.aceitarConvite(cv.toUpperCase()); toast(r === true ? "Pronto! Agora você cuida junto." : r); if (r === true) return; }
+    carregarAcessos().catch(() => {}); estadoPush().catch(() => {}); go(S.perfil ? "inicio" : "boasvindas", {}, true); }
   catch (e) { console.error(e); toast("Não consegui carregar seus dados. Tente de novo."); go("boasvindas", {}, true); }
   finally { ENTRANDO = false; }
 }
@@ -435,8 +543,8 @@ async function sair() { await SB.auth.signOut().catch(() => {}); for (const k of
 let TELA = { nome: "", p: {} }; const HIST = [];
 function go(nome, p = {}, raiz = false) { if (raiz) HIST.length = 0; else if (TELA.nome) HIST.push(TELA); TELA = { nome, p }; render(raiz ? "aba" : "fwd"); }
 function voltar() { TELA = HIST.pop() || { nome: "inicio", p: {} }; render("back"); }
-const SEM_DOCK = ["entrar","teiaplus","boasvindas","cadastro","assistente","processando","escaneando"];
-const raizDe = n => ({teiaplus:"perfil",rotina:"rotina",conteudos:"conteudos",artigo:"conteudos",familia:"perfil",perfil:"perfil",consulta:"perfil"}[n] || "inicio");
+const SEM_DOCK = ["tour","entrar","teiaplus","boasvindas","cadastro","assistente","processando","escaneando"];
+const raizDe = n => ({relatorio:"perfil",lembretes:"perfil",conta:"perfil",tour:"inicio",agenda:"inicio",crises:"inicio",marcos:"inicio",direitos:"conteudos",modelo:"conteudos",teiaplus:"perfil",rotina:"rotina",conteudos:"conteudos",artigo:"conteudos",familia:"perfil",perfil:"perfil",consulta:"perfil"}[n] || "inicio");
 const REDUZ = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 let OBS = null;
 function revelar() {
@@ -535,9 +643,39 @@ function proximaSessao() { const a = new Date(), hh = `${pad(a.getHours())}:${pa
 function proximoRemedio() { const n = new Date(), hh = `${pad(n.getHours())}:${pad(n.getMinutes())}`, h = iso(n); const hoje = itensDoDia(h).filter(i => i.key.startsWith("med:") && i.hora !== "—" && i.hora >= hh && !feito(h, i.key)); if (hoje.length) return { hora: hoje[0].hora, nome: hoje[0].titulo }; const am = itensDoDia(iso(addDays(n, 1))).filter(i => i.key.startsWith("med:") && i.hora !== "—"); return am.length ? { hora: am[0].hora, nome: am[0].titulo, amanha: true } : null; }
 function sessoesMes(t, ref = new Date()) { const y = ref.getFullYear(), m = ref.getMonth(), n = new Date(y, m+1, 0).getDate(); let prev = 0, ok = 0; for (let d = 1; d <= n; d++) { const dt = new Date(y, m, d); if ((t.dias || []).includes(dt.getDay())) { prev++; if (feito(iso(dt), `trat:${t.id}`)) ok++; } } return { prev, ok }; }
 const receitasVencendo = () => { const h = iso(new Date()), l = iso(addDays(new Date(), 5)); return S.meds.items.filter(m => m.fim && m.fim >= h && m.fim <= l); };
+/* estoque de remédio */
+function diasDeEstoque(m) { if (m.estoque === "" || m.estoque == null || isNaN(Number(m.estoque))) return null; const porDia = (Number(m.porTomada) || 1) * Math.max(1, (m.horarios || []).length); return Math.floor(Number(m.estoque) / porDia); }
+const estoqueBaixo = () => S.meds.items.filter(m => medAtivo(m, iso(new Date()))).map(m => ({ m, d: diasDeEstoque(m) })).filter(x => x.d !== null && x.d <= 5);
+/* agenda: o que acontece em um dia */
+function eventosDoDia(dI) { const dow = parseISO(dI).getDay(); const ev = [];
+  for (const c of S.consultas.items) if (c.data === dI) ev.push({ t: "consulta", nome: c.titulo, hora: c.hora });
+  for (const t of S.trat.items) if ((t.dias || []).includes(dow)) ev.push({ t: "terapia", nome: curto(t.tipo), hora: t.hora });
+  for (const m of S.meds.items) if (m.fim === dI) ev.push({ t: "receita", nome: `Fim: ${m.nome}`, hora: "" });
+  for (const x of S.marcos.items) if (x.data === dI) ev.push({ t: "marco", nome: x.titulo, hora: "" });
+  return ev.sort((a, b) => (a.hora || "99").localeCompare(b.hora || "99")); }
+/* crises */
+const GATILHOS = ["Barulho","Mudança de rotina","Sono ruim","Fome","Frustração","Lugar cheio","Transição","Não sei"];
+function padroesCrise(dias = 90) { const lim = iso(addDays(new Date(), -dias)); const regs = S.regs.items.filter(r => r.data >= lim); const cr = regs.filter(r => r.crise);
+  const cont = {}; for (const r of cr) for (const g of ((r.criseInfo || {}).gatilhos || [])) cont[g] = (cont[g] || 0) + 1;
+  const sonoRuim = regs.filter(r => r.sono === "Ruim"), crSono = sonoRuim.filter(r => r.crise).length;
+  const taxa = regs.length ? cr.length / regs.length : 0, taxaSono = sonoRuim.length ? crSono / sonoRuim.length : 0;
+  const ajudou = cr.map(r => (r.criseInfo || {}).ajudou).filter(Boolean);
+  return { total: cr.length, regs: regs.length, gatilhos: Object.entries(cont).sort((a, b) => b[1] - a[1]), sono: sonoRuim.length >= 3 && taxaSono > taxa * 1.5 ? { taxaSono, taxa } : null, ajudou: [...new Set(ajudou)].slice(0, 5), lista: cr.sort((a, b) => b.data.localeCompare(a.data)) }; }
+/* arquivos (fotos dos marcos): o site troca isto por links assinados */
+const URLS = {};
+let obterURL = id => {};
+function urlArquivo(id) { if (!id) return ""; if (URLS[id] === undefined) { URLS[id] = ""; obterURL(id); } return URLS[id]; }
+/* celebração */
+function festa(msg) { if (msg) toast(msg); if (REDUZ) return; const cores = ["#5B2EE8","#9C82F5","#F5B544","#4FC3A1","#F2789F"]; const box = document.createElement("div"); box.className = "festa"; box.setAttribute("aria-hidden", "true");
+  for (let i = 0; i < 46; i++) { const e = document.createElement("i"); e.style.left = Math.random() * 100 + "%"; e.style.background = cores[i % cores.length]; e.style.animationDelay = (Math.random() * .5) + "s"; e.style.animationDuration = (1.4 + Math.random() * 1.2) + "s"; e.style.transform = `rotate(${Math.random() * 360}deg)`; box.appendChild(e); }
+  document.body.appendChild(box); setTimeout(() => box.remove(), 3200); }
 function podarChecks() { const lim = iso(addDays(new Date(), -150)); for (const k of Object.keys(S.checks.d)) if (k < lim) delete S.checks.d[k]; }
 function saudacao() { const h = new Date().getHours(); return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite"; }
 
+
+/* ---------- recursos que dependem do servidor (o site liga; o protótipo mostra o aviso) ---------- */
+const NUVEM = { ativo: false, conta: null, compartilhar: null, links: null, revogarLink: null, entrarEmail: null, convidar: null, aceitarConvite: null, acessos: null, pushAtivar: null, pushDesativar: null, pushAtivo: null, dono: null };
+const soNoApp = () => toast("Disponível no app instalado em minhateia.vercel.app.");
 
 /* ---------- teia+ ---------- */
 const LIMITE = { leitura: 3, pergunta: 5 };
@@ -569,8 +707,34 @@ const CONTEUDOS = [
  { id: "ciptea", cat: "direitos", titulo: "Carteira CIPTEA: o que é e para que serve", min: 4, autor: "Equipe do app", corpo: [
   "A Carteira de Identificação da Pessoa com Transtorno do Espectro Autista (CIPTEA) foi criada pela Lei 13.977/2020, conhecida como Lei Romeo Mion. Ela ajuda a comprovar o diagnóstico e a pedir atendimento prioritário em serviços públicos e privados.",
   ["h","Como pedir"],
-  "As regras de emissão variam por estado e município. Em geral, é preciso apresentar documentos da pessoa, comprovante de residência e laudo médico. Procure o órgão de assistência social ou de direitos da pessoa com deficiência da sua cidade para saber o passo a passo.",
+  "Cada estado ou cidade tem o seu sistema. Em muitos lugares o pedido é feito pela internet, com a conta gov.br. Em geral, pedem documento e CPF da pessoa, comprovante de residência, foto e o laudo. Procure o portal do seu estado ou o órgão de direitos da pessoa com deficiência da sua cidade.",
   "A Lei 12.764/2012, a Lei Berenice Piedade, garante à pessoa com autismo os direitos das pessoas com deficiência. Este texto é informativo e não substitui orientação jurídica."] },
+ { id: "bpc", cat: "direitos", titulo: "BPC: um salário mínimo por mês para a pessoa com deficiência", min: 4, autor: "Equipe teia", corpo: [
+  "O Benefício de Prestação Continuada (BPC/LOAS) paga um salário mínimo por mês (R$ 1.621 em 2026) à pessoa com deficiência de qualquer idade, inclusive criança, quando a família tem baixa renda. Não é preciso ter contribuído para o INSS.",
+  ["h","Quem pode pedir"],
+  ["ul",["Pessoa com deficiência de longo prazo, o que inclui o autismo.","Família com renda de até 1/4 do salário mínimo por pessoa (R$ 405,25 em 2026). Some a renda de quem mora na casa e divida pelo número de pessoas.","Cadastro Único (CadÚnico) atualizado nos últimos 24 meses e CPF de todos da família em dia."]],
+  ["h","Como pedir"],
+  ["ul",["Faça ou atualize o CadÚnico no CRAS da sua cidade.","Peça o BPC pelo app ou site Meu INSS, ou pelo telefone 135.","Leve os laudos e relatórios. Eles ficam na pasta Documentos da teia.","A pessoa passa por avaliação médica e social do INSS."]],
+  "O BPC não paga 13º e é revisto de tempos em tempos. Se o pedido for negado, a Defensoria Pública pode ajudar de graça. As regras mudam: confirme sempre no INSS."] },
+ { id: "plano-terapias", cat: "direitos", titulo: "Plano de saúde não pode limitar as sessões de terapia", min: 4, autor: "Equipe teia", corpo: [
+  "Desde 2021, a ANS (agência que regula os planos) tirou o limite de sessões de psicologia, fonoaudiologia e terapia ocupacional para pessoas com autismo e outros transtornos do desenvolvimento. Em 2022, a regra passou a valer de forma mais ampla para essas terapias. O que vale é o que o profissional prescreveu.",
+  ["h","Se o plano negar ou limitar"],
+  ["ul",["Peça a negativa por escrito, com o motivo e o número do protocolo.","Guarde a prescrição médica com o número de sessões e o tipo de terapia.","Registre reclamação na ANS, pelo site ou telefone. O plano costuma ser chamado a responder.","Procure o Procon, a Defensoria Pública ou um advogado. A Justiça tem dado ganho de causa às famílias nesses casos."]],
+  "Use o modelo \"Pedido de terapias ao plano de saúde\", na área de direitos, para fazer o pedido por escrito. Este texto é informativo e não substitui orientação jurídica."] },
+ { id: "escola", cat: "direitos", titulo: "Escola: matrícula, acompanhante e nenhuma taxa extra", min: 4, autor: "Equipe teia", corpo: [
+  "A Lei 12.764/2012 (Lei Berenice Piana) garante à pessoa com autismo os direitos da pessoa com deficiência. Na escola, pública ou particular, isso significa:",
+  ["ul",["A escola não pode recusar a matrícula.","Quando a necessidade é comprovada, o aluno tem direito a acompanhante especializado em sala.","A escola não pode cobrar valor a mais por esse apoio.","O aluno tem direito a adaptações e ao atendimento educacional especializado (AEE)."]],
+  ["h","Como pedir o acompanhante"],
+  ["ul",["Peça por escrito, protocolado na secretaria da escola.","Anexe laudo e relatório dos terapeutas explicando por que o apoio é necessário.","Se a escola negar, procure a Secretaria de Educação, o Ministério Público ou a Defensoria Pública."]],
+  "Use o modelo \"Pedido de acompanhante na escola\", na área de direitos. Este texto é informativo e não substitui orientação jurídica."] },
+ { id: "passe-livre", cat: "direitos", titulo: "Passe Livre: viagem de ônibus entre estados sem pagar", min: 3, autor: "Equipe teia", corpo: [
+  "O Passe Livre Interestadual (Lei 8.899/1994) dá passagem gratuita em ônibus, trem e barco entre estados para a pessoa com deficiência de baixa renda. As regras foram atualizadas em 2026.",
+  ["ul",["O pedido é feito pela internet, no site do Passe Livre da ANTT, com a conta gov.br.","Quem recebe o BPC como pessoa com deficiência não precisa comprovar renda nem mandar atestado, a menos que precise de acompanhante.","O acompanhante também viaja de graça quando o médico registra que ele é necessário.","Com a credencial, a passagem é pedida direto na empresa de ônibus, com antecedência."]],
+  "Confira as regras atuais no site da ANTT antes de pedir."] },
+ { id: "carro", cat: "direitos", titulo: "Carro com isenção de impostos para a família", min: 4, autor: "Equipe teia", corpo: [
+  "A pessoa com autismo ou outra deficiência pode ter isenção de impostos na compra de um carro, mesmo que não seja ela quem dirige. São quatro impostos, cada um com regras próprias:",
+  ["ul",["IPI e IOF (federais): pedidos pelo sistema SISEN da Receita Federal, com a conta gov.br. Em 2026, a isenção de IPI vale para carros de até R$ 200 mil.","ICMS (estadual): pedido na Secretaria da Fazenda do estado, depois do IPI. Tem limite de valor menor.","IPVA (estadual): pedido depois da compra. As regras mudam de estado para estado."]],
+  "Em 2026, o Supremo decidiu que a isenção de IPI vale para pessoas autistas de qualquer nível de suporte. Antes de escolher o carro, confira os limites atuais e os documentos exigidos no seu estado."] },
  { id: "cuidar", cat: "artigo", titulo: "Cuidando de quem cuida: pequenas pausas", min: 3, autor: "Equipe do app", corpo: [
   "Quem cuida costuma colocar a própria saúde por último. Cuidar de si também faz parte do cuidado.",
   ["ul",["Combine com alguém da rede um horário fixo na semana só seu.","Peça ajuda de forma específica: buscar na escola, ficar uma hora, fazer uma compra.","Mantenha um compromisso seu na agenda, como consulta, caminhada ou encontro com uma amiga.","Se o cansaço ou a tristeza durarem muito, procure um profissional de saúde mental."]],
@@ -581,6 +745,45 @@ const CONTEUDOS = [
   "Se a lista de alimentos for muito curta ou houver perda de peso, procure o pediatra, um nutricionista ou uma fonoaudióloga com experiência em alimentação."] },
 ];
 const nomeConteudo = id => CONTEUDOS.find(c => c.id === id);
+const MODELOS = [
+ { id: "plano", titulo: "Pedido de terapias ao plano de saúde", sub: "Para pedir cobertura sem limite de sessões e a resposta por escrito", texto: (c) => `À operadora ${c.plano || "[nome do plano de saúde]"}
+
+Eu, ${c.eu || "[seu nome]"}, responsável por ${c.pessoa}${c.carteirinha}, venho solicitar a autorização e a cobertura das terapias prescritas para ${c.pessoa}, conforme prescrição em anexo:
+
+${c.terapias || "- [terapia] — [quantidade de sessões por semana]"}
+
+${c.diag ? `${c.pessoa} tem diagnóstico de ${c.diag}. ` : ""}As normas da ANS não permitem limitar o número de sessões de psicologia, fonoaudiologia e terapia ocupacional para essas condições. O número de sessões deve seguir a indicação do profissional responsável.
+
+Peço que a resposta seja enviada por escrito, com o número do protocolo e, em caso de negativa, o motivo detalhado.
+
+${c.cidade || "[cidade]"}, ${c.hoje}.
+
+${c.eu || "[seu nome]"}
+${c.contato || "[telefone ou e-mail]"}` },
+ { id: "escola", titulo: "Pedido de acompanhante na escola", sub: "Para pedir apoio especializado em sala, sem custo extra", texto: (c) => `À direção da escola ${c.escola || "[nome da escola]"}
+
+Eu, ${c.eu || "[seu nome]"}, responsável por ${c.pessoa}, aluno(a) da turma ${c.turma || "[turma]"}, venho solicitar a disponibilização de acompanhante especializado em sala de aula, com base na Lei 12.764/2012 (art. 3º, parágrafo único) e no Decreto 8.368/2014.
+
+${c.diag ? `${c.pessoa} tem diagnóstico de ${c.diag}. ` : ""}Os laudos e relatórios em anexo mostram a necessidade desse apoio para a participação, a segurança e a aprendizagem em sala.
+
+Lembro que a escola não pode cobrar valor adicional por esse apoio.
+
+Peço resposta por escrito em até 15 dias, com o nome do profissional designado ou o motivo de eventual negativa.
+
+${c.cidade || "[cidade]"}, ${c.hoje}.
+
+${c.eu || "[seu nome]"}
+${c.contato || "[telefone ou e-mail]"}` },
+ { id: "negativa", titulo: "Pedido de negativa por escrito", sub: "Quando o plano ou o serviço nega por telefone", texto: (c) => `À ${c.plano || "[empresa ou órgão]"}
+
+Eu, ${c.eu || "[seu nome]"}, responsável por ${c.pessoa}, recebi em ${c.hoje} a informação de que o pedido de [descreva o pedido] foi negado.
+
+Solicito que essa negativa seja enviada por escrito, com o motivo detalhado, a norma ou cláusula usada como base e o número do protocolo do atendimento.
+
+${c.eu || "[seu nome]"}
+${c.contato || "[telefone ou e-mail]"}` },
+];
+function dadosModelo() { const m = membroAtivo() || {}; const n = new Date(); return { eu: nomeUsuario(), pessoa: m.nome || "[nome da pessoa]", diag: m.diagnosticos || "", plano: m.plano || "", carteirinha: "", terapias: S.trat.items.map(t => `- ${t.tipo}${(t.dias || []).length ? ` — ${t.dias.length} vez(es) por semana` : ""}${t.profissional ? ` (${t.profissional})` : ""}`).join("\n"), hoje: `${n.getDate()} de ${MESES[n.getMonth()]} de ${n.getFullYear()}`, cidade: "", contato: "", escola: "", turma: "" }; }
 const cardArtigo = c => `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th">${ic(CAT_ICON[c.cat] || "artigo", 20)}</span><span class="grow"><span class="t" style="display:block">${esc(c.titulo)}</span><span class="m" style="display:block">${CAT_NOME[c.cat]} · ${c.min} min de leitura</span></span>${ic("seta", 16)}</button>`;
 
 /* ---------- Telas ---------- */
@@ -597,6 +800,7 @@ TELAS.boasvindas = () => `<div class="bv">
   </div>
   <button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>
   <p class="xs muted" style="text-align:center;margin-top:12px">Seus dados de saúde ficam privados.</p>
+  ${SB ? `<button class="link" style="align-self:center;margin-top:4px" data-a="ir" data-v="conta">Recebi um convite ou já tenho conta</button>` : ""}
 </div>`;
 
 TELAS.entrar = (p) => `${topo("Entrar")}
@@ -652,8 +856,12 @@ TELAS.inicio = () => {
     <div class="hero-track"><i style="width:${sem.pct}%"></i></div>
     <div class="hero-foot"><span>${sem.ok} de ${sem.tot} tarefas feitas</span><span style="display:inline-flex;align-items:center;gap:4px">Ver detalhes ${ic("seta-dir", 14)}</span></div>
   </button>
+  ${(() => { const h = iso(new Date()), itens = itensDoDia(h), pend = itens.filter(x => !feito(h, x.key)); const meds = pend.filter(x => x.key.startsWith("med:")).length; const sess = itens.filter(x => x.key.startsWith("trat:") || x.key.startsWith("cons:")); const est = estoqueBaixo();
+    const linhas = []; if (meds) linhas.push(["medicacao", `${meds} ${meds === 1 ? "remédio" : "remédios"} para dar hoje`]); for (const x of sess.slice(0, 2)) linhas.push([x.icone, `${x.titulo}${x.hora !== "—" ? " às " + x.hora : ""}`]); for (const e of est.slice(0, 2)) linhas.push(["alerta", `${e.m.nome}: estoque para ${e.d} ${e.d === 1 ? "dia" : "dias"}`]);
+    return linhas.length ? `<div class="card hoje-card"><p class="b small">Hoje para ${esc(crianca)}</p>${linhas.map(([i, t]) => `<div class="hoje-it"><span class="ib c2">${ic(i, 16)}</span><span class="grow">${esc(t)}</span></div>`).join("")}</div>` : ""; })()}
+  ${!instalado() && !SEM_INSTALAR && (INSTALAR || /iPhone|iPad/.test(navigator.userAgent)) ? `<div class="card row" style="gap:12px"><span class="ib c2">${simbolo(18)}</span><div class="grow"><p class="b small">Instale a teia no celular</p><p class="xs muted">${INSTALAR ? "Abre como app e recebe lembretes." : "Toque em Compartilhar e depois em Adicionar à Tela de Início."}</p></div>${INSTALAR ? `<button class="btn" style="height:36px;padding:0 14px;font-size:13px" data-a="instalar">Instalar</button>` : ""}<button class="circle" style="width:30px;height:30px;box-shadow:none;background:var(--soft)" data-a="instalar-nao" aria-label="Fechar">${ic("fechar", 14)}</button></div>` : ""}
   <div class="qts">
-    ${[["aba","rotina","rotina","Rotina do dia"],["ir","tratamentos","consulta","Terapias"],["ir","documentos","pasta","Laudos e receitas"],["ir","evolucao","evolucao","Evolução"]].map(([a, v, i, l]) => `<button class="qt" data-a="${a}" data-v="${v}"><span class="qi">${ic(i, 18)}</span><span>${l}</span></button>`).join("")}
+    ${[["ir","agenda","rotina","Agenda"],["ir","tratamentos","consulta","Terapias"],["ir","documentos","pasta","Laudos e receitas"],["ir","evolucao","evolucao","Evolução"],["ir","marcos","conquista","Marcos"],["ir","direitos","direitos","Direitos"]].map(([a, v, i, l]) => `<button class="qt" data-a="${a}" data-v="${v}"><span class="qi">${ic(i, 18)}</span><span>${l}</span></button>`).join("")}
   </div>
   <div class="card">
     <div class="sec-row"><h3>${ic("rotina", 22)}Próximos compromissos</h3><button class="lk" data-a="aba" data-v="rotina">Ver ${ic("seta-dir", 16)}</button></div>
@@ -683,6 +891,7 @@ TELAS.conteudos = (p) => {
   return `${topoRaiz("Conteúdos")}
 <div class="wrap stack" style="padding-top:8px;gap:12px">
   <div class="cat" role="tablist" aria-label="Categorias">${CATS.map(([k, l]) => `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "on" : ""}" data-a="cont-cat" data-v="${k}">${l}</button>`).join("")}</div>
+  ${cat === "todos" || cat === "direitos" ? `<button class="art" data-a="ir" data-v="direitos"><span class="th">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="m" style="display:block">BPC, plano de saúde, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
   ${dest ? `<button class="tile au-indigo" data-a="ir" data-v="artigo" data-id="${dest.id}" style="border:1px solid rgba(255,255,255,.14);text-align:left;width:100%;padding:14px 16px;border-radius:20px;cursor:pointer;font-family:inherit"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Em destaque · ${CAT_NOME[dest.cat]}</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">${esc(dest.titulo)}</p><p style="font-size:12px;opacity:.85;margin-top:6px">${dest.min} min de leitura</p></button>` : ""}
   ${(dest ? lista.slice(1) : lista).map(cardArtigo).join("")}
   ${vazio ? `<div class="empty"><span class="ib c2" style="margin:0 auto 10px">${ic(cat === "video" ? "video" : "conteudos", 20)}</span><p class="b">${vazio[0]}</p><p class="small muted" style="margin-top:4px">${vazio[1]}</p></div>` : ""}
@@ -705,8 +914,9 @@ TELAS.consulta = () => {
   const it = [...S.notas.items].sort((a, b) => (a.feito ? 1 : 0) - (b.feito ? 1 : 0) || (b.data || "").localeCompare(a.data || "")); const pend = it.filter(n => !n.feito).length;
   return `${topo("Para a consulta", `<button class="circle" data-a="nota-nova" aria-label="Nova anotação">${ic("mais", 20)}</button>`)}
 <div class="wrap stack" style="padding-top:8px;gap:10px">
+  <button class="art" data-a="ir" data-v="relatorio"><span class="th">${ic("relatorio", 20)}</span><span class="grow"><span class="t" style="display:block">Relatório para a consulta</span><span class="m" style="display:block">Remédios, terapias, crises e estas anotações numa página</span></span>${ic("seta", 16)}</button>
   <p class="small muted">Anotações para falar com o profissional.${pend ? ` ${pend} para conversar.` : ""}</p>
-  ${it.length ? it.map(n => `<div class="card nota ${n.feito ? "feita" : ""}"><button class="check ${n.feito ? "on" : ""}" data-a="nota-feita" data-id="${n.id}" aria-pressed="${!!n.feito}" aria-label="${n.feito ? "Marcar como não conversada" : "Marcar como conversada"}">${n.feito ? ic("feito", 16) : ""}</button><div class="grow"><p class="b small">${esc(n.titulo)}</p><p class="small" style="margin-top:3px;color:#4A466E;line-height:1.45">${esc(n.texto)}</p><p class="xs muted" style="margin-top:6px">${esc(fmtData(n.data))}${n.para ? " · para " + esc(n.para) : ""}${n.origem === "ia" ? " · anotada pela IA" : ""}</p></div><button class="circle" data-a="nota-apagar" data-id="${n.id}" aria-label="Apagar anotação" style="width:34px;height:34px;box-shadow:none;background:var(--soft)">${ic("lixo", 16)}</button></div>`).join("")
+  ${it.length ? it.map(n => `<div class="card nota ${n.feito ? "feita" : ""}"><button class="check ${n.feito ? "on" : ""}" data-a="nota-feita" data-id="${n.id}" aria-pressed="${!!n.feito}" aria-label="${n.feito ? "Marcar como não conversada" : "Marcar como conversada"}">${n.feito ? ic("feito", 16) : ""}</button><div class="grow"><p class="b small">${esc(n.titulo)}</p><p class="small" style="margin-top:3px;color:#4A466E;line-height:1.45">${esc(n.texto)}</p>${n.resposta ? `<p class="resp"><b>Resposta${n.para ? " (" + esc(n.para) + ")" : ""}:</b> ${esc(n.resposta)}</p>` : `<button class="lk" style="font-size:12.5px;padding:6px 0 0" data-a="nota-responder" data-id="${n.id}">Registrar o que o profissional disse</button>`}<p class="xs muted" style="margin-top:6px">${esc(fmtData(n.data))}${n.para ? " · para " + esc(n.para) : ""}${n.origem === "ia" ? " · anotada pela IA" : ""}</p></div><button class="circle" data-a="nota-apagar" data-id="${n.id}" aria-label="Apagar anotação" style="width:34px;height:34px;box-shadow:none;background:var(--soft)">${ic("lixo", 16)}</button></div>`).join("")
     : `<div class="empty"><span class="ib c4" style="margin:0 auto 10px">${ic("diario", 20)}</span><p class="b">Nenhuma anotação ainda</p><p class="small muted" style="margin-top:4px">Quando você pedir uma opinião à IA, ela anota o que aconteceu para você levar à consulta.</p></div>`}
   ${pend ? `<button class="btn sec full" data-a="nota-copiar">Copiar anotações pendentes</button>` : ""}
 </div>`;
@@ -734,12 +944,120 @@ TELAS.teiaplus = (p) => {
   <div class="card row" style="gap:12px;margin-top:4px"><span class="ib" style="width:34px;height:34px">${ic("bemestar", 18)}</span><p class="xs muted grow" style="line-height:1.45">Família com renda baixa? Vamos ter teia+ gratuito para quem precisa.</p></div>
 </div>`;
 };
+TELAS.direitos = () => { const guias = CONTEUDOS.filter(c => c.cat === "direitos"); const docs = S.docs.items.length;
+  return `${topo("Direitos")}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  <div class="tile au-indigo" style="padding:14px 16px;border-radius:20px"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Guia de direitos</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">O que ${esc(nomeCrianca())} pode ter garantido por lei</p><p class="xs" style="opacity:.85;margin-top:6px">Passo a passo e modelos prontos com o nome de ${esc(nomeCrianca())}.</p></div>
+  ${docs ? `<button class="art" data-a="ir" data-v="documentos"><span class="th">${ic("pasta", 20)}</span><span class="grow"><span class="t" style="display:block">${docs} ${docs === 1 ? "documento guardado" : "documentos guardados"}</span><span class="m" style="display:block">Laudos e receitas que podem ser anexados aos pedidos</span></span>${ic("seta", 16)}</button>` : ""}
+  <div class="sec-title"><h2>Guias</h2></div>
+  ${guias.map(cardArtigo).join("")}
+  <div class="sec-title"><h2>Modelos de documentos</h2></div>
+  ${MODELOS.map(m => `<button class="art" data-a="ir" data-v="modelo" data-id="${m.id}"><span class="th">${ic("relatorio", 20)}</span><span class="grow"><span class="t" style="display:block">${esc(m.titulo)}</span><span class="m" style="display:block">${esc(m.sub)}</span></span>${ic("seta", 16)}</button>`).join("")}
+  <div class="card row" style="gap:12px"><span class="ib c1">${ic("direitos", 20)}</span><p class="xs muted grow" style="line-height:1.5">Precisa de ajuda? A Defensoria Pública atende de graça quem não pode pagar advogado. Os textos daqui são informativos e não substituem orientação jurídica.</p></div>
+</div>`; };
+TELAS.modelo = (p) => { const m = MODELOS.find(x => x.id === p.id) || MODELOS[0]; const txt = m.texto(dadosModelo());
+  return `${topo("Modelo")}
+<div class="wrap stack" style="padding-top:6px;gap:12px">
+  <div><h1 style="font-size:19px;font-weight:600;letter-spacing:-.4px">${esc(m.titulo)}</h1><p class="small muted" style="margin-top:4px">Já preenchemos o que a teia sabe. Complete o que está entre colchetes.</p></div>
+  <label class="sr" for="modtxt">Texto do documento</label><textarea class="input" id="modtxt" style="min-height:380px;font-size:13.5px;line-height:1.55">${esc(txt)}</textarea>
+  <div class="row" style="gap:8px"><button class="btn grow" data-a="modelo-copiar">${ic("tarefa", 18)}Copiar texto</button><button class="btn sec grow" data-a="modelo-compartilhar">${ic("enviar", 18)}Enviar</button></div>
+  <p class="note">Imprima ou envie por e-mail e guarde o protocolo. Texto informativo, não substitui orientação jurídica.</p>
+</div>`; };
+
+TELAS.agenda = (p) => { const base = p.mes ? parseISO(p.mes + "-01") : new Date(); const y = base.getFullYear(), mo = base.getMonth(); const ini = new Date(y, mo, 1); const desloc = ini.getDay(); const hoje = iso(new Date()); const sel = p.dia || (iso(base).slice(0, 7) === hoje.slice(0, 7) ? hoje : iso(ini));
+  const cel = []; for (let i = 0; i < 42; i++) { const d = new Date(y, mo, 1 - desloc + i); cel.push(d); } const mesStr = m => `${m.getFullYear()}-${pad(m.getMonth() + 1)}`;
+  const evSel = eventosDoDia(sel);
+  return `${topo("Agenda", `<button class="circle" data-a="consulta-nova" aria-label="Nova consulta">${ic("mais", 20)}</button>`)}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  <div class="card"><div class="row" style="margin-bottom:10px"><button class="circle" style="width:34px;height:34px;box-shadow:none;background:var(--soft)" data-a="agenda-mes" data-v="${mesStr(new Date(y, mo - 1, 1))}" aria-label="Mês anterior">${ic("esquerda", 16)}</button><p class="b grow" style="text-align:center;font-size:15px;text-transform:capitalize">${MESES[mo]} ${y}</p><button class="circle" style="width:34px;height:34px;box-shadow:none;background:var(--soft)" data-a="agenda-mes" data-v="${mesStr(new Date(y, mo + 1, 1))}" aria-label="Próximo mês">${ic("seta", 16)}</button></div>
+    <div class="cal">${["D","S","T","Q","Q","S","S"].map(d => `<span class="dw">${d}</span>`).join("")}${cel.map(d => { const dI = iso(d); const ev = eventosDoDia(dI); const tipos = [...new Set(ev.map(e => e.t))]; return `<button class="${d.getMonth() !== mo ? "fora" : ""} ${dI === hoje ? "hoje" : ""} ${dI === sel ? "sel" : ""}" data-a="agenda-dia" data-v="${dI}" aria-label="${esc(fmtLonga(dI))}${ev.length ? ", " + ev.length + " eventos" : ""}">${d.getDate()}<span class="pts">${tipos.slice(0, 4).map(t => `<i class="pt-${t}"></i>`).join("")}</span></button>`; }).join("")}</div>
+    <div class="legenda" style="margin-top:12px"><span><i class="pt-consulta"></i>Consulta</span><span><i class="pt-terapia"></i>Terapia</span><span><i class="pt-receita"></i>Receita acaba</span><span><i class="pt-marco"></i>Marco</span></div></div>
+  <div class="sec-title"><h2 style="text-transform:none">${esc(fmtLonga(sel))}</h2><button class="lk" data-a="rotina-dia" data-v="${sel}">Ver rotina ${ic("seta-dir", 14)}</button></div>
+  ${evSel.length ? evSel.map(e => `<div class="list"><span class="ib c2"><i class="pt-${e.t}" style="width:10px;height:10px;border-radius:50%;display:block"></i></span><div class="grow"><p class="b small">${esc(e.nome)}</p><p class="xs muted">${{ consulta: "Consulta", terapia: "Terapia", receita: "Último dia da receita", marco: "Marco" }[e.t]}${e.hora ? " · " + esc(e.hora) : ""}</p></div></div>`).join("") : `<div class="empty"><span class="ib" style="margin:0 auto 10px">${ic("rotina", 22)}</span><p class="b">Nada marcado neste dia</p><button class="btn" style="margin-top:12px" data-a="consulta-nova" data-v="${sel}">Marcar consulta</button></div>`}
+</div>`; };
+
+TELAS.crises = () => { const pc = padroesCrise(90);
+  return `${topo("Crises")}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  <div class="tile au-indigo" style="padding:14px 16px;border-radius:20px"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Últimos 90 dias</p><div class="row" style="align-items:flex-end;justify-content:space-between;margin-top:4px"><p style="font-size:19px;font-weight:500;letter-spacing:-.4px">${pc.total} ${pc.total === 1 ? "crise registrada" : "crises registradas"}</p><p class="xs" style="opacity:.85">em ${pc.regs} dias registrados</p></div></div>
+  ${pc.sono ? `<div class="card row" style="gap:12px"><span class="ib c4">${ic("sono", 20)}</span><p class="small grow"><b>Padrão:</b> nos dias de sono ruim, ${esc(nomeCrianca())} teve crise em ${Math.round(pc.sono.taxaSono * 100)}% das vezes, contra ${Math.round(pc.sono.taxa * 100)}% no geral.</p></div>` : ""}
+  ${pc.gatilhos.length ? `<div class="card"><p class="b small" style="margin-bottom:8px">O que veio antes</p>${pc.gatilhos.slice(0, 5).map(([g, n]) => `<div class="row" style="gap:10px;margin-top:6px"><span class="small grow">${esc(g)}</span><span class="bar" style="width:40%"><span style="width:${Math.round(n / pc.total * 100)}%"></span></span><b class="xs" style="width:26px;text-align:right">${n}</b></div>`).join("")}</div>` : ""}
+  ${pc.ajudou.length ? `<div class="card"><p class="b small" style="margin-bottom:6px">O que ajudou</p>${pc.ajudou.map(a => `<p class="small" style="margin-top:4px">• ${esc(a)}</p>`).join("")}</div>` : ""}
+  <div class="sec-title"><h2>Registros de crise</h2><button class="lk" data-a="ir" data-v="registro" data-id="crise">${ic("mais", 14)} Registrar</button></div>
+  ${pc.lista.length ? pc.lista.slice(0, 20).map(r => { const ci = r.criseInfo || {}; return `<div class="list" style="align-items:flex-start"><span class="ib c4">${ic("crise", 20)}</span><div class="grow"><p class="b small">${esc(fmtLonga(r.data))}${ci.intensidade ? " · " + esc(ci.intensidade) : ""}${ci.duracao ? " · " + esc(ci.duracao) + " min" : ""}</p><p class="xs muted" style="margin-top:2px">${esc([(ci.gatilhos || []).join(", "), ci.ajudou ? "ajudou: " + ci.ajudou : ""].filter(Boolean).join(" · ") || r.nota || "Sem detalhes")}</p></div></div>`; }).join("")
+    : `<div class="empty"><span class="ib" style="margin:0 auto 10px">${ic("crise", 22)}</span><p class="b">Nenhuma crise registrada</p><p class="small muted" style="margin-top:4px">Ao registrar o dia, marque se teve crise e o que veio antes. Com o tempo, a teia mostra padrões.</p></div>`}
+  <p class="note">Os padrões são só uma observação dos registros. Converse com os profissionais antes de mudar qualquer coisa.</p>
+</div>`; };
+
+const MARCOS_SUG = ["Primeira palavra","Dormiu a noite toda","Desfralde","Comeu um alimento novo","Primeiro dia na escola","Pediu algo sozinho(a)","Brincou com outra criança","Cortou o cabelo sem crise"];
+TELAS.marcos = () => { const it = [...S.marcos.items].sort((a, b) => (b.data || "").localeCompare(a.data || ""));
+  return `${topo("Marcos", `<button class="circle" data-a="marco-novo" aria-label="Novo marco">${ic("mais", 20)}</button>`)}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  <p class="small muted">As conquistas de ${esc(nomeCrianca())}, com foto e data, para lembrar e mostrar aos profissionais.</p>
+  ${it.length ? `<div class="marcos">${it.map(m => { const u = m.foto ? urlArquivo(m.foto) : ""; return `<button class="marco" data-a="marco-ver" data-id="${m.id}"><div class="ft">${u ? `<img src="${esc(u)}" alt="">` : ic("conquista", 30)}</div><div class="tx"><b>${esc(m.titulo)}</b><small>${esc(fmtData(m.data))}</small></div></button>`; }).join("")}</div>`
+    : `<div class="empty"><span class="ib" style="margin:0 auto 10px">${ic("conquista", 22)}</span><p class="b">O primeiro marco começa aqui</p><p class="small muted" style="margin-top:4px">Primeira palavra, desfralde, um alimento novo. Toda conquista conta.</p><button class="btn" style="margin-top:12px" data-a="marco-novo">Registrar marco</button></div>`}
+</div>`; };
+
+function dadosRelatorio() { const m = membroAtivo() || {}; const h = iso(new Date()), lim = iso(addDays(new Date(), -30));
+  const regs = S.regs.items.filter(r => r.data >= lim); const crises = regs.filter(r => r.crise); const cont = {}; for (const r of crises) for (const g of ((r.criseInfo || {}).gatilhos || [])) cont[g] = (cont[g] || 0) + 1;
+  const sono = { Bom: 0, Regular: 0, Ruim: 0 }; for (const r of regs) if (sono[r.sono] !== undefined) sono[r.sono]++;
+  return { m, quem: nomeUsuario(), papel: (S.perfil || {}).papel || "", gerado: fmtData(h), meds: S.meds.items.filter(x => medAtivo(x, h)), trat: S.trat.items,
+    consultasProx: S.consultas.items.filter(c => c.data >= h).sort((a, b) => a.data.localeCompare(b.data)).slice(0, 5), consultasPass: S.consultas.items.filter(c => c.data < h).sort((a, b) => b.data.localeCompare(a.data)).slice(0, 5),
+    docs: [...S.docs.items].sort((a, b) => (b.data || "").localeCompare(a.data || "")).slice(0, 6), regs: regs.length, humor: regs.length ? (regs.reduce((t, r) => t + (r.humor || 3), 0) / regs.length) : 0, sono, crises: crises.length, gatilhos: Object.entries(cont).sort((a, b) => b[1] - a[1]).slice(0, 4),
+    marcos: [...S.marcos.items].sort((a, b) => (b.data || "").localeCompare(a.data || "")).slice(0, 5), notas: S.notas.items.filter(n => !n.feito) }; }
+function htmlRelatorio(d) { const L = (a, b) => b ? `<tr><td>${a}</td><td>${b}</td></tr>` : ""; const humorTx = d.humor ? HUMOR[Math.round(d.humor) - 1][1] : "";
+  return `<div class="rel"><div style="display:flex;align-items:center;justify-content:space-between;gap:10px">${logo(20)}<span style="font-size:11px;color:#6E6A8C">Gerado em ${esc(d.gerado)}</span></div>
+  <h2 style="font-size:19px;font-weight:600;margin-top:14px">Resumo de ${esc(d.m.nome || "")}</h2><p style="color:#6E6A8C;font-size:12px">Preparado por ${esc(d.quem || "")}${d.papel ? " (" + esc(d.papel) + ")" : ""} para a consulta</p>
+  <h3>Quem é</h3><table>${L("Nome", esc(d.m.nome))}${L("Idade", d.m.nascimento ? esc(idade(d.m.nascimento)) + " (" + esc(fmtData(d.m.nascimento)) + ")" : "")}${L("Diagnósticos", esc(d.m.diagnosticos || ""))}${L("Plano de saúde", esc(d.m.plano || ""))}</table>
+  <h3>Remédios em uso</h3>${d.meds.length ? `<table>${d.meds.map(x => L(esc(x.nome), esc([x.dose, (x.horarios || []).join(", "), x.medico ? "receitado por " + x.medico : "", x.fim ? "até " + fmtData(x.fim) : "uso contínuo"].filter(Boolean).join(" · ")))).join("")}</table>` : "<p>Nenhum remédio cadastrado.</p>"}
+  <h3>Terapias</h3>${d.trat.length ? `<table>${d.trat.map(t => { const s = sessoesMes(t); return L(esc(t.tipo), esc([(t.dias || []).map(x => DIAS[x]).join(", "), t.hora, t.profissional, `${s.ok} de ${s.prev} sessões no mês`, t.meta ? "meta: " + t.meta : ""].filter(Boolean).join(" · "))); }).join("")}</table>` : "<p>Nenhuma terapia cadastrada.</p>"}
+  <h3>Últimos 30 dias</h3><table>${L("Dias registrados", String(d.regs))}${L("Humor médio", humorTx)}${L("Sono", d.regs ? `bom ${d.sono.Bom}, regular ${d.sono.Regular}, ruim ${d.sono.Ruim}` : "")}${L("Crises", d.regs ? String(d.crises) + (d.gatilhos.length ? " · antes: " + esc(d.gatilhos.map(([g, n]) => `${g} (${n})`).join(", ")) : "") : "")}</table>
+  ${d.marcos.length ? `<h3>Conquistas recentes</h3><ul>${d.marcos.map(x => `<li>${esc(x.titulo)} · ${esc(fmtData(x.data))}</li>`).join("")}</ul>` : ""}
+  ${d.docs.length ? `<h3>Documentos recentes</h3><ul>${d.docs.map(x => `<li><b>${esc(x.titulo || "Documento")}</b> · ${esc([fmtData(x.data), x.profissional].filter(y => y && y !== "—").join(" · "))}${x.resumo && x.tipo !== "receita" ? `<br><span style="color:#55507A">${esc(x.resumo)}</span>` : ""}</li>`).join("")}</ul>` : ""}
+  ${d.consultasPass.length || d.consultasProx.length ? `<h3>Consultas</h3><ul>${[...d.consultasPass.map(c => `<li>${esc(fmtData(c.data))} · ${esc(c.titulo)}${c.profissional ? " · " + esc(c.profissional) : ""}</li>`), ...d.consultasProx.map(c => `<li>Próxima: ${esc(fmtData(c.data))}${c.hora ? " às " + esc(c.hora) : ""} · ${esc(c.titulo)}</li>`)].join("")}</ul>` : ""}
+  ${d.notas.length ? `<h3>Para conversar nesta consulta</h3><ul>${d.notas.map(n => `<li><b>${esc(n.titulo)}:</b> ${esc(n.texto)}</li>`).join("")}</ul>` : ""}
+  <p style="margin-top:16px;font-size:10.5px;color:#8A86A6">Organizado pela família no app teia. Não substitui a avaliação dos profissionais.</p></div>`; }
+TELAS.relatorio = () => `${topo("Relatório")}
+<div class="wrap stack" style="padding-top:6px;gap:12px">
+  <div class="row noprint" style="gap:8px"><button class="btn grow" data-a="rel-imprimir">${ic("relatorio", 18)}Salvar PDF</button><button class="btn sec grow" data-a="rel-link">${ic("enviar", 18)}Enviar link</button></div>
+  ${htmlRelatorio(dadosRelatorio())}
+  <p class="note noprint">Em "Salvar em PDF", escolha "Salvar como PDF" na janela de impressão do celular.</p>
+</div>`;
+
+TELAS.tour = (p) => { const i = Number(p.i || 0); const pgs = [["rotina", "A rotina de " + nomeCrianca() + " num lugar só", "Remédios, terapias, consultas e tarefas do dia. Toque para marcar o que já foi feito."], ["camera", "A IA lê receitas e laudos", "Tire uma foto: a receita vira lembrete e o laudo é explicado em palavras simples."], ["diario", "Tudo pronto para a consulta", "Anote o que acontece, gere o relatório e mostre ao profissional em um toque."]];
+  const [icn, t, d] = pgs[i]; const ult = i === pgs.length - 1;
+  return `<div class="tour"><div class="row"><span class="grow"></span><button class="link" data-a="tour-fim">Pular</button></div>
+  <div class="pg"><div class="big">${ic(icn, 44)}</div><h1 style="font-size:22px;font-weight:600;letter-spacing:-.5px;max-width:300px">${esc(t)}</h1><p class="muted" style="max-width:290px;font-size:14px;line-height:1.5">${esc(d)}</p></div>
+  <div class="dots" style="justify-content:center;display:flex">${pgs.map((_, k) => `<i class="${k <= i ? "on" : ""}" style="width:${k === i ? 18 : 6}px;border-radius:3px"></i>`).join("")}</div>
+  ${ult ? `<button class="btn full" data-a="tour-acao" data-v="receita">${ic("camera", 18)}Fotografar uma receita</button><button class="btn sec full" data-a="tour-acao" data-v="consulta">Marcar uma consulta</button><button class="link" style="align-self:center" data-a="tour-fim">Explorar por conta própria</button>`
+       : `<button class="btn full" data-a="tour" data-v="${i + 1}">Continuar ${ic("seta-dir", 18)}</button>`}</div>`; };
+
+TELAS.lembretes = () => { const l = (S.perfil && S.perfil.lembretes) || {}; const on = k => l[k] !== false; const ativo = NUVEM.pushAtivo ? NUVEM.pushAtivo() : false;
+  return `${topo("Lembretes")}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  <div class="card row" style="gap:12px"><span class="ib c2">${ic("lembrete", 20)}</span><div class="grow"><p class="b small">${ativo ? "Notificações ligadas neste celular" : "Receba avisos no celular"}</p><p class="xs muted">${NUVEM.ativo ? (ativo ? "Você pode desligar quando quiser." : "Funciona com o app instalado na tela inicial.") : "Os avisos funcionam no app instalado em minhateia.vercel.app."}</p></div><button class="btn ${ativo ? "sec" : ""}" style="height:38px;padding:0 14px;font-size:13px" data-a="${ativo ? "push-desligar" : "push-ligar"}">${ativo ? "Desligar" : "Ligar"}</button></div>
+  <div class="card" style="padding:6px 14px">${[["remedio", "medicacao", "Remédios", "Na hora de cada dose"], ["consulta", "consulta", "Consultas", "No dia anterior às 19h e 1 hora antes"], ["receita", "alerta", "Receitas e estoque", "Quando a receita ou o remédio estiver acabando"], ["manha", "rotina", "Resumo do dia", "Todo dia às 7h30, o que tem para hoje"]].map(([k, i, t, d]) => `<div class="task"><span class="ib c1" style="width:32px;height:32px">${ic(i, 16)}</span><div class="grow"><p class="small b">${t}</p><p class="xs muted">${d}</p></div><button class="check ${on(k) ? "on" : ""}" data-a="lembrete-tipo" data-v="${k}" aria-pressed="${on(k)}" aria-label="${t}">${on(k) ? ic("feito", 16) : ""}</button></div>`).join("")}</div>
+  <p class="note">No iPhone, os avisos só funcionam depois de adicionar o app à tela de início (Compartilhar → Adicionar à Tela de Início).</p>
+</div>`; };
+
+TELAS.conta = () => { const c = NUVEM.conta ? NUVEM.conta() : null; const ac = NUVEM.acessos ? NUVEM.acessos() : [];
+  return `${topo("Conta e família")}
+<div class="wrap stack" style="padding-top:8px;gap:12px">
+  ${!NUVEM.ativo ? `<div class="card"><p class="b small">Disponível no app</p><p class="small muted" style="margin-top:4px">Criar conta, entrar em outros aparelhos e convidar a família funcionam em minhateia.vercel.app.</p></div>` : `
+  <div class="card stack" style="gap:8px"><p class="b small">${c && c.email ? "Sua conta" : "Guarde seus dados com uma conta"}</p>${c && c.email ? `<p class="small">${esc(c.email)}</p><p class="xs muted">Entre com este e-mail em qualquer aparelho para ver tudo.</p>` : `<p class="xs muted">Hoje seus dados estão ligados só a este aparelho. Com o seu e-mail, nada se perde e você entra de outros lugares.</p><form class="stack" data-f="conta-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com" autocomplete="email"><button class="btn full" type="submit">Proteger com meu e-mail</button></form>`}</div>
+  <div class="card stack" style="gap:8px"><p class="b small">Já tem conta em outro aparelho?</p><form class="stack" data-f="entrar-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com"><button class="btn sec full" type="submit">Receber link para entrar</button></form></div>
+  <div class="sec-title"><h2>Família com acesso</h2>${plus() ? `<button class="lk" data-a="convidar">${ic("mais", 14)} Convidar</button>` : ""}</div>
+  ${!plus() ? `<button class="art" data-a="ir" data-v="teiaplus"><span class="th">${ic("rede", 20)}</span><span class="grow"><span class="t" style="display:block">Cuidar junto com o mesmo app</span><span class="m" style="display:block">Pai, avó e babá entram com o próprio acesso. Faz parte do teia+.</span></span>${ic("seta", 16)}</button>` : ac.length ? ac.map(x => `<div class="list"><span class="ib c2">${ic("cuidador", 20)}</span><div class="grow"><p class="b small">${esc(x.nome || x.email || "Convite")}</p><p class="xs muted">${esc(x.status)}</p></div></div>`).join("") : `<p class="small muted">Ninguém ainda. Toque em Convidar e mande o link pelo WhatsApp.</p>`}
+  <div class="card stack" style="gap:8px"><p class="b small">Recebeu um convite?</p><form class="row" data-f="aceitar-convite" style="gap:8px"><input class="input grow" name="codigo" required placeholder="Código do convite" style="text-transform:uppercase"><button class="btn" type="submit" style="height:46px">Entrar</button></form></div>`}
+</div>`; };
+
 TELAS.rotina = (p) => {
   const sel = p.data || iso(new Date()), selD = parseISO(sel), hoje = iso(new Date()); const ini = addDays(selD, -((selD.getDay() + 6) % 7)); const itens = itensDoDia(sel); const venc = receitasVencendo(); const ok = itens.filter(x => feito(sel, x.key)).length;
   return `${topoRaiz("Rotina", `<button class="circle" data-a="rotina-dia" data-v="${iso(addDays(ini, -7))}" aria-label="Semana anterior">${ic("esquerda", 20)}</button><button class="circle" data-a="rotina-dia" data-v="${iso(addDays(ini, 7))}" aria-label="Próxima semana">${ic("seta", 20)}</button>`)}
 <div class="wrap stack" style="padding-top:12px;gap:14px">
   <div class="week">${[0,1,2,3,4,5,6].map(i => { const d = addDays(ini, i), dI = iso(d); return `<button class="day ${dI === sel ? "on" : ""} ${dI === hoje ? "today" : ""}" data-a="rotina-dia" data-v="${dI}" aria-label="${esc(fmtLonga(dI))}" aria-pressed="${dI === sel}">${DIAS[d.getDay()]}<b>${d.getDate()}</b></button>`; }).join("")}</div>
   <div class="tile au-lilas row"><div class="grow"><p class="xs b" style="opacity:.75">${esc(fmtLonga(sel))}${sel === hoje ? " · hoje" : ""}</p><p class="num" style="font-size:26px;margin-top:4px">${ok}/${itens.length}</p><p class="xs b" style="margin-top:4px">tarefas feitas</p></div>${dotsBar(ok, itens.length, 10)}</div>
+  ${estoqueBaixo().map(({ m, d }) => `<div class="card row" style="background:#FFF6E6;box-shadow:none"><span class="ib" style="background:#fff">${ic("medicacao", 22)}</span><div class="grow"><p class="small b">${esc(m.nome)}: estoque para ${d} ${d === 1 ? "dia" : "dias"}</p><p class="xs muted">${esc(m.estoque)} unidade(s) em casa</p></div><button class="btn sec" style="height:36px;padding:0 12px;font-size:12.5px" data-a="estoque-repor" data-id="${m.id}">Repor</button></div>`).join("")}
   ${venc.map(m => `<div class="card row" style="background:#FFF3E9;box-shadow:none"><span class="ib" style="background:#fff">${ic("alerta", 22)}</span><div class="grow"><p class="small b">A receita de ${esc(m.nome)} vence em ${fmtData(m.fim)}</p><p class="xs muted">${esc(m.medico || "Fale com o médico para renovar")}</p></div></div>`).join("")}
   ${itens.length ? `<div class="card" style="padding:6px 16px">${itens.map(it => { const f = feito(sel, it.key), q = f ? S.checks.d[sel][it.key] : null; return `<div class="task"><button class="check ${f ? "on" : ""}" data-a="check" data-v="${esc(it.key)}" data-d="${sel}" aria-pressed="${f}" aria-label="${f ? "Desmarcar" : "Marcar como feito"}: ${esc(it.titulo)}">${f ? ic("feito", 18) : ""}</button><div class="grow"><p class="b">${esc(it.titulo)}</p><p class="xs muted">${esc(it.sub)}${q ? ` · por ${esc(q.by)} às ${esc(q.at)}` : ""}</p></div><span class="tag ${it.cor}">${it.tag}</span></div>`; }).join("")}</div>`
     : `<div class="empty"><span class="ib c2" style="margin:0 auto 10px">${ic("rotina", 22)}</span><p class="b">Nada na rotina deste dia</p><p class="small muted" style="margin-top:4px">Fotografe uma receita ou cadastre terapias e tarefas.</p></div>`}
@@ -809,13 +1127,19 @@ TELAS.tratform = (p) => { const t = S.trat.items.find(x => x.id === p.id) || {};
   ${p.id ? `<button class="btn danger full" type="button" data-a="trat-apagar" data-id="${p.id}">Apagar tratamento</button>` : ""}
 </form>`; };
 
-TELAS.registro = () => `${topo("Registrar o dia")}
+TELAS.registro = (p = {}) => `${topo("Registrar o dia")}
 <form class="wrap stack" data-f="registro" style="padding-top:12px;gap:16px">
   <div class="tile au-sol"><p class="xs b" style="opacity:.75">Leva 30 segundos</p><h2 style="margin-top:4px">Como foi o dia de ${esc(nomeCrianca())}?</h2></div>
   <label class="f">Data<input class="input" type="date" name="data" value="${iso(new Date())}" required></label>
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Humor</legend><div class="mood">${HUMOR.map(([e, l], i) => `<label class="opt"><input type="radio" name="humor" value="${i + 1}" ${i === 3 ? "checked" : ""}><span>${ic(e, 26)}${l}</span></label>`).join("")}</div></fieldset>
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Sono</legend><div class="chips">${["Bom","Regular","Ruim"].map((s, i) => `<label class="opt"><input type="radio" name="sono" value="${s}" ${i === 0 ? "checked" : ""}><span>${s}</span></label>`).join("")}</div></fieldset>
-  <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Teve crise?</legend><div class="chips">${["Não","Sim"].map((s, i) => `<label class="opt"><input type="radio" name="crise" value="${s}" ${i === 0 ? "checked" : ""}><span>${s}</span></label>`).join("")}</div></fieldset>
+  <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Teve crise?</legend><div class="chips">${["Não","Sim"].map((s, i) => `<label class="opt"><input type="radio" name="crise" value="${s}" ${(p.id === "crise" ? i === 1 : i === 0) ? "checked" : ""}><span>${s}</span></label>`).join("")}</div></fieldset>
+  <div class="crise-extra card stack" style="gap:12px;flex-direction:column">
+    <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Intensidade</legend><div class="chips">${["Leve","Moderada","Forte"].map(x => `<label class="opt"><input type="radio" name="intensidade" value="${x}"><span>${x}</span></label>`).join("")}</div></fieldset>
+    <label class="f">Quanto tempo durou (minutos)<input class="input" type="number" min="0" name="duracao" placeholder="Ex.: 15"></label>
+    <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">O que veio antes</legend><div class="chips">${GATILHOS.map(x => `<label class="opt"><input type="checkbox" name="gatilho" value="${x}"><span>${x}</span></label>`).join("")}</div></fieldset>
+    <label class="f">O que ajudou<input class="input" name="ajudou" placeholder="Ex.: abraço apertado, lugar calmo"></label>
+  </div>
   <label class="f">Terapia relacionada (opcional)<select class="input" name="tratId"><option value="">Nenhuma</option>${S.trat.items.map(t => `<option value="${t.id}">${esc(curto(t.tipo))}</option>`).join("")}</select></label>
   <label class="f">Conquista do dia (opcional)<input class="input" name="conquista" placeholder="Ex.: pediu água sozinho"></label>
   <label class="f">Anotações<textarea class="input" name="nota" placeholder="O que aconteceu, o que ajudou, o que observar"></textarea></label>
@@ -835,6 +1159,7 @@ TELAS.evolucao = (p) => {
   <div class="card"><div class="row"><div class="grow"><p class="xs b muted">Últimas 4 semanas</p><p class="b" style="font-size:15.5px">${bons} ${bons === 1 ? "dia bom" : "dias bons"}</p></div><span class="xs muted">por humor registrado</span></div>
     <div role="img" aria-label="Humor registrado nos últimos 28 dias: ${bons} dias bons" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px">${Array.from({length: 28}, (_, i) => { const dI = iso(addDays(ini, i)); const h = porDia[dI] || 0; return `<span style="aspect-ratio:1;border-radius:50%;background:${cores[h]};${dI === iso(hoje) ? "outline:2px solid #1B1C3A;outline-offset:2px" : ""}"></span>`; }).join("")}</div>
     <div class="row xs muted" style="gap:10px;margin-top:12px;flex-wrap:wrap">${[[1,"Difícil"],[3,"Ok"],[5,"Ótimo"],[0,"Sem registro"]].map(([h, l]) => `<span class="row" style="gap:5px"><i style="width:10px;height:10px;border-radius:50%;background:${cores[h]};display:inline-block"></i>${l}</span>`).join("")}</div></div>
+  <div class="row" style="gap:10px"><button class="qt grow" data-a="ir" data-v="crises"><span class="qi">${ic("crise", 18)}</span><span>Crises e padrões</span></button><button class="qt grow" data-a="ir" data-v="marcos"><span class="qi">${ic("conquista", 18)}</span><span>Marcos</span></button></div>
   <div class="sec-title"><h2>Registros</h2><button class="link" data-a="ir" data-v="registro">Registrar</button></div>
   ${regs.length ? regs.slice(0, 12).map(r => `<div class="list"><span class="ib c2" aria-hidden="true">${ic(HUMOR[(r.humor || 3) - 1][0], 22)}</span><div class="grow"><p class="small b">${esc(r.conquista || r.nota || HUMOR[(r.humor || 3) - 1][1])}</p><p class="xs muted">${fmtData(r.data)} · sono ${esc((r.sono || "").toLowerCase())}${r.crise ? " · teve crise" : ""}</p></div><button class="circle" data-a="reg-apagar" data-id="${r.id}" aria-label="Apagar registro" style="width:40px;height:40px;box-shadow:none;background:var(--soft)">${ic("lixo", 18)}</button></div>`).join("")
     : `<div class="empty"><span class="ib c3" style="margin:0 auto 10px">${ic("diario", 22)}</span><p class="b">Ainda sem registros</p><p class="small muted" style="margin-top:4px">Registre o dia em 30 segundos.</p></div>`}
@@ -849,6 +1174,7 @@ TELAS.linha = () => {
   for (const r of S.regs.items) if (r.conquista) ev.push({ data: r.data, t: "Nova conquista!", s: r.conquista, i: "conquista", c: "c1", tile: "au-sol" });
   for (const [dI, mapa] of Object.entries(S.checks.d)) for (const k of Object.keys(mapa)) if (k.startsWith("trat:")) { const t = S.trat.items.find(x => x.id === k.slice(5)); if (t) ev.push({ data: dI, t: `${curto(t.tipo)} realizada`, s: `Marcado por ${mapa[k].by}`, i: "feito", c: "c3" }); }
   for (const c of S.consultas.items) ev.push({ data: c.data, t: `Consulta: ${c.titulo}`, s: [c.hora, c.profissional, c.local].filter(Boolean).join(" · "), i: "consulta", c: "c5" });
+  for (const x of S.marcos.items) ev.push({ data: x.data, t: "Marco: " + x.titulo, s: x.nota || "", i: "conquista", c: "c1", tile: "au-sol" });
   for (const m of S.meds.items) if (m.inicio) ev.push({ data: m.inicio, t: "Remédio na rotina", s: m.nome, i: "medicacao", c: "c4" });
   ev.sort((a, b) => (b.data || "").localeCompare(a.data || "")); let dia = "";
   return `${topo("Linha do tempo")}<div class="wrap stack" style="padding-top:12px">
@@ -872,9 +1198,11 @@ TELAS.perfil = () => { const p = S.perfil || {}; const m = membroAtivo() || {}; 
   <button class="card row" data-a="cad-editar" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="av" style="width:46px;height:46px;font-size:18px">${esc((p.mae || "?").slice(0, 1).toUpperCase())}</span><span class="grow"><b style="display:block;font-size:15px;font-weight:600">${esc(p.mae || "Seu perfil")}</b><span class="xs muted">${esc(p.papel || "Toque para dizer seu papel no cuidado")}</span></span>${ic("editar", 18)}</button>
   <div class="sec-title"><h2>Quem você cuida</h2><button class="lk" data-a="membro-novo">${ic("mais", 14)} Adicionar</button></div>
   ${S.membros.items.map(x => `<div class="list"><span class="ib ${x.id === ATIVO ? "" : "c2"}" style="${x.id === ATIVO ? "background:var(--navy) !important;color:#fff !important;" : ""}font-weight:600">${esc((x.nome || "?").slice(0, 1).toUpperCase())}</span><button class="grow" data-a="membro-trocar" data-v="${x.id}" style="border:none;background:none;text-align:left;padding:0;font-family:inherit;color:var(--ink)"><b style="display:block;font-size:14px;font-weight:600">${esc(x.nome)}${x.id === ATIVO ? ' <span class="tg" style="margin-left:4px">vendo agora</span>' : ""}</b><span class="xs muted">${esc([x.relacao, x.nascimento ? idade(x.nascimento) : "", x.diagnosticos].filter(Boolean).join(" · ") || "Complete os dados")}</span></button><button class="circle" data-a="membro-editar" data-v="${x.id}" aria-label="Editar ${esc(x.nome)}" style="width:38px;height:38px;box-shadow:none;background:var(--soft)">${ic("editar", 16)}</button></div>`).join("")}
-  ${[["consulta","diario","c4","Para a consulta"],["familia","rede","c2","Quem cuida junto"],["tratamentos","rotina","c2","Tratamentos"],["documentos","pasta","c5","Documentos"],["evolucao","evolucao","c3","Evolução"],["linha","linha","c4","Linha do tempo"],["assistente","ia","c1","Pergunte à IA"]].map(([v, i, c, l]) => `<button class="list" data-a="ir" data-v="${v}"><span class="ib ${c}">${ic(i, 22)}</span><span class="grow b">${l}</span>${ic("seta", 18)}</button>`).join("")}
+  ${[["relatorio","relatorio","c5","Relatório para a consulta"],["consulta","diario","c4","Para a consulta"],["agenda","rotina","c2","Agenda"],["lembretes","lembrete","c1","Lembretes"],["conta","privacidade","c3","Conta e família"],["familia","rede","c2","Quem cuida junto"],["direitos","direitos","c1","Direitos"],["tratamentos","rotina","c2","Tratamentos"],["documentos","pasta","c5","Documentos"],["evolucao","evolucao","c3","Evolução"],["linha","linha","c4","Linha do tempo"],["assistente","ia","c1","Pergunte à IA"]].map(([v, i, c, l]) => `<button class="list" data-a="ir" data-v="${v}"><span class="ib ${c}">${ic(i, 22)}</span><span class="grow b">${l}</span>${ic("seta", 18)}</button>`).join("")}
   <div class="card stack" style="gap:8px"><div class="row" style="gap:10px"><span class="ib c2">${ic("privacidade", 22)}</span><h3>Privacidade</h3></div><p class="small muted">Os dados de saúde ficam privados na sua conta. A IA lê receitas e laudos, e você confere tudo antes de salvar. O app organiza e explica, mas não substitui a orientação médica.</p></div>
   <button class="card row" data-a="ir" data-v="teiaplus" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib" style="width:38px;height:38px">${ic("conquista", 18)}</span><span class="grow"><b style="display:block;font-size:14px;font-weight:600">${plus() ? "Você é teia+" : "Conheça o teia+"}</b><span class="xs muted">${plus() ? "Leituras e perguntas sem limite" : `Plano grátis · ${restam("leitura")} leituras e ${restam("pergunta")} perguntas restantes`}</span></span>${plus() ? `<span class="plus-tag">+</span>` : ic("seta", 16)}</button>
+  <div class="card"><p class="b small" style="margin-bottom:8px">Aparência</p><div class="chips">${[["auto","Automático"],["claro","Claro"],["escuro","Escuro"]].map(([k, l]) => `<button class="chip ${TEMA === k ? "on" : ""}" data-a="tema" data-v="${k}">${l}</button>`).join("")}</div></div>
+  <button class="btn sec full" data-a="exportar">${ic("upload", 18)}Baixar todos os meus dados</button>
   ${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<p class="xs muted" style="text-align:center;line-height:1.5">Acesso livre: seus dados ficam guardados e ligados a este aparelho. Em breve você vai poder criar uma conta para entrar de outros lugares.</p>` : ""}
   <button class="btn danger full" data-a="apagar-tudo">Apagar todos os meus dados</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px">${logo(22, "#B9A6FF")}<p class="xs muted">${SB ? "versão beta" : "demonstração"}</p></div><p class="note" style="text-align:center">Ícones com base na Phosphor Icons (licença MIT).</p>
@@ -924,6 +1252,8 @@ TELAS.medform = (p) => { const m = S.meds.items.find(x => x.id === p.id) || {}; 
   <label class="f">Horários (separe por vírgula)<input class="input" name="horarios" value="${esc((m.horarios || []).join(", "))}"></label>
   <div class="row" style="gap:10px"><label class="f grow">Início<input class="input" type="date" name="inicio" value="${esc(m.inicio)}"></label><label class="f grow">Fim<input class="input" type="date" name="fim" value="${esc(m.fim)}"></label></div>
   <p class="xs muted">Deixe o fim vazio para uso contínuo.</p>
+  <div class="row" style="gap:10px"><label class="f grow">Unidades em casa<input class="input" type="number" min="0" name="estoque" value="${esc(m.estoque ?? "")}" placeholder="Ex.: 30"></label><label class="f grow">Por vez<input class="input" type="number" min="0.25" step="0.25" name="porTomada" value="${esc(m.porTomada || 1)}"></label></div>
+  <p class="xs muted">Com o estoque preenchido, a teia desconta a cada dose marcada e avisa quando estiver acabando.</p>
   <button class="btn full" type="submit">Salvar</button>
   <button class="btn danger full" type="button" data-a="med-apagar" data-id="${esc(p.id)}">Tirar da rotina</button>
 </form>`; };
@@ -977,7 +1307,7 @@ async function pdfParaImagens(file, max = 4) {
   return { imagens: out, paginas: doc.numPages };
 }
 async function lerComIA(tipo, imgs) { const imagens = await Promise.all(imgs.slice(0, 4).map(blobParaDataURL)); return await ia(tipo, { imagens }); }
-async function guardarArquivos(files) { if (!SB || !USER) return []; const ids = []; for (const f of files) { try { const ext = (f.name.match(/\.[a-z0-9]+$/i) || [""])[0].toLowerCase(); const caminho = `${USER.id}/${uid()}${ext}`; const { error } = await SB.storage.from("documentos").upload(caminho, f, { contentType: f.type || undefined, upsert: false }); if (error) throw error; ids.push(caminho); } catch (e) { toast("Não consegui guardar o arquivo original."); } } return ids; }
+async function guardarArquivos(files) { if (!SB || !USER) return []; const ids = []; for (const f of files) { try { const ext = (f.name.match(/\.[a-z0-9]+$/i) || [""])[0].toLowerCase(); const caminho = `${DONO()}/${uid()}${ext}`; const { error } = await SB.storage.from("documentos").upload(caminho, f, { contentType: f.type || undefined, upsert: false }); if (error) throw error; ids.push(caminho); } catch (e) { toast("Não consegui guardar o arquivo original."); } } return ids; }
 let LEITURA = null;
 function escolherFonte(tipo) {
   if (!plus() && restam("leitura") <= 0) { paywall("leitura", { tipo }); return; }
@@ -1053,6 +1383,8 @@ document.addEventListener("click", async e => {
   switch (a) {
     case "ir": go(v, id ? { id } : {}); break;
     case "voltar": voltar(); break;
+    case "instalar": if (INSTALAR) { INSTALAR.prompt(); const r = await INSTALAR.userChoice.catch(() => null); INSTALAR = null; if (r && r.outcome === "accepted") toast("teia instalada!"); render(); } break;
+    case "instalar-nao": SEM_INSTALAR = true; try { localStorage.setItem("teia.semInstalar", "1"); } catch (e) {} render(); break;
     case "entrar-de-novo": TELA.p = {}; render(); break;
     case "sair": confirmar("Sair da conta?", "Seus dados continuam guardados. Para voltar, é só entrar com o mesmo e-mail.", "Sair", sair); break;
     case "ver-original": { const w = window.open("", "_blank"); const { data, error } = await SB.storage.from("documentos").createSignedUrl(v, 300); if (error || !data) { if (w) w.close(); toast("Não consegui abrir o arquivo."); } else if (w) w.location = data.signedUrl; else location.href = data.signedUrl; break; }
@@ -1061,6 +1393,35 @@ document.addEventListener("click", async e => {
     case "nota-feita": S.notas.items = S.notas.items.map(n => n.id === id ? { ...n, feito: !n.feito } : n); render(); await salvar("notas").catch(() => {}); break;
     case "nota-apagar": S.notas.items = S.notas.items.filter(n => n.id !== id); render(); await salvar("notas").catch(() => {}); toast("Anotação apagada."); break;
     case "nota-copiar": { const txt = S.notas.items.filter(n => !n.feito).map(n => `• ${n.titulo}${n.para ? " (" + n.para + ")" : ""}: ${n.texto}`).join("\n"); try { await navigator.clipboard.writeText(`Anotações para a consulta — ${nomeCrianca()}\n${txt}`); toast("Anotações copiadas."); } catch (er) { toast("Não consegui copiar aqui."); } break; }
+    case "modelo-copiar": { const t = (document.getElementById("modtxt") || {}).value || ""; try { await navigator.clipboard.writeText(t); toast("Texto copiado."); } catch (er) { toast("Não consegui copiar aqui."); } break; }
+    case "modelo-compartilhar": { const t = (document.getElementById("modtxt") || {}).value || ""; if (navigator.share) { try { await navigator.share({ text: t }); } catch (er) {} } else { try { await navigator.clipboard.writeText(t); toast("Texto copiado. Cole no e-mail ou no WhatsApp."); } catch (er) { toast("Não consegui compartilhar aqui."); } } break; }
+    case "agenda-mes": TELA.p = { mes: v }; render(); break;
+    case "agenda-dia": TELA.p = { ...TELA.p, dia: v }; render(); break;
+    case "estoque-repor": { const m = S.meds.items.find(x => x.id === id); if (!m) break; abrirSheet(`<form class="stack" data-f="repor" data-id="${m.id}"><h2>Repor ${esc(m.nome)}</h2><p class="small muted" style="margin-top:-4px">Hoje há ${esc(m.estoque)} unidade(s).</p><label class="f">Quantas unidades chegaram?<input class="input" type="number" min="1" name="qtd" required placeholder="Ex.: 30"></label><button class="btn full" type="submit">Somar ao estoque</button></form>`, "Repor estoque"); break; }
+    case "marco-novo": fecharSheet(true); abrirSheet(`<form class="stack" data-f="marco"><h2>Novo marco de ${esc(nomeCrianca())}</h2>
+      <div class="chips">${MARCOS_SUG.slice(0, 6).map(x => `<button type="button" class="chip" data-a="marco-sug" data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+      <label class="f">O que aconteceu<input class="input" name="titulo" id="marcotit" required placeholder="Ex.: Falou &quot;mamãe&quot; pela primeira vez"></label>
+      <label class="f">Quando<input class="input" type="date" name="data" value="${iso(new Date())}" required></label>
+      <label class="f">Como foi (opcional)<textarea class="input" name="nota" placeholder="Conte como foi"></textarea></label>
+      <label class="f">Foto (opcional)<input class="input" type="file" name="foto" accept="image/*" style="padding:10px"></label>
+      <button class="btn full" type="submit">Guardar marco</button></form>`, "Novo marco"); break;
+    case "marco-sug": { const i = document.getElementById("marcotit"); if (i) { i.value = v; i.focus(); } break; }
+    case "marco-ver": { const m = S.marcos.items.find(x => x.id === id); if (!m) break; const u = m.foto ? urlArquivo(m.foto) : ""; abrirSheet(`<div class="stack">${u ? `<img src="${esc(u)}" alt="" style="width:100%;border-radius:16px;max-height:50vh;object-fit:cover">` : ""}<h2>${esc(m.titulo)}</h2><p class="small muted">${esc(fmtLonga(m.data))}</p>${m.nota ? `<p class="small">${esc(m.nota)}</p>` : ""}<button class="btn danger full" data-a="marco-apagar" data-id="${m.id}">Apagar marco</button></div>`, "Marco"); break; }
+    case "marco-apagar": S.marcos.items = S.marcos.items.filter(x => x.id !== id); fecharSheet(); render(); salvar("marcos").catch(() => {}); toast("Marco apagado."); break;
+    case "nota-responder": { const n = S.notas.items.find(x => x.id === id); if (!n) break; abrirSheet(`<form class="stack" data-f="nota-resposta" data-id="${n.id}"><h2>O que o profissional disse?</h2><p class="small muted" style="margin-top:-4px">${esc(n.titulo)}</p><textarea class="input" name="resposta" required placeholder="Ex.: Observar por mais 2 semanas e manter a rotina do sono">${esc(n.resposta || "")}</textarea><button class="btn full" type="submit">Salvar resposta</button></form>`, "Resposta"); break; }
+    case "rel-imprimir": window.print(); break;
+    case "rel-link": if (!NUVEM.compartilhar) { soNoApp(); break; } { const r = await NUVEM.compartilhar().catch(() => null); if (!r) { toast("Não consegui criar o link agora."); break; } const txt = `Resumo de ${nomeCrianca()} para a consulta (válido por 7 dias): ${r}`; if (navigator.share) { try { await navigator.share({ text: txt }); } catch (er) {} } else { try { await navigator.clipboard.writeText(r); toast("Link copiado. Ele vale por 7 dias."); } catch (er) { toast(r); } } } break;
+    case "tour": TELA.p = { i: Number(v) }; render("fwd"); break;
+    case "tour-fim": case "tour-acao": S.perfil = { ...S.perfil, tour: true }; salvar("perfil").catch(() => {}); go("inicio", {}, true); if (v === "receita") escolherFonte("receita"); if (v === "consulta") { const b = document.createElement("button"); b.dataset.a = "consulta-nova"; b.hidden = true; document.body.appendChild(b); b.click(); b.remove(); } break;
+    case "tema": TEMA = v; try { localStorage.setItem("teia.tema", v); } catch (e) {} aplicarTema(); render(); break;
+    case "lembrete-tipo": { const l = { ...((S.perfil && S.perfil.lembretes) || {}) }; l[v] = l[v] === false; S.perfil = { ...S.perfil, lembretes: l }; render(); salvar("perfil").catch(() => {}); break; }
+    case "push-ligar": if (!NUVEM.pushAtivar) { soNoApp(); break; } { const ok = await NUVEM.pushAtivar().catch(e => { console.error(e); return false; }); toast(ok === true ? "Pronto! Os lembretes vão chegar neste celular." : (ok || "Não consegui ligar as notificações.")); render(); } break;
+    case "push-desligar": if (NUVEM.pushDesativar) { await NUVEM.pushDesativar().catch(() => {}); toast("Notificações desligadas neste celular."); render(); } break;
+    case "exportar": { const dados = { app: "teia", versao: 1, exportadoEm: new Date().toISOString(), perfil: S.perfil, pessoas: S.membros.items, rede: S.rede.items, marcacoes: S.checks.d, ...Object.fromEntries(POR_MEMBRO.map(n => [n, ALL[n]])) };
+      const nomeArq = `teia-dados-${iso(new Date())}.json`, texto = JSON.stringify(dados, null, 2);
+      if (window.claude && window.claude.use) { const dl = await window.claude.use("downloads").catch(() => null); if (dl) { try { await dl.save({ filename: nomeArq, data: texto }); toast("Arquivo com todos os seus dados pronto."); } catch (er) { toast("O download foi cancelado."); } break; } }
+      const blob = new Blob([texto], { type: "application/json" }); const a2 = document.createElement("a"); a2.href = URL.createObjectURL(blob); a2.download = nomeArq; document.body.appendChild(a2); a2.click(); setTimeout(() => { URL.revokeObjectURL(a2.href); a2.remove(); }, 1000); toast("Arquivo com todos os seus dados baixado."); break; }
+    case "convidar": if (!NUVEM.convidar) { soNoApp(); break; } { const r = await NUVEM.convidar().catch(e => { console.error(e); return null; }); if (!r) { toast("Não consegui criar o convite."); break; } const txt = `Entre na teia para cuidar junto de ${nomeCrianca()}: ${r.link} (código ${r.codigo}, vale por 7 dias)`; if (navigator.share) { try { await navigator.share({ text: txt }); } catch (er) {} } else { try { await navigator.clipboard.writeText(txt); toast("Convite copiado. Mande pelo WhatsApp."); } catch (er) { toast(txt); } } render(); } break;
     case "cont-cat": TELA.p = { cat: v }; render(); break;
     case "fechar": fecharSheet(); break;
     case "confirmar-ok": { const f = window.__ok; fecharSheet(); if (f) await f(); break; }
@@ -1071,7 +1432,7 @@ document.addEventListener("click", async e => {
     case "membro-trocar": escolherMembro(v); render("aba"); toast(`Agora você está vendo ${nomeCrianca()}.`); break;
     case "membro-apagar": confirmar(`Remover ${(S.membros.items.find(x => x.id === id) || {}).nome || "esta pessoa"}?`, "A rotina, os documentos e os registros dessa pessoa serão apagados.", "Remover", async () => { for (const n of POR_MEMBRO) ALL[n] = ALL[n].filter(x => (x.membroId || membroPadrao()) !== id); S.membros.items = S.membros.items.filter(x => x.id !== id); escolherMembro(membroPadrao()); for (const n of [...POR_MEMBRO, "membros"]) await salvar(n).catch(() => {}); go("inicio", {}, true); toast("Pessoa removida."); }); break;
     case "quem-sou": QUEM = v || ""; try { localStorage.setItem("teia.quem", QUEM); } catch (e) {} render(); toast(`Pronto: as marcações agora ficam no nome de ${nomeQuem()}.`); break;
-    case "sheet-mais": if (document.querySelector("#layer .overlay")) { fecharSheet(); break; } document.getElementById("dock").classList.add("aberto"); abrirSheet(`<h2 style="margin-bottom:12px">Adicionar</h2>` + opcoesSheet([["ler","receita","camera","c1","Ler receita","Foto vira rotina de remédios"],["ler","laudo","laudo","c5","Ler laudo ou exame","Explicado em palavras simples"],["ir-fechar","registro","diario","c3","Registrar o dia","Humor, sono, crises e conquistas"],["consulta-nova","","consulta","c5","Nova consulta","Uma consulta avulsa, com dia e hora"],["trat-novo","","rotina","c2","Novo tratamento","Terapia com dias e horário"],["tarefa-nova","","tarefa","c4","Nova tarefa","Atividade sensorial, banho, escola…"]]), "Adicionar"); break;
+    case "sheet-mais": if (document.querySelector("#layer .overlay")) { fecharSheet(); break; } document.getElementById("dock").classList.add("aberto"); abrirSheet(`<h2 style="margin-bottom:12px">Adicionar</h2>` + opcoesSheet([["ler","receita","camera","c1","Ler receita","Foto vira rotina de remédios"],["ler","laudo","laudo","c5","Ler laudo ou exame","Explicado em palavras simples"],["ir-fechar","registro","diario","c3","Registrar o dia","Humor, sono, crises e conquistas"],["marco-novo","","conquista","c1","Novo marco","Uma conquista para guardar"],["consulta-nova","","consulta","c5","Nova consulta","Uma consulta avulsa, com dia e hora"],["trat-novo","","rotina","c2","Novo tratamento","Terapia com dias e horário"],["tarefa-nova","","tarefa","c4","Nova tarefa","Atividade sensorial, banho, escola…"]]), "Adicionar"); break;
     case "ir-fechar": fecharSheet(); go(v); break;
     case "sheet-doc": abrirSheet(`<h2 style="margin-bottom:12px">Adicionar documento</h2>` + opcoesSheet([["ler","laudo","ia","c5","Ler laudo ou exame com IA","Foto ou PDF, explicado em palavras simples"],["ler","receita","receita","c1","Ler receita com IA","Foto ou PDF, vira rotina de remédios"],["upload-manual","","upload","c2","Só guardar um arquivo","PDF ou imagem, sem leitura da IA"]]), "Adicionar documento"); break;
     case "ler": escolherFonte(v); break;
@@ -1079,13 +1440,16 @@ document.addEventListener("click", async e => {
     case "pegar": { const [t, m] = v.split("|"); fecharSheet(true); pedirArquivo(t, m); break; }
     case "upload-manual": fecharSheet(true); pedirArquivo("manual", "manual"); break;
     case "rotina-dia": TELA.p = { data: v }; render(); break;
-    case "check": { const d = el.dataset.d, k = v; S.checks.d[d] = S.checks.d[d] || {}; if (S.checks.d[d][k]) delete S.checks.d[d][k]; else { const n = new Date(); S.checks.d[d][k] = { by: nomeQuem(), at: `${pad(n.getHours())}:${pad(n.getMinutes())}` }; } if (!Object.keys(S.checks.d[d]).length) delete S.checks.d[d]; podarChecks(); render(); salvar("checks").catch(() => {}); break; }
+    case "check": { const d = el.dataset.d, k = v; S.checks.d[d] = S.checks.d[d] || {}; if (S.checks.d[d][k]) delete S.checks.d[d][k]; else { const n = new Date(); S.checks.d[d][k] = { by: nomeQuem(), at: `${pad(n.getHours())}:${pad(n.getMinutes())}` }; } if (!Object.keys(S.checks.d[d]).length) delete S.checks.d[d]; podarChecks();
+      if (k.startsWith("med:")) { const mid = k.split(":")[1], marcado = !!(S.checks.d[d] && S.checks.d[d][k]); S.meds.items = S.meds.items.map(m => m.id === mid && m.estoque !== "" && m.estoque != null ? { ...m, estoque: Math.max(0, Number(m.estoque) + (marcado ? -1 : 1) * (Number(m.porTomada) || 1)) } : m); salvar("meds").catch(() => {}); }
+      const tudo = itensDoDia(d); if (S.checks.d[d] && S.checks.d[d][k] && tudo.length > 1 && tudo.every(x => feito(d, x.key))) festa(`Rotina de ${nomeCrianca()} completa hoje!`);
+      render(); salvar("checks").catch(() => {}); break; }
     case "doc-filtro": TELA.p = { ...TELA.p, filtro: v }; render(); break;
     case "doc-abrir": go("doc", { id }); break;
     case "doc-apagar": confirmar("Apagar documento?", "Ele sai da pasta. Não dá para desfazer.", "Apagar", async () => { S.docs.items = S.docs.items.filter(d => d.id !== id); await salvar("docs").catch(() => {}); voltar(); toast("Documento apagado."); }); break;
     case "recs-add": { const d = S.docs.items.find(x => x.id === id); if (!d) break; let n = 0; for (const r of d.recomendacoes || []) { const tipo = (TERAPIAS.find(([nm]) => r.terapia && r.terapia.toLowerCase().includes(nm.split(" ")[0].toLowerCase().slice(0, 5))) || ["Outra"])[0]; if (tipo === "Outra" || !S.trat.items.some(t => t.tipo === tipo)) { addItem("trat", { id: uid(), tipo, profissional: "", local: "", dias: [], hora: "", meta: tipo === "Outra" ? r.terapia : "", progresso: 0 }); n++; } } await salvar("trat").catch(() => {}); toast(n ? `${n} tratamento(s) adicionado(s). Defina dias e horários.` : "Já estavam cadastrados."); go("tratamentos"); break; }
     case "trat-novo": fecharSheet(); go("tratform", {}); break;
-    case "consulta-nova": case "consulta-editar": { const c = (a === "consulta-editar" && S.consultas.items.find(x => x.id === id)) || {}; fecharSheet(true); abrirSheet(`<form class="stack" data-f="consulta" data-id="${esc(c.id || "")}"><h2>${c.id ? "Editar consulta" : "Nova consulta"}</h2><p class="small muted" style="margin-top:-4px">Para ${esc(nomeCrianca())}</p>
+    case "consulta-nova": case "consulta-editar": { const c = (a === "consulta-editar" && S.consultas.items.find(x => x.id === id)) || (v ? { data: v } : {}); fecharSheet(true); abrirSheet(`<form class="stack" data-f="consulta" data-id="${esc(c.id || "")}"><h2>${c.id ? "Editar consulta" : "Nova consulta"}</h2><p class="small muted" style="margin-top:-4px">Para ${esc(nomeCrianca())}</p>
       <label class="f">Com quem ou qual especialidade<input class="input" name="titulo" required value="${esc(c.titulo)}" placeholder="Ex.: Neuropediatra, Dra. Ana"></label>
       <div class="row" style="gap:10px"><label class="f grow">Dia<input class="input" type="date" name="data" required value="${esc(c.data || iso(new Date()))}"></label><label class="f grow">Hora<input class="input" type="time" name="hora" value="${esc(c.hora)}"></label></div>
       <label class="f">Profissional (opcional)<input class="input" name="profissional" value="${esc(c.profissional)}"></label>
@@ -1113,6 +1477,7 @@ document.addEventListener("click", async e => {
     case "manual": TELA = { nome: v === "receita" ? "confreceita" : "conflaudo", p: { r: {} } }; render("fwd"); break;
     case "copiar": try { await navigator.clipboard.writeText(document.getElementById("reltxt").textContent); toast("Copiado."); } catch (err) { toast("Não consegui copiar. Selecione o texto."); } break;
     case "apagar-tudo": confirmar("Apagar todos os dados?", "Perfil, rotina, tratamentos, documentos, arquivos e registros serão apagados. Não dá para desfazer.", "Apagar tudo", async () => {
+      if (SB && USER && DONO() !== USER.id) { await SB.from("acessos").delete().eq("dono", DONO()).eq("convidado", USER.id); DONO_ID = null; for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; go("boasvindas", {}, true); toast("Você saiu da família. Os dados continuam com quem te convidou."); return; }
       if (SB && USER) { try { const { data: arqs } = await SB.storage.from("documentos").list(USER.id, { limit: 1000 }); if (arqs && arqs.length) await SB.storage.from("documentos").remove(arqs.map(f => `${USER.id}/${f.name}`));
         for (const t of ["marcacoes", ...Object.values(MAPA).map(m => m[0]).filter(t => t !== "membros"), "membros", "perfis"]) { const { error } = await SB.from(t).delete().eq("user_id", USER.id); if (error) throw error; } } catch (e) { toast("Não consegui apagar tudo. Tente de novo."); return; } }
       for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; go("boasvindas", {}, true); toast("Tudo apagado."); }); break;
@@ -1152,14 +1517,14 @@ document.addEventListener("submit", async e => {
       CAD.diag = fd.getAll("diag"); CAD.plano = g("plano");
       S.membros.items = [{ id: "principal", nome: CAD.crianca, nascimento: CAD.nascimento || "", diagnosticos: CAD.diag.join(", "), plano: CAD.plano || "", relacao: "" }]; escolherMembro("principal");
       S.perfil = { mae: CAD.mae, papel: CAD.papel || "", crianca: CAD.crianca, nascimento: CAD.nascimento, diagnosticos: CAD.diag.join(", "), plano: CAD.plano, consent: true, consentEm: new Date().toISOString() };
-      await salvar("perfil").catch(() => {}); await salvar("membros").catch(() => {}); go("inicio", {}, true); toast("Seu espaço está pronto."); }
+      await salvar("perfil").catch(() => {}); await salvar("membros").catch(() => {}); go("tour", { i: 0 }, true); }
     if (tipo === "perfil-editar") { S.perfil = { ...S.perfil, mae: g("mae"), papel: g("papel") }; await salvar("perfil").catch(() => {}); voltar(); toast("Perfil salvo."); }
     if (tipo === "membro") { const mid = f.dataset.id; const dados = { nome: g("nome"), relacao: g("relacao"), nascimento: g("nascimento"), diagnosticos: g("diagnosticos"), plano: g("plano") };
       if (mid) S.membros.items = S.membros.items.map(x => x.id === mid ? { ...x, ...dados } : x); else { const nid = uid(); S.membros.items.push({ id: nid, ...dados }); escolherMembro(nid); }
       if (S.perfil && (mid || "principal") === membroPadrao()) S.perfil = { ...S.perfil, crianca: S.membros.items[0].nome, nascimento: S.membros.items[0].nascimento, diagnosticos: S.membros.items[0].diagnosticos, plano: S.membros.items[0].plano };
       await salvar("membros").catch(() => {}); await salvar("perfil").catch(() => {}); go("inicio", {}, true); toast(mid ? "Dados atualizados." : `${dados.nome} foi adicionada(o) à sua área de cuidado.`); }
     if (tipo === "trat") { const item = { tipo: g("tipo"), profissional: g("profissional"), local: g("local"), dias: fd.getAll("dias").map(Number), hora: g("hora"), meta: g("meta"), progresso: Number(g("progresso") || 0) }; const id = f.dataset.id; if (id) S.trat.items = S.trat.items.map(t => t.id === id ? { ...t, ...item } : t); else addItem("trat", { id: uid(), ...item }); await salvar("trat").catch(() => {}); voltar(); toast("Tratamento salvo."); }
-    if (tipo === "registro") { addItem("regs", { id: uid(), data: g("data"), humor: Number(g("humor") || 3), sono: g("sono"), crise: g("crise") === "Sim", tratId: g("tratId"), conquista: g("conquista"), nota: g("nota") }); if (S.regs.items.length > 900) S.regs.items = S.regs.items.slice(-900); await salvar("regs").catch(() => {}); go("evolucao", {}, true); toast("Registro salvo."); }
+    if (tipo === "registro") { addItem("regs", { id: uid(), data: g("data"), humor: Number(g("humor") || 3), sono: g("sono"), crise: g("crise") === "Sim", criseInfo: g("crise") === "Sim" ? { intensidade: g("intensidade"), duracao: g("duracao"), gatilhos: fd.getAll("gatilho"), ajudou: g("ajudou") } : null, tratId: g("tratId"), conquista: g("conquista"), nota: g("nota") }); if (S.regs.items.length > 900) S.regs.items = S.regs.items.slice(-900); await salvar("regs").catch(() => {}); go("evolucao", {}, true); if (g("conquista")) festa(`Que conquista, ${nomeCrianca()}!`); else toast("Registro salvo."); }
     if (tipo === "receita") { const r = (TELA.p && TELA.p.r) || {}; const ids = LEITURA && LEITURA.assetP ? await LEITURA.assetP : []; const assetId = ids[0] || null; const docId = uid(), meds = [];
       for (const fs of f.querySelectorAll("[data-med]")) { const q = n => (fs.querySelector(`[name="${n}"]`) || {}).value || ""; const nome = q("nome").trim(); if (!nome) continue; const dias = Number(q("dias")); meds.push({ id: uid(), nome, dose: q("dose").trim(), horarios: lerHorarios(q("horarios")), inicio: iso(new Date()), fim: dias > 0 ? iso(addDays(new Date(), dias - 1)) : "", receitaId: docId, medico: g("medico") }); }
       if (!meds.length) { toast("Adicione pelo menos um remédio."); return; }
@@ -1168,11 +1533,17 @@ document.addEventListener("submit", async e => {
     if (tipo === "laudo") { const ids = LEITURA && LEITURA.assetP ? await LEITURA.assetP : []; const assetId = ids[0] || null; const r = (TELA.p && TELA.p.r) || {}; const id = uid();
       addItem("docs", { id, tipo: g("tipo") || "outro", titulo: g("titulo"), data: g("data"), profissional: g("profissional"), registro: g("registro"), especialidade: g("especialidade"), origem: g("origem"), assetId, assetIds: ids, mime: LEITURA && LEITURA.files ? LEITURA.files[0].type : "", resumo: r.resumo_simples || "", pontos: r.pontos_principais || [], termos: r.termos || [], recomendacoes: r.recomendacoes || [], perguntas: r.perguntas_para_consulta || [], criadoEm: new Date().toISOString() });
       await salvar("docs").catch(() => {}); LEITURA = null; go("documentos", {}, true); go("doc", { id }); toast("Documento guardado."); }
-    if (tipo === "med") { const id = f.dataset.id; S.meds.items = S.meds.items.map(m => m.id === id ? { ...m, nome: g("nome"), dose: g("dose"), horarios: lerHorarios(g("horarios")), inicio: g("inicio"), fim: g("fim") } : m); await salvar("meds").catch(() => {}); voltar(); toast("Remédio atualizado."); }
+    if (tipo === "med") { const id = f.dataset.id; S.meds.items = S.meds.items.map(m => m.id === id ? { ...m, nome: g("nome"), dose: g("dose"), horarios: lerHorarios(g("horarios")), inicio: g("inicio"), fim: g("fim"), estoque: g("estoque") === "" ? "" : Number(g("estoque")), porTomada: Number(g("porTomada") || 1) } : m); await salvar("meds").catch(() => {}); voltar(); toast("Remédio atualizado."); }
     if (tipo === "nota") { addItem("notas", { id: uid(), data: iso(new Date()), titulo: g("titulo"), texto: g("texto"), para: g("para"), feito: false, origem: "manual" }); fecharSheet(); render(); await salvar("notas").catch(() => {}); toast("Anotação salva."); }
     if (tipo === "consulta") { const item = { titulo: g("titulo"), data: g("data"), hora: g("hora"), profissional: g("profissional"), local: g("local"), obs: g("obs") }; const cid = f.dataset.id;
       if (cid) S.consultas.items = S.consultas.items.map(x => x.id === cid ? { ...x, ...item } : x); else addItem("consultas", { id: uid(), ...item });
       fecharSheet(); render(); await salvar("consultas").catch(() => {}); toast(cid ? "Consulta atualizada." : `Consulta marcada para ${fmtData(item.data).slice(0, 5)}${item.hora ? " às " + item.hora : ""}.`); }
+    if (tipo === "repor") { const mid = f.dataset.id, q = Number(g("qtd") || 0); S.meds.items = S.meds.items.map(m => m.id === mid ? { ...m, estoque: Number(m.estoque || 0) + q } : m); fecharSheet(); render(); await salvar("meds").catch(() => {}); toast("Estoque atualizado."); }
+    if (tipo === "marco") { const arq = f.querySelector('input[name="foto"]').files[0]; let foto = ""; if (arq) { try { const red = await reduzirImagem(arq).catch(() => null); const arqFinal = red ? new File([red], (arq.name || "foto").replace(/\.[^.]+$/, "") + ".jpg", { type: red.type || "image/jpeg" }) : arq; const ids = await guardarArquivos([arqFinal]); foto = ids[0] || ""; } catch (er) { toast("Não consegui guardar a foto."); } }
+      addItem("marcos", { id: uid(), titulo: g("titulo"), data: g("data"), nota: g("nota"), foto }); fecharSheet(); await salvar("marcos").catch(() => {}); go("marcos", {}, TELA.nome === "marcos"); festa(`Marco de ${nomeCrianca()} guardado!`); }
+    if (tipo === "nota-resposta") { const nid = f.dataset.id; S.notas.items = S.notas.items.map(n => n.id === nid ? { ...n, resposta: g("resposta"), respondidaEm: iso(new Date()), feito: true } : n); fecharSheet(); render(); await salvar("notas").catch(() => {}); toast("Resposta guardada."); }
+    if (tipo === "conta-email" || tipo === "entrar-email") { if (!NUVEM.entrarEmail) { soNoApp(); return; } const r = await NUVEM.entrarEmail(g("email").toLowerCase(), tipo === "conta-email").catch(e => (e && e.message) || "erro"); toast(r === true ? (tipo === "conta-email" ? "Confira seu e-mail para confirmar. Seus dados continuam aqui." : "Enviamos um link. Abra no celular para entrar.") : "Não consegui enviar agora. Confira o e-mail."); }
+    if (tipo === "aceitar-convite") { if (!NUVEM.aceitarConvite) { soNoApp(); return; } const r = await NUVEM.aceitarConvite(g("codigo").trim().toUpperCase()).catch(e => (e && e.message) || "erro"); if (r === true) { toast("Pronto! Agora você cuida junto."); } else toast(typeof r === "string" && r.length < 80 ? r : "Código inválido ou vencido."); }
     if (tipo === "tarefa") { addItem("tarefas", { id: uid(), titulo: g("titulo"), dias: fd.getAll("dias").map(Number), hora: g("hora") }); fecharSheet(); await salvar("tarefas").catch(() => {}); go("rotina", {}, true); toast("Tarefa adicionada."); }
     if (tipo === "rede") { S.rede.items.push({ id: uid(), nome: g("nome"), papel: g("papel"), contato: g("contato"), obs: g("obs") }); fecharSheet(); render(); salvar("rede").catch(() => {}); toast("Pessoa adicionada."); }
     if (tipo === "chat") { const q = g("q"); if (q) perguntar(q); }

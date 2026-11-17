@@ -127,7 +127,7 @@ rep('<button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir
     '<button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>\n  ${SB ? `<button class="link" style="align-self:center;margin-top:6px" data-a="ir" data-v="entrar">Já tenho conta</button>` : ""}')
 rep('    case "cad-ir": ', '    case "cad-ir": if (SB && !USER) { go("entrar"); break; } ')
 rep('    case "voltar": voltar(); break;', '    case "voltar": voltar(); break;\n    case "entrar-de-novo": TELA.p = {}; render(); break;\n    case "sair": confirmar("Sair da conta?", "Seus dados continuam guardados. Para voltar, é só entrar com o mesmo e-mail.", "Sair", sair); break;\n    case "ver-original": { const w = window.open("", "_blank"); const { data, error } = await SB.storage.from("documentos").createSignedUrl(v, 300); if (error || !data) { if (w) w.close(); toast("Não consegui abrir o arquivo."); } else if (w) w.location = data.signedUrl; else location.href = data.signedUrl; break; }')
-rep('const SEM_DOCK = ["teiaplus",', 'const SEM_DOCK = ["entrar","teiaplus",')
+rep('const SEM_DOCK = ["tour","teiaplus",', 'const SEM_DOCK = ["tour","entrar","teiaplus",')
 rep('    if (tipo === "cad") {', r'''    if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui enviar o link. Confira o e-mail."); return; } TELA.p = { enviado: true, email }; render(); return; }
     if (tipo === "cad") {''')
 # após cadastro, recarrega sincronização base
@@ -193,6 +193,7 @@ rep2('<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.e
 rep2('go(SB ? "cadastro" : "boasvindas", SB ? { step: 1, novo: true } : {}, true); toast("Tudo apagado.");', 'go("boasvindas", {}, true); toast("Tudo apagado.");')
 rep2('Modo de demonstração: configure o Supabase em config.js para salvar os dados.', 'Modo de demonstração: os dados não estão sendo salvos agora.')
 
+exec(open(os.path.join(RAIZ, 'scripts', 'nuvem_patch.py'), encoding='utf-8').read())
 s = s.replace('/*__ICONS__*/', open(ICONS, encoding='utf-8').read())
 for bad in ["DB.doc", "ASSETS.", "CL.use", "SAMPLE(", "SAMPLE.json", "/_blob/"]:
     assert bad not in s, "sobrou: " + bad
