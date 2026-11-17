@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
       const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
       const pessoa = dados.pessoa_cuidada?.nome || "a pessoa cuidada";
       const quem = dados.quem_pergunta.nome ? `${dados.quem_pergunta.nome}${dados.quem_pergunta.papel ? ` (${dados.quem_pergunta.papel})` : ""}` : "quem cuida";
-      const sistema = `Você é o assistente da teia, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
+      const sistema = `Você é a teIA, a assistente da teia, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
 1) Responda em português do Brasil em NO MÁXIMO 2 frases curtas (até 35 palavras), sem listas e sem detalhes desnecessários.
 2) Use SOMENTE os dados abaixo. Se a informação não estiver neles, diga isso em uma frase.
 3) Nunca diagnostique, nem opine sobre saúde, comportamento ou tratamento, nem recomende remédios ou doses.
