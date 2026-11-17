@@ -49,13 +49,9 @@ $$;
 revoke all on function public.pode_acessar(uuid) from public, anon;
 grant execute on function public.pode_acessar(uuid) to authenticated;
 
--- regras novas: dono ou família
+-- regras novas: dono ou família (somam às regras antigas; nada é apagado)
 do $$ declare t text; begin
   foreach t in array array['perfis','medicamentos','tratamentos','tarefas','marcacoes','documentos','registros','rede','notas_consulta','membros','consultas','marcos'] loop
-    execute format('drop policy if exists "%1$s: ler os meus" on public.%1$I', t);
-    execute format('drop policy if exists "%1$s: criar os meus" on public.%1$I', t);
-    execute format('drop policy if exists "%1$s: editar os meus" on public.%1$I', t);
-    execute format('drop policy if exists "%1$s: apagar os meus" on public.%1$I', t);
     execute format('alter table public.%I enable row level security', t);
     execute format('create policy "%1$s: ler da família" on public.%1$I for select to authenticated using (public.pode_acessar(user_id))', t);
     execute format('create policy "%1$s: criar na família" on public.%1$I for insert to authenticated with check (public.pode_acessar(user_id))', t);
@@ -64,9 +60,7 @@ do $$ declare t text; begin
   end loop;
 end $$;
 
-drop policy if exists "assinaturas: ler a minha" on public.assinaturas;
 create policy "assinaturas: ler da família" on public.assinaturas for select to authenticated using (public.pode_acessar(user_id));
-drop policy if exists "uso_ia: ler o meu" on public.uso_ia;
 create policy "uso_ia: ler da família" on public.uso_ia for select to authenticated using (public.pode_acessar(user_id));
 
 alter table public.acessos enable row level security;
@@ -95,9 +89,6 @@ revoke all on function public.aceitar_convite(text, text) from public, anon;
 grant execute on function public.aceitar_convite(text, text) to authenticated;
 
 -- arquivos: pasta do dono, liberada para a família
-drop policy if exists "documentos: ler os meus" on storage.objects;
-drop policy if exists "documentos: enviar os meus" on storage.objects;
-drop policy if exists "documentos: apagar os meus" on storage.objects;
 create policy "documentos: ler da família" on storage.objects for select to authenticated
   using (bucket_id = 'documentos' and public.pode_acessar(((storage.foldername(name))[1])::uuid));
 create policy "documentos: enviar na família" on storage.objects for insert to authenticated
