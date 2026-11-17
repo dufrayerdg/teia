@@ -28,7 +28,11 @@ Cada conta só enxerga os próprios dados (Row Level Security por `user_id = aut
 - `assinaturas`, `uso_ia` — plano e consumo da IA no mês (só o servidor altera)
 - `conteudos` — artigos, dicas e direitos publicados pela equipe (`publicado = true` aparece no app)
 
-## Como subir
+## Ambiente atual
+
+- Supabase: projeto `teia` (`sdubzubcfizfvgbsuucw`, São Paulo) com banco, RLS, bucket e as funções `ia` e `assinatura` publicados.
+
+## Como subir (do zero)
 
 1. **Supabase**: crie o projeto (região `sa-east-1`) e aplique as migrations de `supabase/migrations/` em ordem.
 2. **Segredos das funções** (Painel → Edge Functions → Secrets):
