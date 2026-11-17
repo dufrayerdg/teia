@@ -31,6 +31,7 @@ Cada conta só enxerga os próprios dados (Row Level Security por `user_id = aut
 ## Ambiente atual
 
 - Supabase: projeto `teia` (`sdubzubcfizfvgbsuucw`, São Paulo) com banco, RLS, bucket e as funções `ia` e `assinatura` publicados.
+- Site: **https://minhateia.vercel.app** (Vercel, projeto `teia`; cada push no `main` publica sozinho).
 
 ## Como subir (do zero)
 
