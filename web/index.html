@@ -379,11 +379,15 @@ async function iniciar() {
   if (!SB) { go(S.perfil ? "inicio" : "boasvindas", {}, true); return; }
   SB.auth.onAuthStateChange((ev, sess) => { if (ev === "SIGNED_IN" && sess && (!USER || USER.id !== sess.user.id)) { USER = sess.user; entrou(); } if (ev === "SIGNED_OUT") { USER = null; go("boasvindas", {}, true); } });
   const { data } = await SB.auth.getSession();
-  if (data && data.session) { USER = data.session.user; await entrou(); } else go("boasvindas", {}, true);
+  if (data && data.session) { USER = data.session.user; await entrou(); return; }
+  /* acesso livre (provisório): conta anônima ligada a este aparelho */
+  const { data: an, error } = await SB.auth.signInAnonymously();
+  if (error || !an || !an.user) { console.error("login anônimo", error); MODO_DEMO = true; SAMPLE = null; SAMPLE_IMG = false; go("boasvindas", {}, true); return; }
+  USER = an.user; await entrou();
 }
 async function entrou() {
   if (ENTRANDO) return; ENTRANDO = true;
-  try { await carregar(); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }
+  try { await carregar(); go(S.perfil ? "inicio" : "boasvindas", {}, true); }
   catch (e) { console.error(e); toast("Não consegui carregar seus dados. Tente de novo."); go("boasvindas", {}, true); }
   finally { ENTRANDO = false; }
 }
@@ -408,7 +412,7 @@ function revelar() {
 }
 function render(anim) {
   const f = TELAS[TELA.nome] || TELAS.inicio; const app = document.getElementById("app");
-  app.innerHTML = (MODO_DEMO && !["boasvindas","cadastro"].includes(TELA.nome) ? `<div class="wrap" style="padding-bottom:0"><p class="banner">Modo de demonstração: configure o Supabase em config.js para salvar os dados.</p></div>` : "") + f(TELA.p);
+  app.innerHTML = (MODO_DEMO && !["boasvindas","cadastro"].includes(TELA.nome) ? `<div class="wrap" style="padding-bottom:0"><p class="banner">Modo de demonstração: os dados não estão sendo salvos agora.</p></div>` : "") + f(TELA.p);
   if (anim) {
     window.scrollTo({ top: 0, behavior: "instant" });
     if (!REDUZ) { app.classList.remove("enter-fwd", "enter-back", "enter-aba"); void app.offsetWidth; app.classList.add(anim === "back" ? "enter-back" : anim === "aba" ? "enter-aba" : "enter-fwd"); }
@@ -546,7 +550,6 @@ TELAS.boasvindas = () => `<div class="bv">
     ${[["receita","Receita vira rotina","A IA lê e monta os horários"],["laudo","Laudo explicado","Em palavras simples, sem jargão"],["evolucao","Evolução no dia a dia","Terapias, humor e conquistas"]].map(([i, t, d]) => `<div class="card row" style="padding:10px 12px;gap:12px"><span class="ib" style="width:34px;height:34px">${ic(i, 18)}</span><div class="grow"><p class="small b">${t}</p><p class="xs muted">${d}</p></div></div>`).join("")}
   </div>
   <button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>
-  ${SB ? `<button class="link" style="align-self:center;margin-top:6px" data-a="ir" data-v="entrar">Já tenho conta</button>` : ""}
   <p class="xs muted" style="text-align:center;margin-top:12px">Seus dados de saúde ficam privados.</p>
 </div>`;
 
@@ -818,7 +821,7 @@ TELAS.perfil = () => { const p = S.perfil || {}; return `${topoRaiz("Perfil")}
   ${[["consulta","diario","c4","Para a consulta"],["familia","rede","c2","Família e rede"],["tratamentos","rotina","c2","Tratamentos"],["documentos","pasta","c5","Documentos"],["evolucao","evolucao","c3","Evolução"],["linha","linha","c4","Linha do tempo"],["assistente","ia","c1","Pergunte à IA"]].map(([v, i, c, l]) => `<button class="list" data-a="ir" data-v="${v}"><span class="ib ${c}">${ic(i, 22)}</span><span class="grow b">${l}</span>${ic("seta", 18)}</button>`).join("")}
   <div class="card stack" style="gap:8px"><div class="row" style="gap:10px"><span class="ib c2">${ic("privacidade", 22)}</span><h3>Privacidade</h3></div><p class="small muted">Os dados de saúde ficam privados na sua conta. A IA lê receitas e laudos, e você confere tudo antes de salvar. O app organiza e explica, mas não substitui a orientação médica.</p></div>
   <button class="card row" data-a="ir" data-v="teiaplus" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib" style="width:38px;height:38px">${ic("conquista", 18)}</span><span class="grow"><b style="display:block;font-size:14px;font-weight:600">${plus() ? "Você é teia+" : "Conheça o teia+"}</b><span class="xs muted">${plus() ? "Leituras e perguntas sem limite" : `Plano grátis · ${restam("leitura")} leituras e ${restam("pergunta")} perguntas restantes`}</span></span>${plus() ? `<span class="plus-tag">+</span>` : ic("seta", 16)}</button>
-  ${SB && USER ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}
+  ${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<p class="xs muted" style="text-align:center;line-height:1.5">Acesso livre: seus dados ficam guardados e ligados a este aparelho. Em breve você vai poder criar uma conta para entrar de outros lugares.</p>` : ""}
   <button class="btn danger full" data-a="apagar-tudo">Apagar todos os meus dados</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:14px">${logo(22, "#B9A6FF")}<p class="xs muted">${SB ? "versão beta" : "demonstração"}</p></div><p class="note" style="text-align:center">Ícones com base na Phosphor Icons (licença MIT).</p>
 </div>`; };
@@ -1007,7 +1010,7 @@ document.addEventListener("click", async e => {
     case "cont-cat": TELA.p = { cat: v }; render(); break;
     case "fechar": fecharSheet(); break;
     case "confirmar-ok": { const f = window.__ok; fecharSheet(); if (f) await f(); break; }
-    case "cad-ir": if (SB && !USER) { go("entrar"); break; } if (Number(v) < 1) { go("boasvindas", {}, true); break; } TELA.nome === "cadastro" ? (TELA.p = { step: Number(v), novo: true }, render("back")) : go("cadastro", { step: Number(v), novo: true }); break;
+    case "cad-ir": if (Number(v) < 1) { go("boasvindas", {}, true); break; } TELA.nome === "cadastro" ? (TELA.p = { step: Number(v), novo: true }, render("back")) : go("cadastro", { step: Number(v), novo: true }); break;
     case "cad-editar": go("cadastro", {}); break;
     case "sheet-mais": if (document.querySelector("#layer .overlay")) { fecharSheet(); break; } document.getElementById("dock").classList.add("aberto"); abrirSheet(`<h2 style="margin-bottom:12px">Adicionar</h2>` + opcoesSheet([["ler","receita","camera","c1","Ler receita","Foto vira rotina de remédios"],["ler","laudo","laudo","c5","Ler laudo ou exame","Explicado em palavras simples"],["ir-fechar","registro","diario","c3","Registrar o dia","Humor, sono, crises e conquistas"],["trat-novo","","rotina","c2","Novo tratamento","Terapia com dias e horário"],["tarefa-nova","","tarefa","c4","Nova tarefa","Atividade sensorial, banho, escola…"]]), "Adicionar"); break;
     case "ir-fechar": fecharSheet(); go(v); break;
@@ -1044,7 +1047,7 @@ document.addEventListener("click", async e => {
     case "apagar-tudo": confirmar("Apagar todos os dados?", "Perfil, rotina, tratamentos, documentos, arquivos e registros serão apagados. Não dá para desfazer.", "Apagar tudo", async () => {
       if (SB && USER) { try { const { data: arqs } = await SB.storage.from("documentos").list(USER.id, { limit: 1000 }); if (arqs && arqs.length) await SB.storage.from("documentos").remove(arqs.map(f => `${USER.id}/${f.name}`));
         for (const t of ["marcacoes", ...Object.values(MAPA).map(m => m[0]), "perfis"]) { const { error } = await SB.from(t).delete().eq("user_id", USER.id); if (error) throw error; } } catch (e) { toast("Não consegui apagar tudo. Tente de novo."); return; } }
-      for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; go(SB ? "cadastro" : "boasvindas", SB ? { step: 1, novo: true } : {}, true); toast("Tudo apagado."); }); break;
+      for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; go("boasvindas", {}, true); toast("Tudo apagado."); }); break;
   }
 });
 document.addEventListener("input", e => {

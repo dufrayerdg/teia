@@ -164,6 +164,29 @@ rep('salvar("plano").catch(() => {}); }', '}')
 # remove protótipo leftovers
 s = s.replace('<p class="xs muted" style="text-align:center;line-height:1.5">${pl === "anual" ? "Depois dos 7 dias, R$ 149,00 por ano. Cancele antes e não paga nada." : "Renova todo mês. Cancele quando quiser."}<br>Protótipo: nenhuma cobrança é feita.</p>',
               '<p class="xs muted" style="text-align:center;line-height:1.5">${pl === "anual" ? "Depois dos 7 dias, R$ 149,00 por ano. Cancele antes e não paga nada." : "Renova todo mês. Cancele quando quiser."}<br>Versão beta: nenhuma cobrança é feita ainda.</p>')
+
+# ---------- acesso livre (provisório): conta anônima, sem tela de login ----------
+def rep2(a, b):
+    global s
+    assert a in s, "MISS2: " + a[:90]
+    s = s.replace(a, b, 1)
+rep2("""  const { data } = await SB.auth.getSession();
+  if (data && data.session) { USER = data.session.user; await entrou(); } else go("boasvindas", {}, true);
+}""", """  const { data } = await SB.auth.getSession();
+  if (data && data.session) { USER = data.session.user; await entrou(); return; }
+  /* acesso livre (provisório): conta anônima ligada a este aparelho */
+  const { data: an, error } = await SB.auth.signInAnonymously();
+  if (error || !an || !an.user) { console.error("login anônimo", error); MODO_DEMO = true; SAMPLE = null; SAMPLE_IMG = false; go("boasvindas", {}, true); return; }
+  USER = an.user; await entrou();
+}""")
+rep2('go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true);', 'go(S.perfil ? "inicio" : "boasvindas", {}, true);')
+rep2('    case "cad-ir": if (SB && !USER) { go("entrar"); break; } ', '    case "cad-ir": ')
+rep2('\n  ${SB ? `<button class="link" style="align-self:center;margin-top:6px" data-a="ir" data-v="entrar">Já tenho conta</button>` : ""}', '')
+rep2('${SB && USER ? `<button class="btn sec full" data-a="sair">Sair da conta</button>', '${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button>')
+rep2('<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}', '<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<p class="xs muted" style="text-align:center;line-height:1.5">Acesso livre: seus dados ficam guardados e ligados a este aparelho. Em breve você vai poder criar uma conta para entrar de outros lugares.</p>` : ""}')
+rep2('go(SB ? "cadastro" : "boasvindas", SB ? { step: 1, novo: true } : {}, true); toast("Tudo apagado.");', 'go("boasvindas", {}, true); toast("Tudo apagado.");')
+rep2('Modo de demonstração: configure o Supabase em config.js para salvar os dados.', 'Modo de demonstração: os dados não estão sendo salvos agora.')
+
 s = s.replace('/*__ICONS__*/', open(ICONS, encoding='utf-8').read())
 for bad in ["DB.doc", "ASSETS.", "CL.use", "SAMPLE(", "SAMPLE.json", "/_blob/"]:
     assert bad not in s, "sobrou: " + bad

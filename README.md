@@ -41,7 +41,7 @@ Cada conta só enxerga os próprios dados (Row Level Security por `user_id = aut
    - `PAGAMENTOS_TESTE=true` — só enquanto o pagamento real não estiver ligado
    - opcionais: `MODELO_LEITURA` (padrão `claude-sonnet-5-5`), `MODELO_CONVERSA` (padrão `claude-haiku-5-5`)
 3. **Funções**: `supabase functions deploy ia` e `supabase functions deploy assinatura`.
-4. **Login**: em Authentication → URL Configuration, coloque o endereço do site em *Site URL* e *Redirect URLs*.
+4. **Acesso**: por enquanto o app usa **acesso livre** (login anônimo do Supabase, uma conta por aparelho). Ligue em Authentication → Sign In / Providers → *Allow anonymous sign-ins*. Quando o login definitivo entrar, a conta anônima pode ser convertida em conta com e-mail sem perder dados (`auth.updateUser({ email })`). Coloque também o endereço do site em Authentication → URL Configuration.
 5. **Site**: preencha `web/config.js` com a URL e a chave *publishable/anon* do projeto e publique a pasta `web/` (o `vercel.json` já aponta para ela).
 
 ## Publicar um conteúdo
