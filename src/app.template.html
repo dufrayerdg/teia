@@ -272,6 +272,9 @@ html,body{background:#fff}
 <div class="dock-wrap" id="dockw" hidden><nav class="dock" id="dock" aria-label="Navegação principal"></nav></div>
 <div id="layer"></div>
 <input type="file" id="filein" class="sr" tabindex="-1" aria-hidden="true">
+<input type="file" id="fin-camera" class="sr" tabindex="-1" aria-hidden="true" accept="image/*" capture="environment">
+<input type="file" id="fin-galeria" class="sr" tabindex="-1" aria-hidden="true" accept="image/*" multiple>
+<input type="file" id="fin-pdf" class="sr" tabindex="-1" aria-hidden="true" accept="application/pdf,.pdf">
 <script>
 const ICONS = /*__ICONS__*/;
 
@@ -851,10 +854,9 @@ async function guardarArquivos(files) { if (!ASSETS) return []; const ids = []; 
 let LEITURA = null;
 function escolherFonte(tipo) {
   if (!plus() && restam("leitura") <= 0) { paywall("leitura", { tipo }); return; }
-  abrirSheet(`<h2 style="margin-bottom:4px">${tipo === "receita" ? "Ler receita" : "Ler laudo ou exame"}</h2><p class="small muted" style="margin-bottom:14px">A IA lê, explica e organiza na sua pasta.</p>` + opcoesSheet([
-    ["pegar", tipo + "|camera", "camera", "c1", "Tirar foto", "Use a câmera do celular"],
-    ["pegar", tipo + "|galeria", "pasta", "c5", "Escolher fotos", "Até 4 páginas da galeria"],
-    ["pegar", tipo + "|pdf", "laudo", "c2", "Enviar PDF", "Lemos até 4 páginas"]]), tipo === "receita" ? "Ler receita" : "Ler laudo");
+  const op = (modo, icone, cor, t, sub) => `<label class="list" for="fin-${modo}" data-a="pegar-label" data-v="${tipo}|${modo}" style="cursor:pointer"><span class="ib ${cor}">${ic(icone, 22)}</span><span class="grow"><b style="display:block">${t}</b><span class="xs muted">${sub}</span></span>${ic("seta", 18)}</label>`;
+  abrirSheet(`<h2 style="margin-bottom:4px">${tipo === "receita" ? "Ler receita" : "Ler laudo ou exame"}</h2><p class="small muted" style="margin-bottom:14px">A IA lê, explica e organiza na sua pasta.</p><div class="stack" style="gap:10px">` +
+    op("camera", "camera", "c1", "Tirar foto", "Use a câmera do celular") + op("galeria", "pasta", "c5", "Escolher fotos", "Até 4 páginas da galeria") + op("pdf", "laudo", "c2", "Enviar PDF", "Lemos até 4 páginas") + `</div>`, tipo === "receita" ? "Ler receita" : "Ler laudo");
 }
 function pedirArquivo(tipo, modo) {
   const i = document.getElementById("filein"); i.value = ""; i.dataset.tipo = tipo;
@@ -865,7 +867,7 @@ function pedirArquivo(tipo, modo) {
 }
 let SCAN = null;
 function passoScan(n) { SCAN && (SCAN.passo = n); document.querySelectorAll(".passo").forEach((el, i) => { el.classList.toggle("ok", i < n); el.classList.toggle("ativo", i === n); const st = el.querySelector(".st"); st.innerHTML = i < n ? ic("feito", 16) : ""; }); }
-document.getElementById("filein").addEventListener("change", async e => {
+const aoArquivo = async e => {
   const files = [...(e.target.files || [])].slice(0, 4); if (!files.length) return; const tipo = e.target.dataset.tipo;
   if (tipo === "manual") { LEITURA = { files, assetP: guardarArquivos(files) }; go("conflaudo", { r: { titulo: files[0].name.replace(/\.[^.]+$/, ""), tipo: "outro" } }); return; }
   const ehPDF = files[0].type === "application/pdf" || /\.pdf$/i.test(files[0].name);
@@ -885,7 +887,8 @@ document.getElementById("filein").addEventListener("change", async e => {
     const r = await lerComIA(tipo, imgs); contarUso("leitura"); clearInterval(relogio); passoScan(4); await new Promise(x => setTimeout(x, 450)); passoScan(5); await new Promise(x => setTimeout(x, 550));
     TELA = { nome: tipo === "receita" ? "confreceita" : "conflaudo", p: { r, lido: true } }; render("fwd");
   } catch (err) { clearInterval(relogio); toast(err && err.code === "rate_limited" ? "Muitas leituras seguidas. Tente em alguns minutos." : "Não consegui ler o documento. Preencha os dados."); TELA = { nome: tipo === "receita" ? "confreceita" : "conflaudo", p: { r: {} } }; render("fwd"); }
-});
+};
+["filein", "fin-camera", "fin-galeria", "fin-pdf"].forEach(id => document.getElementById(id).addEventListener("change", aoArquivo));
 function contexto() {
   const h = iso(new Date()); const ult = Object.entries(S.checks.d).filter(([d]) => d >= iso(addDays(new Date(), -14)));
   return JSON.stringify({ hoje: h, perfil: S.perfil, remedios: S.meds.items.map(({ nome, dose, horarios, inicio, fim, medico }) => ({ nome, dose, horarios, inicio, fim, medico })), tratamentos: S.trat.items.map(t => ({ ...t, sessoesNoMes: sessoesMes(t), dias: (t.dias || []).map(d => DIAS[d]) })), tarefas: S.tarefas.items, documentos: S.docs.items.map(({ tipo, titulo, data, profissional, especialidade, origem, resumo, recomendacoes, medicamentos }) => ({ tipo, titulo, data, profissional, especialidade, origem, resumo, recomendacoes, medicamentos })), registros: [...S.regs.items].sort((a, b) => b.data.localeCompare(a.data)).slice(0, 40).map(r => ({ ...r, humor: HUMOR[(r.humor || 3) - 1][1] })), marcacoesUltimos14Dias: Object.fromEntries(ult.map(([d, m]) => [d, Object.keys(m)])) }).slice(0, 60000);
@@ -937,6 +940,7 @@ document.addEventListener("click", async e => {
     case "ir-fechar": fecharSheet(); go(v); break;
     case "sheet-doc": abrirSheet(`<h2 style="margin-bottom:12px">Adicionar documento</h2>` + opcoesSheet([["ler","laudo","ia","c5","Ler laudo ou exame com IA","Foto ou PDF, explicado em palavras simples"],["ler","receita","receita","c1","Ler receita com IA","Foto ou PDF, vira rotina de remédios"],["upload-manual","","upload","c2","Só guardar um arquivo","PDF ou imagem, sem leitura da IA"]]), "Adicionar documento"); break;
     case "ler": escolherFonte(v); break;
+    case "pegar-label": { const [t, m] = v.split("|"); const inp = document.getElementById("fin-" + m); if (inp) { inp.value = ""; inp.dataset.tipo = t; } setTimeout(() => fecharSheet(true), 350); break; }
     case "pegar": { const [t, m] = v.split("|"); fecharSheet(true); pedirArquivo(t, m); break; }
     case "upload-manual": fecharSheet(true); pedirArquivo("manual", "manual"); break;
     case "rotina-dia": TELA.p = { data: v }; render(); break;

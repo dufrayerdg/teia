@@ -89,7 +89,7 @@ with sync_playwright() as p:
     img = "/tmp/laudo_teste.png"
     from PIL import Image; Image.new("RGB", (800, 1000), "white").save(img)
     pg.click('button.bn[data-v="laudo"]'); pg.wait_for_timeout(500)
-    with pg.expect_file_chooser() as fc: pg.click('button[data-v="laudo|galeria"]')
+    with pg.expect_file_chooser() as fc: pg.click('label[data-v="laudo|galeria"]')
     fc.value.set_files(img); pg.wait_for_timeout(9000)
     assert pg.evaluate("TELA.nome") == "conflaudo", pg.evaluate("TELA.nome")
     assert pg.evaluate("window.__dataurl").startswith("data:image/"), pg.evaluate("window.__dataurl")
