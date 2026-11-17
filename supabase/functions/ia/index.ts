@@ -37,19 +37,33 @@ function imagemParaBloco(dataUrl: string) {
 const DIAS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 const HUMOR = ["Difícil", "Ruim", "Ok", "Bom", "Ótimo"];
 
-async function dadosDaFamilia(usuario: any) {
+/** Dados de UMA pessoa cuidada (membro). Itens antigos sem membro_id pertencem à primeira pessoa. */
+async function dadosDaFamilia(usuario: any, membroPedido?: string) {
   const desde = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10);
-  const [perfil, meds, trat, tar, docs, regs] = await Promise.all([
-    usuario.from("perfis").select("mae,crianca,nascimento,diagnosticos,plano_saude").maybeSingle(),
-    usuario.from("medicamentos").select("nome,dose,horarios,inicio,fim,medico"),
-    usuario.from("tratamentos").select("tipo,profissional,local,dias,hora,meta,progresso"),
-    usuario.from("tarefas").select("titulo,dias,hora"),
-    usuario.from("documentos").select("tipo,titulo,data,profissional,especialidade,origem,resumo,recomendacoes,medicamentos").order("data", { ascending: false }).limit(25),
-    usuario.from("registros").select("data,humor,sono,crise,conquista,nota").gte("data", desde).order("data", { ascending: false }).limit(40),
+  const [perfil, membros] = await Promise.all([
+    usuario.from("perfis").select("mae,papel,crianca,nascimento,diagnosticos,plano_saude").maybeSingle(),
+    usuario.from("membros").select("id,nome,relacao,nascimento,diagnosticos,plano_saude").order("criado_em"),
   ]);
+  const lista = membros.data ?? [];
+  const membro = lista.find((m: any) => m.id === membroPedido) ?? lista[0] ?? null;
+  const primeiro = !membro || (lista[0] && membro.id === lista[0].id);
+  const filtro = (q: any) => membro ? (primeiro ? q.or(`membro_id.eq.${membro.id},membro_id.is.null`) : q.eq("membro_id", membro.id)) : q;
+  const hoje = new Date().toISOString().slice(0, 10);
+  const [meds, trat, tar, docs, regs, cons] = await Promise.all([
+    filtro(usuario.from("medicamentos").select("nome,dose,horarios,inicio,fim,medico")),
+    filtro(usuario.from("tratamentos").select("tipo,profissional,local,dias,hora,meta,progresso")),
+    filtro(usuario.from("tarefas").select("titulo,dias,hora")),
+    filtro(usuario.from("documentos").select("tipo,titulo,data,profissional,especialidade,origem,resumo,recomendacoes,medicamentos")).order("data", { ascending: false }).limit(25),
+    filtro(usuario.from("registros").select("data,humor,sono,crise,conquista,nota")).gte("data", desde).order("data", { ascending: false }).limit(40),
+    filtro(usuario.from("consultas").select("titulo,data,hora,profissional,local,obs")).gte("data", desde).order("data").limit(20),
+  ]);
+  const p = perfil.data ?? {};
   return {
-    hoje: new Date().toISOString().slice(0, 10),
-    perfil: perfil.data,
+    hoje,
+    quem_pergunta: { nome: p.mae || null, papel: p.papel || null },
+    pessoa_cuidada: membro ? { nome: membro.nome, relacao: membro.relacao, nascimento: membro.nascimento, diagnosticos: membro.diagnosticos, plano_saude: membro.plano_saude }
+                           : { nome: p.crianca, nascimento: p.nascimento, diagnosticos: p.diagnosticos, plano_saude: p.plano_saude },
+    consultas: cons.data ?? [],
     remedios: meds.data ?? [],
     tratamentos: (trat.data ?? []).map((t: any) => ({ ...t, dias: (t.dias ?? []).map((d: number) => DIAS[d]) })),
     tarefas: (tar.data ?? []).map((t: any) => ({ ...t, dias: (t.dias ?? []).map((d: number) => DIAS[d]) })),
@@ -90,13 +104,14 @@ Deno.serve(async (req) => {
         .slice(-10).map((m: any) => ({ role: m.role, content: m.content.slice(0, 2000) }));
       while (historico.length && historico[0].role !== "user") historico.shift();
       if (!historico.length || historico[historico.length - 1].role !== "user") return json({ erro: "sem_pergunta" }, 400);
-      const dados = await dadosDaFamilia(usuario);
-      const crianca = dados.perfil?.crianca || "a criança";
-      const sistema = `Você é o assistente da teia, um app para mães de crianças atípicas, sobre ${crianca}. Regras:
+      const dados = await dadosDaFamilia(usuario, String(corpo.membro || ""));
+      const pessoa = dados.pessoa_cuidada?.nome || "a pessoa cuidada";
+      const quem = dados.quem_pergunta.nome ? `${dados.quem_pergunta.nome}${dados.quem_pergunta.papel ? ` (${dados.quem_pergunta.papel})` : ""}` : "quem cuida";
+      const sistema = `Você é o assistente da teia, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
 1) Responda em português do Brasil em NO MÁXIMO 2 frases curtas (até 35 palavras), sem listas e sem detalhes desnecessários.
 2) Use SOMENTE os dados abaixo. Se a informação não estiver neles, diga isso em uma frase.
 3) Nunca diagnostique, nem opine sobre saúde, comportamento ou tratamento, nem recomende remédios ou doses.
-4) Se a mãe pedir opinião, conselho ou orientação (por exemplo "devo", "é normal", "o que faço", "o que acha"), NÃO opine. Diga em uma frase que isso é para o profissional avaliar e preencha "anotacao" com uma nota objetiva para levar à consulta: 1 a 3 frases descrevendo o que a criança fez ou está fazendo (só fatos dos dados e da fala da mãe, sem interpretar) e a pergunta a fazer. "para" é a especialidade mais indicada entre os profissionais e terapias dos dados, ou null. Nos demais casos, "anotacao" é null.
+4) Se a pessoa pedir opinião, conselho ou orientação (por exemplo "devo", "é normal", "o que faço", "o que acha"), NÃO opine. Diga em uma frase que isso é para o profissional avaliar e preencha "anotacao" com uma nota objetiva para levar à consulta: 1 a 3 frases descrevendo o que ${pessoa} fez ou está fazendo (só fatos dos dados e da fala da pessoa, sem interpretar) e a pergunta a fazer. "para" é a especialidade mais indicada entre os profissionais e terapias dos dados, ou null. Nos demais casos, "anotacao" é null.
 Responda APENAS com JSON: {"resposta":string,"anotacao":null|{"titulo":string (até 6 palavras),"texto":string,"para":string|null}}
 DADOS: ${JSON.stringify(dados)}`;
       const texto = await claude(MODELO_CONVERSA, historico, sistema, 500);
@@ -107,12 +122,12 @@ DADOS: ${JSON.stringify(dados)}`;
 
     if (tarefa === "resumo") {
       if (!plus) return json({ erro: "limite", motivo: "relatorio" }, 402);
-      const dados = await dadosDaFamilia(usuario);
+      const dados = await dadosDaFamilia(usuario, String(corpo.membro || ""));
       const mes = mesAtual();
       const regs = dados.registros.filter((r: any) => String(r.data).startsWith(mes));
       const { data: notas } = await usuario.from("notas_consulta").select("titulo,texto,para").eq("feito", false).limit(10);
-      const prompt = `Escreva em português do Brasil um resumo curto (até 170 palavras) do mês da criança ${dados.perfil?.crianca || ""}, para a mãe levar às terapeutas. Tom acolhedor e objetivo. Organize em: Presença nas terapias; Como foram os dias; Conquistas; Pontos para conversar. Sem diagnósticos nem recomendações clínicas. Use só os dados abaixo.
-Tratamentos: ${JSON.stringify(dados.tratamentos)}
+      const prompt = `Escreva em português do Brasil um resumo curto (até 170 palavras) do mês de ${dados.pessoa_cuidada?.nome || ""}, para ${dados.quem_pergunta.nome || "a família"} levar aos profissionais. Tom acolhedor e objetivo. Chame as pessoas pelo nome. Organize em: Presença nas terapias; Como foram os dias; Conquistas; Pontos para conversar. Sem diagnósticos nem recomendações clínicas. Use só os dados abaixo.
+Tratamentos: ${JSON.stringify(dados.tratamentos)}\nConsultas: ${JSON.stringify(dados.consultas)}
 Sessões do mês (marcadas): ${JSON.stringify(corpo.sessoes ?? [])}
 Registros do mês: ${JSON.stringify(regs)}
 Anotações pendentes para a consulta: ${JSON.stringify(notas ?? [])}`;

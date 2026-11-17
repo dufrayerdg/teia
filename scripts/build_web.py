@@ -21,27 +21,31 @@ let USER = null, MODO_DEMO = !SB, SAMPLE = SB ? {} : null, SAMPLE_IMG = !!SB;
 const nul = v => (v === "" || v === undefined ? null : v);
 /* coleção do app -> tabela do banco */
 const MAPA = {
-  meds: ["medicamentos", m => ({ nome: m.nome, dose: m.dose || "", horarios: m.horarios || [], inicio: nul(m.inicio), fim: nul(m.fim), receita_id: nul(m.receitaId), medico: m.medico || "" }),
-         r => ({ id: r.id, nome: r.nome, dose: r.dose, horarios: r.horarios || [], inicio: r.inicio || "", fim: r.fim || "", receitaId: r.receita_id || "", medico: r.medico })],
-  trat: ["tratamentos", t => ({ tipo: t.tipo, profissional: t.profissional || "", local: t.local || "", dias: t.dias || [], hora: t.hora || "", meta: t.meta || "", progresso: Number(t.progresso || 0) }),
-         r => ({ id: r.id, tipo: r.tipo, profissional: r.profissional, local: r.local, dias: r.dias || [], hora: r.hora, meta: r.meta, progresso: r.progresso })],
-  tarefas: ["tarefas", t => ({ titulo: t.titulo, dias: t.dias || [], hora: t.hora || "" }), r => ({ id: r.id, titulo: r.titulo, dias: r.dias || [], hora: r.hora })],
-  docs: ["documentos", d => ({ tipo: d.tipo || "outro", titulo: d.titulo || "", data: nul(d.data), profissional: d.profissional || "", registro: d.registro || "", especialidade: d.especialidade || "", origem: d.origem || "", resumo: d.resumo || "", pontos: d.pontos || [], termos: d.termos || [], recomendacoes: d.recomendacoes || [], perguntas: d.perguntas || [], medicamentos: d.medicamentos || [], arquivos: d.assetIds || [], mime: d.mime || "", lido_por_ia: !!d.resumo }),
-         r => ({ id: r.id, tipo: r.tipo, titulo: r.titulo, data: r.data || "", profissional: r.profissional, registro: r.registro, especialidade: r.especialidade, origem: r.origem, resumo: r.resumo, pontos: r.pontos, termos: r.termos, recomendacoes: r.recomendacoes, perguntas: r.perguntas, medicamentos: r.medicamentos, assetIds: r.arquivos || [], assetId: (r.arquivos || [])[0] || null, mime: r.mime, criadoEm: r.criado_em })],
-  regs: ["registros", x => ({ data: x.data, humor: Number(x.humor || 3), sono: x.sono || "", crise: !!x.crise, tratamento_id: nul(x.tratId), conquista: x.conquista || "", nota: x.nota || "" }),
-         r => ({ id: r.id, data: r.data, humor: r.humor, sono: r.sono, crise: r.crise, tratId: r.tratamento_id || "", conquista: r.conquista, nota: r.nota })],
+  meds: ["medicamentos", m => ({ membro_id: nul(m.membroId), nome: m.nome, dose: m.dose || "", horarios: m.horarios || [], inicio: nul(m.inicio), fim: nul(m.fim), receita_id: nul(m.receitaId), medico: m.medico || "" }),
+         r => ({ id: r.id, membroId: r.membro_id || "", nome: r.nome, dose: r.dose, horarios: r.horarios || [], inicio: r.inicio || "", fim: r.fim || "", receitaId: r.receita_id || "", medico: r.medico })],
+  trat: ["tratamentos", t => ({ membro_id: nul(t.membroId), tipo: t.tipo, profissional: t.profissional || "", local: t.local || "", dias: t.dias || [], hora: t.hora || "", meta: t.meta || "", progresso: Number(t.progresso || 0) }),
+         r => ({ id: r.id, membroId: r.membro_id || "", tipo: r.tipo, profissional: r.profissional, local: r.local, dias: r.dias || [], hora: r.hora, meta: r.meta, progresso: r.progresso })],
+  tarefas: ["tarefas", t => ({ membro_id: nul(t.membroId), titulo: t.titulo, dias: t.dias || [], hora: t.hora || "" }), r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, dias: r.dias || [], hora: r.hora })],
+  docs: ["documentos", d => ({ membro_id: nul(d.membroId), tipo: d.tipo || "outro", titulo: d.titulo || "", data: nul(d.data), profissional: d.profissional || "", registro: d.registro || "", especialidade: d.especialidade || "", origem: d.origem || "", resumo: d.resumo || "", pontos: d.pontos || [], termos: d.termos || [], recomendacoes: d.recomendacoes || [], perguntas: d.perguntas || [], medicamentos: d.medicamentos || [], arquivos: d.assetIds || [], mime: d.mime || "", lido_por_ia: !!d.resumo }),
+         r => ({ id: r.id, membroId: r.membro_id || "", tipo: r.tipo, titulo: r.titulo, data: r.data || "", profissional: r.profissional, registro: r.registro, especialidade: r.especialidade, origem: r.origem, resumo: r.resumo, pontos: r.pontos, termos: r.termos, recomendacoes: r.recomendacoes, perguntas: r.perguntas, medicamentos: r.medicamentos, assetIds: r.arquivos || [], assetId: (r.arquivos || [])[0] || null, mime: r.mime, criadoEm: r.criado_em })],
+  regs: ["registros", x => ({ membro_id: nul(x.membroId), data: x.data, humor: Number(x.humor || 3), sono: x.sono || "", crise: !!x.crise, tratamento_id: nul(x.tratId), conquista: x.conquista || "", nota: x.nota || "" }),
+         r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, humor: r.humor, sono: r.sono, crise: r.crise, tratId: r.tratamento_id || "", conquista: r.conquista, nota: r.nota })],
   rede: ["rede", x => ({ nome: x.nome, papel: x.papel || "", contato: x.contato || "", obs: x.obs || "" }), r => ({ id: r.id, nome: r.nome, papel: r.papel, contato: r.contato, obs: r.obs })],
-  notas: ["notas_consulta", n => ({ data: n.data, titulo: n.titulo, texto: n.texto, para: n.para || "", feito: !!n.feito, origem: n.origem || "manual", pergunta: n.pergunta || "" }),
-          r => ({ id: r.id, data: r.data, titulo: r.titulo, texto: r.texto, para: r.para, feito: r.feito, origem: r.origem, pergunta: r.pergunta })],
+  notas: ["notas_consulta", n => ({ membro_id: nul(n.membroId), data: n.data, titulo: n.titulo, texto: n.texto, para: n.para || "", feito: !!n.feito, origem: n.origem || "manual", pergunta: n.pergunta || "" }),
+          r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, titulo: r.titulo, texto: r.texto, para: r.para, feito: r.feito, origem: r.origem, pergunta: r.pergunta })],
+  consultas: ["consultas", c => ({ membro_id: nul(c.membroId), titulo: c.titulo, data: c.data, hora: c.hora || "", profissional: c.profissional || "", local: c.local || "", obs: c.obs || "" }),
+          r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, hora: r.hora, profissional: r.profissional, local: r.local, obs: r.obs })],
+  membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "" }),
+          r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude })],
 };
 const SINC = {}; const filas = {};
 function linhasDe(nome) {
   if (nome === "checks") { const out = new Map(); for (const [dia, ks] of Object.entries(S.checks.d || {})) for (const [chave, q] of Object.entries(ks || {})) out.set(dia + "|" + chave, { dia, chave, por: (q && q.by) || "", hora: (q && q.at) || "" }); return out; }
-  const [, para] = MAPA[nome]; const out = new Map(); for (const it of S[nome].items) { if (!it.id) it.id = uid(); out.set(it.id, { id: it.id, ...para(it) }); } return out;
+  const [, para] = MAPA[nome]; const out = new Map(); for (const it of (POR_MEMBRO.includes(nome) ? ALL[nome] : S[nome].items)) { if (!it.id) it.id = uid(); out.set(it.id, { id: it.id, ...para(it) }); } return out;
 }
 async function sincronizar(nome) {
   if (nome === "plano") return;
-  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: USER.id, mae: p.mae || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
+  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: USER.id, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
   const tabela = nome === "checks" ? "marcacoes" : MAPA[nome][0];
   const atual = linhasDe(nome), antes = SINC[nome] || new Map();
   const mudou = [...atual].filter(([k, v]) => antes.get(k) !== JSON.stringify(v)).map(([, v]) => ({ ...v, user_id: USER.id }));
@@ -55,7 +59,7 @@ async function sincronizar(nome) {
 }
 function salvar(nome) {
   if (!SB || !USER) return Promise.resolve();
-  const p = (filas[nome] || Promise.resolve()).catch(() => {}).then(() => sincronizar(nome)).catch(e => { console.error("salvar", nome, e); toast("Não consegui salvar agora. Confira sua internet."); throw e; });
+  const p = (filas[nome] || Promise.resolve()).catch(() => {}).then(() => sincronizar(nome)).catch(e => { console.error("salvar", nome, e); if (e && /teia_plus_necessario/.test(e.message || "")) { paywall(e.hint || (nome === "rede" ? "rede" : "membro")); } else toast("Não consegui salvar agora. Confira sua internet."); throw e; });
   filas[nome] = p; return p;
 }
 async function carregar() {
@@ -64,11 +68,13 @@ async function carregar() {
     SB.from("perfis").select("*").maybeSingle(), SB.from("assinaturas").select("*").maybeSingle(), SB.from("uso_ia").select("*").eq("mes", mesAtual()).maybeSingle(),
     ...Object.values(MAPA).map(([t]) => pega(t)), SB.from("marcacoes").select("dia,chave,por,hora").gte("dia", iso(addDays(new Date(), -150)))]);
   const err = [perfil, assin, uso, ...cols].find(r => r.error); if (err) throw err.error;
-  const r = perfil.data; S.perfil = r ? { mae: r.mae, crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em } : null;
+  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em } : null;
   Object.keys(MAPA).forEach((n, i) => { S[n] = { items: (cols[i].data || []).map(MAPA[n][2]) }; });
   S.checks = { d: {} }; for (const m of cols[cols.length - 1].data || []) { (S.checks.d[m.dia] = S.checks.d[m.dia] || {})[m.chave] = { by: m.por, at: m.hora }; }
+  prepararMembros();
   aplicarPlano(assin.data, uso.data);
   for (const n of [...Object.keys(MAPA), "checks"]) SINC[n] = new Map([...linhasDe(n)].map(([k, v]) => [k, JSON.stringify(v)]));
+  if (S.membros.items.length && !(cols[Object.keys(MAPA).indexOf("membros")].data || []).length) { SINC.membros = new Map(); salvar("membros").catch(() => {}); }
   carregarConteudos();
 }
 function aplicarPlano(a, u) { S.plano = { plus: !!a && a.plano === "plus" && ["ativa", "teste"].includes(a.status), ciclo: a && a.ciclo, desde: a && a.desde, uso: { [mesAtual()]: { leitura: (u && u.leituras) || 0, pergunta: (u && u.perguntas) || 0 } } }; }
@@ -139,22 +145,22 @@ rep('const r = await lerComIA(tipo, imgs); contarUso("leitura");', 'const r = aw
 rep('} catch (err) { clearInterval(relogio); toast(err && err.code === "rate_limited"', '} catch (err) { clearInterval(relogio); if (err && err.code === "limite") { SCAN = null; paywall(err.motivo || "leitura", { tipo }); return; } toast(err && err.code === "rate_limited"')
 # assistente
 rep('const r = await SAMPLE(msgs, { modelTier: "default", cache: false }); contarUso("pergunta");',
-    'const r = { text: JSON.stringify(await ia("pergunta", { historico: hist.map(m => ({ role: m.role, content: m.content })) })) }; contarUso("pergunta"); atualizarPlano().catch(() => {});')
+    'const r = { text: JSON.stringify(await ia("pergunta", { membro: ATIVO, historico: hist.map(m => ({ role: m.role, content: m.content })) })) }; contarUso("pergunta"); atualizarPlano().catch(() => {});')
 rep('} catch (e) { ult().content = e && e.code === "rate_limited"', '} catch (e) { if (e && e.code === "limite") { CHAT.splice(-2, 2); paywall(e.motivo || "pergunta"); return; } ult().content = e && e.code === "rate_limited"')
 # resumo
 rep('try { const r = await SAMPLE(prompt, { modelTier: "default", onText: ({ text }) => { const el = document.getElementById("reltxt"); if (el) el.textContent = text; } }); const el = document.getElementById("reltxt"); if (el && r.text) el.textContent = r.text; }',
-    'try { const r = await ia("resumo", { sessoes: sess }); const el = document.getElementById("reltxt"); if (el && r && r.texto) el.textContent = r.texto; }')
+    'try { const r = await ia("resumo", { membro: ATIVO, sessoes: sess }); const el = document.getElementById("reltxt"); if (el && r && r.texto) el.textContent = r.texto; }')
 rep('catch (err) { out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"', 'catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"')
 # teia+ via servidor
-rep('    case "plus-assinar": S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; await salvar("plano").catch(() => {}); voltar(); toast("Bem-vinda ao teia+!"); break;',
-    '    case "plus-assinar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "assinar", ciclo: v } }); if (error) { toast("O pagamento ainda não está disponível."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; voltar(); toast("Bem-vinda ao teia+!"); break;')
+rep('    case "plus-assinar": S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; await salvar("plano").catch(() => {}); voltar(); toast("Boas-vindas ao teia+!"); break;',
+    '    case "plus-assinar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "assinar", ciclo: v } }); if (error) { toast("O pagamento ainda não está disponível."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; voltar(); toast("Boas-vindas ao teia+!"); break;')
 rep('    case "plus-cancelar": S.plano = { ...S.plano, plus: false }; await salvar("plano").catch(() => {}); render(); toast("Assinatura cancelada (teste)."); break;',
     '    case "plus-cancelar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "cancelar" } }); if (error) { toast("Não consegui cancelar agora."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: false }; render(); toast("Assinatura cancelada."); break;')
 # apagar tudo
 a = s.index('    case "apagar-tudo":'); b = s.index('\n', a)
 s = s[:a] + r'''    case "apagar-tudo": confirmar("Apagar todos os dados?", "Perfil, rotina, tratamentos, documentos, arquivos e registros serão apagados. Não dá para desfazer.", "Apagar tudo", async () => {
       if (SB && USER) { try { const { data: arqs } = await SB.storage.from("documentos").list(USER.id, { limit: 1000 }); if (arqs && arqs.length) await SB.storage.from("documentos").remove(arqs.map(f => `${USER.id}/${f.name}`));
-        for (const t of ["marcacoes", ...Object.values(MAPA).map(m => m[0]), "perfis"]) { const { error } = await SB.from(t).delete().eq("user_id", USER.id); if (error) throw error; } } catch (e) { toast("Não consegui apagar tudo. Tente de novo."); return; } }
+        for (const t of ["marcacoes", ...Object.values(MAPA).map(m => m[0]).filter(t => t !== "membros"), "membros", "perfis"]) { const { error } = await SB.from(t).delete().eq("user_id", USER.id); if (error) throw error; } } catch (e) { toast("Não consegui apagar tudo. Tente de novo."); return; } }
       for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; go(SB ? "cadastro" : "boasvindas", SB ? { step: 1, novo: true } : {}, true); toast("Tudo apagado."); }); break;''' + s[b:]
 # sair no perfil
 rep('  <button class="btn danger full" data-a="apagar-tudo">', '  ${SB && USER ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}\n  <button class="btn danger full" data-a="apagar-tudo">')

@@ -6,7 +6,7 @@ OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp"
 MOCK = r"""
 window.TEIA_CONFIG_FORCE = true;
 (() => {
- const salvo = sessionStorage.getItem("__db"); const db = window.__db = salvo ? JSON.parse(salvo) : { perfis: [], medicamentos: [], tratamentos: [], tarefas: [], marcacoes: [], documentos: [], registros: [], rede: [], notas_consulta: [], assinaturas: [{ user_id: "u1", plano: "gratis", status: "ativa" }], uso_ia: [], conteudos: [{ id: "c1", categoria: "artigo", titulo: "Artigo do banco", minutos: 2, autor: "Equipe teia", corpo: [{ p: "Texto" }, { h: "Título" }, { ul: ["a", "b"] }], destaque: true, publicado: true }] };
+ const salvo = sessionStorage.getItem("__db"); const db = window.__db = salvo ? JSON.parse(salvo) : { perfis: [], medicamentos: [], tratamentos: [], tarefas: [], marcacoes: [], documentos: [], registros: [], rede: [], notas_consulta: [], membros: [], consultas: [], assinaturas: [{ user_id: "u1", plano: "gratis", status: "ativa" }], uso_ia: [], conteudos: [{ id: "c1", categoria: "artigo", titulo: "Artigo do banco", minutos: 2, autor: "Equipe teia", corpo: [{ p: "Texto" }, { h: "Título" }, { ul: ["a", "b"] }], destaque: true, publicado: true }] };
  const files = window.__files = JSON.parse(sessionStorage.getItem("__files") || "[]");
  const persist = () => { sessionStorage.setItem("__db", JSON.stringify(db)); sessionStorage.setItem("__files", JSON.stringify(files)); };
  const user = { id: "u1", email: "", is_anonymous: true };
@@ -57,14 +57,18 @@ window.TEIA_CONFIG_FORCE = true;
 })();
 """
 erros = []
+import threading, http.server, functools, socketserver
+_srv = socketserver.TCPServer(("127.0.0.1", 0), functools.partial(type("H", (http.server.SimpleHTTPRequestHandler,), {"log_message": lambda *a: None}), directory=os.path.dirname(WEB)))
+threading.Thread(target=_srv.serve_forever, daemon=True).start()
+URL = f"http://127.0.0.1:{_srv.server_address[1]}/index.html"
 with sync_playwright() as p:
     b = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
     ctx = b.new_context(viewport={"width": 390, "height": 844})
     ctx.route("https://cdn.jsdelivr.net/npm/@supabase/**", lambda r: r.fulfill(body="", content_type="text/javascript"))
     ctx.route("**/config.js", lambda r: r.fulfill(body='window.TEIA_CONFIG={SUPABASE_URL:"https://x.supabase.co",SUPABASE_ANON_KEY:"k"}', content_type="text/javascript"))
     ctx.add_init_script(MOCK)
-    pg = ctx.new_page(); pg.on("pageerror", lambda e: erros.append(str(e))); pg.on("console", lambda m: m.type == "error" and erros.append("console: " + m.text))
-    pg.goto("file://" + WEB); pg.wait_for_timeout(800)
+    pg = ctx.new_page(); pg.on("pageerror", lambda e: erros.append(str(e))); pg.on("console", lambda m: m.type == "error" and erros.append("console: " + m.text + " " + str([a.json_value() for a in m.args][:2])))
+    pg.goto(URL); pg.wait_for_timeout(800)
     assert pg.evaluate("TELA.nome") == "boasvindas", pg.evaluate("TELA.nome")
     assert pg.evaluate("window.__anon") == 1 and pg.evaluate("USER.id") == "u1", "sem login anônimo"
     assert pg.evaluate("document.body.innerText.includes('Já tenho conta')") is False
@@ -73,10 +77,18 @@ with sync_playwright() as p:
     pg.fill('input[name="crianca"]', "Theo"); pg.fill('input[name="nascimento"]', "2023-03-10"); pg.click('form button[type="submit"]')
     pg.click('label.opt:has(input[value="TEA"]) span'); pg.check('input[name="consent"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(600)
     assert pg.evaluate("__db.perfis.length") == 1 and pg.evaluate("__db.perfis[0].crianca") == "Theo"
-    pg.click("text=Adicionar terapia")
+    pg.click("text=Terapia fixa")
     for d in ["1", "3"]: pg.click(f'label.opt:has(input[name="dias"][value="{d}"]) span')
     pg.fill('input[name="hora"]', "10:00"); pg.click('form button[type="submit"]'); pg.wait_for_timeout(500)
     assert pg.evaluate("__db.tratamentos.length") == 1 and pg.evaluate("__db.tratamentos[0].dias") == [1, 3]
+    assert pg.evaluate("__db.membros.length") == 1 and pg.evaluate("__db.membros[0].nome") == "Theo"
+    assert pg.evaluate("__db.tratamentos[0].membro_id") == pg.evaluate("__db.membros[0].id")
+    # consulta avulsa vai para o banco
+    pg.evaluate("go('rotina',{},true)"); pg.wait_for_timeout(300)
+    pg.click('button[data-a="consulta-nova"]'); pg.wait_for_timeout(300)
+    pg.fill('form[data-f="consulta"] input[name="titulo"]', "Neuropediatra"); pg.fill('form[data-f="consulta"] input[name="data"]', "2026-11-26"); pg.fill('form[data-f="consulta"] input[name="hora"]', "23:00")
+    pg.click('form[data-f="consulta"] button[type="submit"]'); pg.wait_for_timeout(500)
+    assert pg.evaluate("__db.consultas.length") == 1 and pg.evaluate("__db.consultas[0].hora") == "23:00"
     pg.evaluate("go('rotina',{data:'2026-11-16'},true)"); pg.wait_for_timeout(400)
     pg.click('button.check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 1, pg.evaluate("__db.marcacoes")
     pg.click('button.check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 0
@@ -98,9 +110,11 @@ with sync_playwright() as p:
     assert pg.evaluate("__files.length") == 1
     # recarregar: os dados vêm do banco
     pg.reload(); pg.wait_for_timeout(1200)
+    if pg.evaluate("TELA.nome") != "inicio": print("DEBUG", pg.evaluate("JSON.stringify({perfis: __db.perfis.length, membros: __db.membros.length, logado: sessionStorage.getItem('logado'), anon: window.__anon||0, user: !!USER, demo: MODO_DEMO, perfil: !!S.perfil})"))
     assert pg.evaluate("TELA.nome") == "inicio", pg.evaluate("TELA.nome")
     assert (pg.evaluate("window.__anon") or 0) == 0, "criou outra conta anônima ao recarregar"
     assert pg.evaluate("S.trat.items.length") == 1 and pg.evaluate("S.docs.items.length") == 1 and pg.evaluate("S.notas.items.length") == 1
+    assert pg.evaluate("S.consultas.items.length") == 1 and pg.evaluate("membroAtivo().nome") == "Theo"
     assert pg.evaluate("CONTEUDOS[0].titulo") == "Artigo do banco"
     ops0 = pg.evaluate("window.__ops || 0"); pg.evaluate("salvar('trat')"); pg.wait_for_timeout(300)
     assert pg.evaluate("window.__ops || 0") == ops0, "salvou sem mudança"
@@ -112,7 +126,7 @@ with sync_playwright() as p:
     assert pg.evaluate("!!document.querySelector('[data-a=sair]')") is False and "Acesso livre" in pg.evaluate("document.body.innerText")
     # apagar tudo
     pg.click('button[data-a="apagar-tudo"]'); pg.wait_for_timeout(400); pg.click('button[data-a="confirmar-ok"]'); pg.wait_for_timeout(800)
-    assert pg.evaluate("__db.documentos.length + __db.tratamentos.length + __db.perfis.length + __files.length") == 0
+    assert pg.evaluate("__db.documentos.length + __db.tratamentos.length + __db.perfis.length + __db.membros.length + __db.consultas.length + __files.length") == 0
     # sair
     pg.evaluate("go('perfil',{},true)"); pg.wait_for_timeout(300)
     b.close()
