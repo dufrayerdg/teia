@@ -88,7 +88,7 @@ with sync_playwright() as p:
     # consulta avulsa vai para o banco
     pg.evaluate("go('rotina',{},true)"); pg.wait_for_timeout(300)
     pg.click('button[data-a="consulta-nova"]'); pg.wait_for_timeout(300)
-    pg.fill('form[data-f="consulta"] input[name="titulo"]', "Neuropediatra"); pg.fill('form[data-f="consulta"] .pk[data-pk="data"] .pk-nat', "2026-11-26"); pg.fill('form[data-f="consulta"] .pk[data-pk="hora"] .pk-nat', "23:00")
+    pg.fill('form[data-f="consulta"] input[name="titulo"]', "Neuropediatra"); pg.click('form[data-f="consulta"] [data-a="pk-cal"]'); pg.click('form[data-f="consulta"] .pkcal [data-v="2026-11-26"]'); pg.click('form[data-f="consulta"] .ptabs button:has-text("Outro")'); pg.click('form[data-f="consulta"] [data-a="pk-h"][data-v="23"]'); pg.click('form[data-f="consulta"] [data-a="pk-m"][data-v="00"]')
     pg.click('form[data-f="consulta"] button[type="submit"]'); pg.wait_for_timeout(500)
     assert pg.evaluate("__db.consultas.length") == 1 and pg.evaluate("__db.consultas[0].hora") == "23:00"
     pg.evaluate("go('rotina',{data:'2026-11-16'},true)"); pg.wait_for_timeout(400)
