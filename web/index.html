@@ -76,13 +76,14 @@ h3{font-size:14px;font-weight:600}
 .minis{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px 4px;scroll-padding:0 18px;scroll-snap-type:x mandatory;scrollbar-width:none}
 .minis::-webkit-scrollbar{display:none}
 .mini{background:var(--f);flex:none;width:128px;scroll-snap-align:start;border:none;border-radius:14px;padding:11px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;font-family:inherit;color:var(--ink);cursor:pointer}
-.mini .mi{color:var(--t);width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.mini .mi{background:var(--g)!important;color:#2E2A45;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
 .mini .mt{font-size:13px;font-weight:500;line-height:1.25}
 .mini .ms{font-size:11px;color:#4A5A55;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-html.escuro .mini .ms{color:#A9C2BA}html.escuro .mini .mi{color:var(--t);background:rgba(255,255,255,.08)}
-.art .th.cor{background:var(--f)!important;color:var(--t)!important}
-html.escuro .art .th.cor,html.escuro .pil{background:color-mix(in srgb,var(--t) 26%,#1A1726)!important;color:color-mix(in srgb,var(--t) 45%,#fff)!important}
-html.escuro .mini{background:color-mix(in srgb,var(--t) 20%,#1A1726)!important}html.escuro .mini .mi{color:color-mix(in srgb,var(--t) 45%,#fff)}
+html.escuro .mini .ms{color:#A9C2BA}html.escuro .mini .mi{background:var(--g)!important;color:#2E2A45;background:rgba(255,255,255,.08)}
+.art .th.cor{background:var(--g)!important;color:#2E2A45!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6)}
+html.escuro .art .th.cor,html.escuro .mini .mi{background:var(--g)!important;color:#2E2A45!important;box-shadow:none!important;filter:brightness(.9) saturate(1.1)}
+html.escuro .pil{background:color-mix(in srgb,var(--t) 26%,#1A1726)!important;color:color-mix(in srgb,var(--t) 45%,#fff)!important}
+html.escuro .mini{background:color-mix(in srgb,var(--t) 20%,#1A1726)!important}
 .dc{display:flex;gap:12px;width:100%;text-align:left;background:#fff;border:none;border-radius:14px;padding:12px;box-shadow:var(--sh);color:var(--ink);align-items:flex-start;font-family:inherit}
 .dc .th{width:38px;height:38px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#EEE8FC,#DDD2F8);color:var(--navy)}
 .dc .tt{font-size:13.5px;font-weight:500;line-height:1.3}
@@ -811,10 +812,23 @@ const ART_INFO = {
   "cuidar": ["bemestar", "Pausas curtas que fazem diferença"],
   "seletividade": ["humor", "Pequenos passos à mesa"],
 };
+const GRADS = [
+  "linear-gradient(135deg,#FFE3EC 0%,#E9E0FF 55%,#D9F0FF 100%)",
+  "linear-gradient(135deg,#FFF1D6 0%,#FFE0E6 50%,#EADFFF 100%)",
+  "linear-gradient(135deg,#DDF7EE 0%,#DCEBFF 55%,#EFE2FF 100%)",
+  "linear-gradient(135deg,#E6E1FF 0%,#FFE1F1 50%,#FFF0D9 100%)",
+  "linear-gradient(135deg,#D9F3FF 0%,#E2FBE9 50%,#FFF6D6 100%)",
+  "linear-gradient(135deg,#FFE6DA 0%,#FFF3C9 50%,#DDF6E8 100%)",
+  "linear-gradient(135deg,#EEDCFF 0%,#DCE6FF 50%,#D7F6F4 100%)",
+  "linear-gradient(135deg,#FFDDE4 0%,#FFEBD9 50%,#E4F4FF 100%)",
+  "linear-gradient(135deg,#E0F5E6 0%,#F4F0D4 50%,#FFE2EA 100%)",
+  "linear-gradient(135deg,#DAEBFF 0%,#EADBFF 50%,#FFDDEB 100%)",
+];
+const gradDe = id => { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const i = Object.keys(ART_INFO).indexOf(id); return GRADS[(i >= 0 ? i : h) % GRADS.length]; };
 const corCat = k => CAT_COR[k] || CAT_COR.artigo;
 const pilCat = k => { const [f, t] = corCat(k); return `<span class="pil" style="--f:${f};--t:${t}">${CAT_NOME[k] || ""}</span>`; };
-const cardArtigo = c => { const [f, t] = corCat(c.cat); const [i, sub] = ART_INFO[c.id] || [CAT_ICON[c.cat] || "artigo", ""]; return `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th cor" style="--f:${f};--t:${t}">${ic(i, 20)}</span><span class="grow" style="min-width:0"><span class="t" style="display:block">${esc(c.titulo)}</span>${sub ? `<span class="sb">${esc(sub)}</span>` : ""}<span class="m" style="display:flex;align-items:center;gap:6px">${pilCat(c.cat)}<span>${c.min} min</span></span></span>${ic("seta", 16)}</button>`; };
-const miniDireito = c => { const [f, t] = corCat("direitos"); const [i, sub, curto] = ART_INFO[c.id] || ["direitos", "", ""]; return `<button class="mini" data-a="ir" data-v="artigo" data-id="${c.id}" style="--f:${f};--t:${t}"><span class="mi">${ic(i, 18)}</span><span class="mt">${esc(curto || c.titulo.split(":")[0])}</span><span class="ms">${esc(sub)}</span></button>`; };
+const cardArtigo = c => { const [f, t] = corCat(c.cat); const [i, sub] = ART_INFO[c.id] || [CAT_ICON[c.cat] || "artigo", ""]; return `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th cor" style="--g:${gradDe(c.id)}">${ic(i, 20)}</span><span class="grow" style="min-width:0"><span class="t" style="display:block">${esc(c.titulo)}</span>${sub ? `<span class="sb">${esc(sub)}</span>` : ""}<span class="m" style="display:flex;align-items:center;gap:6px">${pilCat(c.cat)}<span>${c.min} min</span></span></span>${ic("seta", 16)}</button>`; };
+const miniDireito = c => { const [f, t] = corCat("direitos"); const [i, sub, curto] = ART_INFO[c.id] || ["direitos", "", ""]; return `<button class="mini" data-a="ir" data-v="artigo" data-id="${c.id}" style="--f:${f};--t:${t}"><span class="mi" style="--g:${gradDe(c.id)}">${ic(i, 18)}</span><span class="mt">${esc(curto || c.titulo.split(":")[0])}</span><span class="ms">${esc(sub)}</span></button>`; };
 
 /* ---------- Telas ---------- */
 const TELAS = {};
@@ -921,7 +935,7 @@ TELAS.conteudos = (p) => {
   return `${topoRaiz("Conteúdos")}
 <div class="wrap stack" style="padding-top:8px;gap:12px">
   <div class="cat" role="tablist" aria-label="Categorias">${CATS.map(([k, l]) => `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "on" : ""}" data-a="cont-cat" data-v="${k}">${l}</button>`).join("")}</div>
-  ${cat === "todos" || cat === "direitos" ? `<button class="art guia" data-a="ir" data-v="direitos"><span class="th" style="background:#0B7552!important;color:#fff!important">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="sb">BPC, plano, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
+  ${cat === "todos" || cat === "direitos" ? `<button class="art guia" data-a="ir" data-v="direitos"><span class="th cor" style="--g:linear-gradient(135deg,#DDF7EE 0%,#FFF1D6 50%,#E9E0FF 100%)">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="sb">BPC, plano, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
   ${dest ? `<button class="tile au-indigo" data-a="ir" data-v="artigo" data-id="${dest.id}" style="border:1px solid rgba(255,255,255,.14);text-align:left;width:100%;padding:14px 16px;border-radius:20px;cursor:pointer;font-family:inherit"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Em destaque · ${CAT_NOME[dest.cat]}</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">${esc(dest.titulo)}</p><p style="font-size:12px;opacity:.85;margin-top:6px">${esc((ART_INFO[dest.id] || [])[1] || "")}${(ART_INFO[dest.id] || [])[1] ? " · " : ""}${dest.min} min de leitura</p></button>` : ""}
   ${cat === "todos" ? (() => { const resto = lista.slice(1); const dir = resto.filter(c => c.cat === "direitos"); const dia = resto.filter(c => c.cat === "artigo" || c.cat === "dica"); const outros = resto.filter(c => !dir.includes(c) && !dia.includes(c));
       return `${dia.length ? `<p class="sec">Para o dia a dia</p>${dia.map(cardArtigo).join("")}` : ""}
