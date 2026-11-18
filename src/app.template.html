@@ -72,39 +72,24 @@ h3{font-size:14px;font-weight:600}
 .chip{height:auto;min-height:38px;padding:8px 16px;line-height:1.3;text-align:left}
 @media (max-width:374px){.chips.dias{display:grid;grid-template-columns:repeat(4,1fr)}.btn svg{display:none}.qa .btn{padding:0 6px;font-size:12.5px}}
 @media (max-width:374px){.chips.dias .opt{flex:none}}.qa .btn{padding:0 8px;gap:6px;font-size:13px;height:auto;min-height:44px}
-/* seletor de dia e hora */
+/* seletor de dia e hora: campos com lista suspensa */
 .pk{display:flex;flex-direction:column;gap:8px}
-.pk-l{font-size:11px;font-weight:600;margin-bottom:-2px}.pk-l em{font-style:normal;font-weight:500;color:var(--muted)}
-.dstrip{position:relative;display:flex;gap:6px;overflow-x:auto;margin:0 calc(var(--pkm,16px) * -1);padding:2px var(--pkm,16px) 6px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.dstrip::-webkit-scrollbar{display:none}
-.dc2{flex:none;position:relative;width:50px;height:56px;border-radius:15px;border:1px solid rgba(20,20,40,.06);background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:inherit;color:var(--ink);cursor:pointer;scroll-snap-align:center;padding:0}
-.dc2 small{font-size:10px;font-weight:500;color:var(--muted);line-height:1}
-.dc2 b{font-size:16px;font-weight:600;line-height:1;display:flex}
-.dc2.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 8px 16px -8px rgba(91,46,232,.55)}
-.dc2.on small{color:rgba(255,255,255,.82)}
-.ptabs{display:flex;gap:3px;background:rgba(20,20,40,.055);border-radius:14px;padding:3px}
-.ptabs button,.ptabs label{position:relative;flex:1;height:32px;border:none;border-radius:11px;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-.ptabs .on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(20,20,40,.12)}
-.tgrade{display:grid;grid-template-columns:repeat(auto-fill,minmax(50px,1fr));gap:6px}
-.tc{height:36px;border-radius:12px;border:1px solid rgba(20,20,40,.06);background:rgba(255,255,255,.92);font-family:inherit;font-size:11px;font-weight:500;color:var(--ink);cursor:pointer;padding:0}
-.tc.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 6px 12px -6px rgba(91,46,232,.55)}
-.pkcal{background:rgba(255,255,255,.7);border:1px solid rgba(20,20,40,.06);border-radius:16px;padding:8px 8px 10px}
-.pkcal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.pkcal-h span{font-size:13px;font-weight:600;text-transform:capitalize}
-.pkcal-h button{width:34px;height:34px;border-radius:50%;border:none;background:rgba(20,20,40,.05);display:flex;align-items:center;justify-content:center;color:var(--ink);cursor:pointer;padding:0}
-.pkcal-w,.pkcal-g{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center}
-.pkcal-w span{font-size:10px;font-weight:500;color:var(--muted);height:20px;line-height:20px}
-.pkcal-g button,.pkcal-g i{height:34px}
-.pkcal-g button{border:none;background:none;border-radius:50%;font-family:inherit;font-size:12.5px;font-weight:500;color:var(--ink);cursor:pointer;padding:0}
-.pkcal-g .hj{box-shadow:inset 0 0 0 1.5px var(--navy)}
-.pkcal-g .on{background:var(--navy);color:#fff;box-shadow:none}
-.hstrip{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:2px 16px 4px;scrollbar-width:none;position:relative}.hstrip::-webkit-scrollbar{display:none}
-.hstrip .tc{flex:none;width:40px}
-.tgrade.m6{grid-template-columns:repeat(6,1fr)}.tgrade.m6 .tc{font-size:11.5px}
-html.escuro .pkcal{background:#221E33;border-color:rgba(255,255,255,.08)}html.escuro .pkcal-h button{background:rgba(255,255,255,.08)}
-.sug{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px 2px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
-.sug button{flex:none;height:30px;padding:0 12px;border-radius:15px;border:1px solid rgba(20,20,40,.07);background:rgba(255,255,255,.9);font-family:inherit;font-size:11.5px;font-weight:500;color:var(--ink);cursor:pointer}
-.sug button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.pk-l{font-size:11px;font-weight:600;margin-bottom:-4px}.pk-l em{font-style:normal;font-weight:500;color:var(--muted)}
+.pk3{display:grid;grid-template-columns:.85fr 1fr 1.15fr;gap:8px}
+.pk2{display:flex;align-items:center;gap:8px}.pk2 .pkf{flex:1}
+.pk-dp{font-size:18px;font-weight:600;color:var(--muted)}
+.pkf{position:relative;height:50px;border-radius:14px;border:1px solid rgba(20,20,40,.07);background:rgba(255,255,255,.9);font-family:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;padding:0 26px 0 12px;cursor:pointer;text-align:left;min-width:0}
+.pkf small{font-size:9.5px;font-weight:500;color:var(--muted);line-height:1}
+.pkf b{font-size:15px;font-weight:600;line-height:1.1}
+.pkf:after{content:"";position:absolute;right:12px;top:50%;width:6px;height:6px;border-right:1.6px solid var(--muted);border-bottom:1.6px solid var(--muted);transform:translateY(-70%) rotate(45deg)}
+.pkf.aberto{border-color:var(--navy);box-shadow:0 0 0 3px rgba(91,46,232,.12)}
+.pkpop{position:fixed;z-index:90;overflow-y:auto;background:#fff;border-radius:16px;box-shadow:0 18px 44px -12px rgba(22,23,58,.4),0 0 0 1px rgba(20,20,40,.06);padding:4px;overscroll-behavior:contain;scroll-snap-type:y proximity;-webkit-overflow-scrolling:touch;animation:pkabre .14s ease-out}
+@keyframes pkabre{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.pkpop button{display:block;width:100%;height:40px;border:none;background:none;border-radius:11px;font-family:inherit;font-size:14px;font-weight:500;color:var(--ink);cursor:pointer;scroll-snap-align:center;padding:0}
+.pkpop button.on{background:var(--navy);color:#fff}
+html.escuro .pkf{background:#221E33;border-color:rgba(255,255,255,.08)}
+html.escuro .pkpop{background:#241F38;box-shadow:0 18px 44px -12px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08)}
+html.escuro .pkpop button.on{background:#7B5CF5}
 .mais{border-radius:14px;background:rgba(255,255,255,.6);border:1px solid rgba(20,20,40,.05);padding:0 12px}
 .mais summary{list-style:none;height:40px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink)}
 .mais summary::-webkit-details-marker{display:none}
@@ -114,10 +99,8 @@ html.escuro .pkcal{background:#221E33;border-color:rgba(255,255,255,.08)}html.es
 .pk-foot{position:sticky;bottom:-8px;z-index:2;display:flex;flex-direction:column;gap:8px;padding:10px 0 2px;margin-top:2px;background:linear-gradient(to top,var(--bg) 72%,transparent)}
 .chips.dias{flex-wrap:nowrap;gap:6px}.chips.dias .opt{flex:1}.chips.dias .opt span{width:100%;min-width:0;padding:0;height:40px;font-size:11.5px;border-radius:14px}
 .sheet h2{line-height:1.2}
-html.escuro .dc2,html.escuro .tc,html.escuro .sug button,html.escuro .mais{background:#221E33;border-color:rgba(255,255,255,.08);color:var(--ink)}
-html.escuro .pk-foot{background:linear-gradient(to top,#17142A 72%,transparent)}html.escuro .ptabs{background:rgba(255,255,255,.07)}html.escuro .ptabs .on{background:#2F2950;color:#C9BCFF}
-html.escuro .dc2.on,html.escuro .tc.on,html.escuro .sug button.on{background:#7B5CF5;border-color:#7B5CF5;color:#fff}
-.mini .mi{background:var(--g)!important;color:#2E2A45;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+html.escuro .mais{background:#221E33;border-color:rgba(255,255,255,.08)}
+html.escuro .pk-foot{background:linear-gradient(to top,#17142A 72%,transparent)}.mini .mi{background:var(--g)!important;color:#2E2A45;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
 .mini .mt{font-size:13px;font-weight:500;line-height:1.25}
 .mini .ms{font-size:11px;color:#4A5A55;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 html.escuro .mini .ms{color:#A9C2BA}html.escuro .mini .mi{background:var(--g)!important;color:#2E2A45;background:rgba(255,255,255,.08)}
@@ -537,13 +520,14 @@ window.addEventListener("resize", () => atualizarDock());
 function toast(msg) { const t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 3200); }
 let SHEET_ID = 0;
 function abrirSheet(html, rotulo = "Opções") {
-  const id = ++SHEET_ID;
+  pkFechar(); const id = ++SHEET_ID;
   document.getElementById("layer").innerHTML = `<div class="overlay" data-a="fechar-fundo"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(rotulo)}"><div class="grab-area" aria-hidden="true"><div class="grab"></div></div>${html}</div></div>`;
   const sh = document.querySelector("#layer .sheet"); arrastar(sh);
   const f = sh.querySelector("[data-nofocus]") ? null : sh.querySelector("input, button"); if (f) f.focus({ preventScroll: true });
   return id;
 }
 function fecharSheet(rapido = false) {
+  pkFechar();
   const ov = document.querySelector("#layer .overlay"); document.getElementById("dock").classList.remove("aberto");
   if (!ov) return; const id = SHEET_ID;
   if (rapido || REDUZ) { document.getElementById("layer").innerHTML = ""; return; }
@@ -552,7 +536,7 @@ function fecharSheet(rapido = false) {
 }
 function arrastar(sh) {
   let y0 = null, t0 = 0, dy = 0, ativo = false;
-  const inicio = e => { if (sh.scrollTop > 0 && !e.target.closest(".grab-area")) return; if (e.target.closest("input, select, textarea, .dstrip, .hstrip, .sug")) return; y0 = e.clientY; t0 = performance.now(); dy = 0; ativo = false; };
+  const inicio = e => { if (sh.scrollTop > 0 && !e.target.closest(".grab-area")) return; if (e.target.closest("input, select, textarea, .pkpop")) return; y0 = e.clientY; t0 = performance.now(); dy = 0; ativo = false; };
   const mover = e => { if (y0 === null) return; dy = e.clientY - y0; if (!ativo && dy > 6) { ativo = true; sh.style.transition = "none"; sh.style.animation = "none"; try { sh.setPointerCapture(e.pointerId); } catch (er) {} } if (ativo) { e.preventDefault(); const d = dy > 0 ? dy : dy / 4; sh.style.transform = `translateY(${d}px)`; const ov = sh.parentElement; ov.style.background = `rgba(22,23,58,${Math.max(0, .35 - Math.max(0, dy) / 900)})`; } };
   const fim = () => { if (y0 === null) return; const v = dy / Math.max(1, performance.now() - t0); y0 = null; if (!ativo) return; ativo = false;
     if (dy > 55 || v > 0.45) { sh.style.transition = "transform .28s cubic-bezier(.4,0,1,1)"; sh.style.transform = "translateY(110%)"; const ov = sh.parentElement; ov.style.transition = "opacity .28s"; ov.style.opacity = "0"; const id = SHEET_ID; document.getElementById("dock").classList.remove("aberto"); setTimeout(() => { if (SHEET_ID === id) document.getElementById("layer").innerHTML = ""; }, 280); }
@@ -1350,59 +1334,78 @@ DADOS: ${contexto()}`;
   if (TELA.nome === "assistente") { render(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }
 }
 
-/* ---------- Seletor de dia e hora (sem diálogos do sistema) ---------- */
-const PERIODOS = [["Manhã", 7, 12], ["Tarde", 12, 18], ["Noite", 18, 22]];
-const periodoDe = h => { const n = parseInt(String(h).slice(0, 2), 10); return n < 12 ? 0 : n < 18 ? 1 : 2; };
+/* ---------- Seletor de dia e hora: campos com lista suspensa ---------- */
+const MES_ABR = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+const MES_LONGO = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+const diasNoMes = (y, m) => new Date(y, m, 0).getDate();
 const rotuloDia = k => { const h = iso(new Date()); return k === h ? "hoje" : k === iso(addDays(new Date(), 1)) ? "amanhã" : k === iso(addDays(new Date(), -1)) ? "ontem" : `${DIAS[parseISO(k).getDay()].toLowerCase()}, ${fmtData(k).slice(0, 5)}`; };
-const ymDe = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}`;
-function pkCalHTML(ym, val) {
-  const [y, m] = ym.split("-").map(Number), prim = new Date(y, m - 1, 1), desl = prim.getDay(), n = new Date(y, m, 0).getDate(), hoje = iso(new Date());
-  const cel = []; for (let i = 0; i < desl; i++) cel.push("<i></i>");
-  for (let d = 1; d <= n; d++) { const k = `${y}-${pad(m)}-${pad(d)}`; cel.push(`<button type="button" class="${k === val ? "on" : ""}${k === hoje ? " hj" : ""}" data-a="pk-data" data-v="${k}" aria-label="${fmtLonga(k)}">${d}</button>`); }
-  return `<div class="pkcal"><div class="pkcal-h"><button type="button" data-a="pk-mes" data-v="${ymDe(new Date(y, m - 2, 1))}" aria-label="Mês anterior">${ic("esquerda", 16)}</button><span>${MESES[m - 1]} ${y}</span><button type="button" data-a="pk-mes" data-v="${ymDe(new Date(y, m, 1))}" aria-label="Próximo mês">${ic("seta", 16)}</button></div><div class="pkcal-w">${["D", "S", "T", "Q", "Q", "S", "S"].map(x => `<span>${x}</span>`).join("")}</div><div class="pkcal-g">${cel.join("")}</div></div>`;
+const pkCampo = (k, rotulo, texto) => `<button type="button" class="pkf" data-a="pk-abrir" data-k="${k}" aria-haspopup="listbox" aria-expanded="false"><small>${rotulo}</small><b>${texto}</b></button>`;
+function pkDataHTML(nome, valor, _dias, passado = false) {
+  const val = valor || iso(new Date()), [y, m, d] = val.split("-").map(Number);
+  return `<div class="pk" data-pk="data" data-passado="${passado ? 1 : 0}"><input type="hidden" name="${nome}" value="${val}"><div class="pk3">${pkCampo("d", "Dia", pad(d))}${pkCampo("m", "Mês", MES_ABR[m - 1])}${pkCampo("a", "Ano", y)}</div></div>`;
 }
-function pkDataHTML(nome, valor, dias = 14, passado = false, cal = "") {
-  const val = valor || iso(new Date()); let achou = false; const ini = passado ? -(dias - 1) : 0;
-  const chips = Array.from({ length: dias }, (_, j) => { const i = ini + j, d = addDays(new Date(), i), k = iso(d), on = k === val; if (on) achou = true;
-    const nome3 = i === 0 ? "Hoje" : i === 1 ? "Amanhã" : i === -1 ? "Ontem" : DIAS[d.getDay()];
-    return `<button type="button" class="dc2${on ? " on" : ""}" data-a="pk-data" data-v="${k}" aria-pressed="${on}"><small>${nome3}</small><b>${d.getDate()}</b></button>`; }).join("");
-  const dv = parseISO(val), aberto = !!cal;
-  const outra = `<button type="button" class="dc2${achou && !aberto ? "" : " on"}" data-a="pk-cal" aria-expanded="${aberto}"><small>${achou ? "Outra" : MESES[dv.getMonth()].slice(0, 3)}</small><b>${achou ? ic("rotina", 18) : dv.getDate()}</b></button>`;
-  return `<div class="pk" data-pk="data" data-dias="${dias}" data-passado="${passado ? 1 : 0}" data-cal="${cal}"><input type="hidden" name="${nome}" value="${val}"><div class="dstrip">${chips}${outra}</div>${aberto ? pkCalHTML(cal, val) : ""}</div>`;
+function pkHoraHTML(nome, valor) {
+  const v = valor || "";
+  return `<div class="pk" data-pk="hora"><input type="hidden" name="${nome}" value="${v}"><div class="pk2">${pkCampo("h", "Hora", v ? v.slice(0, 2) : "--")}<span class="pk-dp">:</span>${pkCampo("n", "Minuto", v ? v.slice(3, 5) : "--")}</div></div>`;
 }
-function pkHoraHTML(nome, valor, per) {
-  const v = valor || "", hAgora = new Date().getHours(), hh = v.slice(0, 2), mm = v.slice(3, 5);
-  const fora = v && !/:(00|30)$/.test(v);
-  const p = per != null ? per : fora ? 3 : v ? periodoDe(v) : (hAgora >= 12 && hAgora < 17 ? 1 : 0);
-  const abas = [...PERIODOS.map(x => x[0]), "Outro"].map((n, i) => `<button type="button" class="${i === p ? "on" : ""}" data-a="pk-per" data-v="${i}">${n}</button>`).join("");
-  let corpo;
-  if (p === 3) {
-    const horas = Array.from({ length: 24 }, (_, i) => pad(i)), mins = Array.from({ length: 12 }, (_, i) => pad(i * 5));
-    corpo = `<div class="pk-l">Hora</div><div class="hstrip">${horas.map(x => `<button type="button" class="tc${x === hh ? " on" : ""}" data-a="pk-h" data-v="${x}" aria-pressed="${x === hh}">${x}</button>`).join("")}</div><div class="pk-l">Minuto</div><div class="tgrade m6">${mins.map(x => `<button type="button" class="tc${x === mm ? " on" : ""}" data-a="pk-m" data-v="${x}" aria-pressed="${x === mm}">${x}</button>`).join("")}</div>`;
-  } else {
-    const [, a, b] = PERIODOS[p], slots = []; for (let x = a; x < b; x++) slots.push(`${pad(x)}:00`, `${pad(x)}:30`);
-    const lista = v && !slots.includes(v) && periodoDe(v) === p ? [...slots, v].sort() : slots;
-    corpo = `<div class="tgrade">${lista.map(t => `<button type="button" class="tc${t === v ? " on" : ""}" data-a="pk-hora" data-v="${t}" aria-pressed="${t === v}">${t}</button>`).join("")}</div>`;
+function pkOpcoes(box, k) {
+  const val = box.querySelector('input[type="hidden"]').value;
+  if (box.dataset.pk === "data") {
+    const [y, m, d] = val.split("-").map(Number), ano = new Date().getFullYear(), passado = box.dataset.passado === "1";
+    if (k === "d") return [Array.from({ length: diasNoMes(y, m) }, (_, i) => [pad(i + 1), pad(i + 1)]), pad(d)];
+    if (k === "m") return [MES_LONGO.map((n, i) => [pad(i + 1), n]), pad(m)];
+    const a0 = Math.min(y, passado ? ano - 9 : ano), a1 = Math.max(y, passado ? ano : ano + 3);
+    return [Array.from({ length: a1 - a0 + 1 }, (_, i) => [String(a0 + i), String(a0 + i)]), String(y)];
   }
-  return `<div class="pk" data-pk="hora" data-per="${p}"><input type="hidden" name="${nome}" value="${v}"><div class="ptabs">${abas}</div>${corpo}</div>`;
+  const hh = val.slice(0, 2), mm = val.slice(3, 5);
+  if (k === "h") return [[["", "--"], ...Array.from({ length: 24 }, (_, i) => [pad(i), pad(i)])], hh];
+  const mins = Array.from({ length: 12 }, (_, i) => pad(i * 5)); if (mm && !mins.includes(mm)) { mins.push(mm); mins.sort(); }
+  return [mins.map(x => [x, x]), mm];
 }
 function pkResumo(f) {
   const b = f && f.querySelector("[data-resumo]"); if (!b) return;
   const d = f.querySelector('input[name="data"]'), hh = f.querySelector('input[name="hora"]');
   b.textContent = `${b.dataset.pre} ${rotuloDia(d ? d.value : iso(new Date()))}${hh && hh.value ? " às " + hh.value : ""}`;
 }
-function pkSet(box, valor, per, cal) {
-  const nome = box.querySelector('input[type="hidden"]').name, tmp = document.createElement("div"), sc = box.querySelector(".dstrip"), x = sc ? sc.scrollLeft : 0;
-  tmp.innerHTML = box.dataset.pk === "data" ? pkDataHTML(nome, valor, Number(box.dataset.dias) || 14, box.dataset.passado === "1", cal || "") : pkHoraHTML(nome, valor, per);
-  const el = tmp.firstElementChild; box.replaceWith(el);
-  const ns = el.querySelector(".dstrip"); if (ns) { ns.scrollLeft = x; ns.dataset.ok = "1"; const on = ns.querySelector(".dc2.on"); if (on && (on.offsetLeft < x || on.offsetLeft + on.offsetWidth > x + ns.clientWidth)) ns.scrollLeft = on.offsetLeft - (ns.clientWidth - on.offsetWidth) / 2; }
-  pkResumo(el.closest("form"));
+function pkSet(box, valor) {
+  const nome = box.querySelector('input[type="hidden"]').name, tmp = document.createElement("div");
+  tmp.innerHTML = box.dataset.pk === "data" ? pkDataHTML(nome, valor, 0, box.dataset.passado === "1") : pkHoraHTML(nome, valor);
+  const el = tmp.firstElementChild; box.replaceWith(el); pkResumo(el.closest("form"));
 }
-function pkAjustar() {
-  document.querySelectorAll(".dstrip:not([data-ok]), .hstrip:not([data-ok])").forEach(st => { st.dataset.ok = "1"; const on = st.querySelector(".on"); if (on) st.scrollLeft = on.offsetLeft - (st.clientWidth - on.offsetWidth) / 2; else if (st.classList.contains("hstrip")) st.scrollLeft = 8 * 46 - 40; });
+function pkEscolher(box, k, v) {
+  let val = box.querySelector('input[type="hidden"]').value;
+  if (box.dataset.pk === "data") {
+    let [y, m, d] = val.split("-").map(Number);
+    if (k === "d") d = Number(v); if (k === "m") m = Number(v); if (k === "a") y = Number(v);
+    val = `${y}-${pad(m)}-${pad(Math.min(d, diasNoMes(y, m)))}`;
+  } else {
+    const hh = val.slice(0, 2), mm = val.slice(3, 5);
+    val = k === "h" ? (v === "" ? "" : `${v}:${mm || "00"}`) : `${hh || "08"}:${v}`;
+  }
+  pkSet(box, val);
 }
-new MutationObserver(pkAjustar).observe(document.body, { childList: true, subtree: true });
-const SUG_CONSULTA = ["Neuropediatra", "Pediatra", "Psiquiatra", "Psicologia", "Fonoaudiologia", "Terapia ocupacional", "Dentista", "Exames"];
+let PKPOP = null;
+function pkFechar() { if (!PKPOP) return; PKPOP.el.remove(); PKPOP.btn.setAttribute("aria-expanded", "false"); PKPOP.btn.classList.remove("aberto"); PKPOP = null; }
+function pkPosicionar() {
+  if (!PKPOP) return; const { el, btn } = PKPOP, r = btn.getBoundingClientRect();
+  if (!btn.isConnected || r.bottom < 0 || r.top > innerHeight) { pkFechar(); return; }
+  const w = Math.max(r.width, 110), alt = Math.min(el.scrollHeight, 228), abaixo = innerHeight - r.bottom, acima = r.top, sobe = abaixo < alt + 14 && acima > abaixo;
+  el.style.width = w + "px"; el.style.left = Math.max(8, Math.min(r.left, innerWidth - w - 8)) + "px"; el.style.maxHeight = Math.max(80, Math.min(alt, (sobe ? acima : abaixo) - 14)) + "px";
+  if (sobe) { el.style.top = "auto"; el.style.bottom = (innerHeight - r.top + 6) + "px"; } else { el.style.bottom = "auto"; el.style.top = (r.bottom + 6) + "px"; }
+}
+function pkAbrir(btn) {
+  const mesmo = PKPOP && PKPOP.btn === btn; pkFechar(); if (mesmo) return;
+  const box = btn.closest(".pk"), k = btn.dataset.k, [ops, atual] = pkOpcoes(box, k);
+  const el = document.createElement("div"); el.className = "pkpop"; el.setAttribute("role", "listbox");
+  el.innerHTML = ops.map(([v, l]) => `<button type="button" role="option" class="${v === atual ? "on" : ""}" data-v="${v}" aria-selected="${v === atual}">${l}</button>`).join("");
+  document.body.appendChild(el);
+  btn.setAttribute("aria-expanded", "true"); btn.classList.add("aberto"); PKPOP = { el, btn, box, k }; pkPosicionar();
+  const alvo = k === "h" && !atual ? el.querySelector('button[data-v="08"]') : el.querySelector(".on"); el.scrollTop = alvo ? alvo.offsetTop - (el.clientHeight - alvo.offsetHeight) / 2 : 0;
+  el.addEventListener("click", e => { const o = e.target.closest("button[data-v]"); if (!o || !PKPOP) return; const { box: bx, k: kk } = PKPOP; pkFechar(); pkEscolher(bx, kk, o.dataset.v); });
+}
+document.addEventListener("pointerdown", e => { if (PKPOP && !e.target.closest(".pkpop") && !e.target.closest(".pkf")) pkFechar(); }, true);
+document.addEventListener("scroll", e => { if (PKPOP && !(e.target.closest && e.target.closest(".pkpop"))) pkPosicionar(); }, true);
+addEventListener("resize", () => pkPosicionar());
 
 /* ---------- Ações ---------- */
 document.addEventListener("click", async e => {
@@ -1476,15 +1479,14 @@ document.addEventListener("click", async e => {
     case "trat-novo": fecharSheet(); go("tratform", {}); break;
     case "consulta-nova": case "consulta-editar": { const c = (a === "consulta-editar" && S.consultas.items.find(x => x.id === id)) || (v ? { data: v } : {}); const dv = c.data || iso(new Date()), pre = c.id ? "Salvar para" : "Marcar para"; fecharSheet(true); abrirSheet(`<form class="stack" data-f="consulta" data-nofocus data-id="${esc(c.id || "")}">
       <div class="row" style="justify-content:space-between;align-items:baseline"><h2>${c.id ? "Editar consulta" : "Nova consulta"}</h2><span class="xs muted">para <b>${esc(nomeCrianca())}</b></span></div>
-      <div class="sug">${SUG_CONSULTA.map(n => `<button type="button" class="${c.titulo === n ? "on" : ""}" data-a="pk-sug" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
-      <input class="input" name="titulo" required value="${esc(c.titulo)}" placeholder="Com quem ou qual especialidade" aria-label="Com quem ou qual especialidade">
-      <div class="pk-l">Dia</div>${pkDataHTML("data", dv)}
+      <input class="input" name="titulo" required value="${esc(c.titulo)}" placeholder="Com quem ou qual especialidade" aria-label="Com quem ou qual especialidade" list="esp-lista" autocomplete="off"><datalist id="esp-lista">${["Neuropediatra", "Pediatra", "Psiquiatra", "Psicologia", "Fonoaudiologia", "Terapia ocupacional", "Dentista", "Exames"].map(n => `<option value="${n}">`).join("")}</datalist>
+      <div class="pk-l">Quando</div>${pkDataHTML("data", dv)}
       <div class="pk-l">Horário <em>(opcional)</em></div>${pkHoraHTML("hora", c.hora || "")}
       <details class="mais" ${c.profissional || c.local || c.obs ? "open" : ""}><summary>Mais detalhes</summary><div class="stack">
         <label class="f">Profissional<input class="input" name="profissional" value="${esc(c.profissional)}" placeholder="Ex.: Dra. Ana"></label>
         <label class="f">Local<input class="input" name="local" value="${esc(c.local)}" placeholder="Clínica, hospital, online"></label>
         <label class="f">Observação<input class="input" name="obs" value="${esc(c.obs)}" placeholder="Ex.: levar exames"></label></div></details>
-      <div class="pk-foot"><button class="btn full" type="submit" data-resumo data-pre="${pre}">${pre} ${rotuloDia(dv)}${c.hora ? " às " + c.hora : ""}</button>${c.id ? `<button class="btn danger full" type="button" data-a="consulta-apagar" data-id="${c.id}">Apagar consulta</button>` : ""}</div></form>`, "Consulta"); pkAjustar(); break; }
+      <div class="pk-foot"><button class="btn full" type="submit" data-resumo data-pre="${pre}">${pre} ${rotuloDia(dv)}${c.hora ? " às " + c.hora : ""}</button>${c.id ? `<button class="btn danger full" type="button" data-a="consulta-apagar" data-id="${c.id}">Apagar consulta</button>` : ""}</div></form>`, "Consulta"); break; }
     case "consulta-apagar": S.consultas.items = S.consultas.items.filter(x => x.id !== id); fecharSheet(); render(); salvar("consultas").catch(() => {}); toast("Consulta apagada."); break;
     case "trat-editar": go("tratform", { id }); break;
     case "trat-apagar": confirmar("Apagar tratamento?", "As sessões saem da rotina.", "Apagar", async () => { S.trat.items = S.trat.items.filter(t => t.id !== id); await salvar("trat").catch(() => {}); go("tratamentos", {}, true); }); break;
@@ -1494,14 +1496,7 @@ document.addEventListener("click", async e => {
     case "med-remover": { if (document.querySelectorAll("[data-med]").length > 1) el.closest("[data-med]").remove(); else toast("A receita precisa de pelo menos um remédio."); break; }
     case "med-editar": go("medform", { id }); break;
     case "med-apagar": confirmar("Tirar da rotina?", "O remédio deixa de aparecer na rotina.", "Tirar", async () => { S.meds.items = S.meds.items.filter(m => m.id !== id); await salvar("meds").catch(() => {}); go("rotina", {}, true); }); break;
-    case "pk-data": pkSet(el.closest(".pk"), v); break;
-    case "pk-cal": { const bx = el.closest(".pk"), cur = bx.querySelector('input[type="hidden"]').value; pkSet(bx, cur, null, bx.dataset.cal ? "" : cur.slice(0, 7)); break; }
-    case "pk-mes": { const bx = el.closest(".pk"); pkSet(bx, bx.querySelector('input[type="hidden"]').value, null, v); break; }
-    case "pk-per": { const bx = el.closest(".pk"); pkSet(bx, bx.querySelector('input[type="hidden"]').value, Number(v)); break; }
-    case "pk-hora": { const bx = el.closest(".pk"); pkSet(bx, bx.querySelector('input[type="hidden"]').value === v ? "" : v, Number(bx.dataset.per)); break; }
-    case "pk-h": { const bx = el.closest(".pk"), cur = bx.querySelector('input[type="hidden"]').value; pkSet(bx, `${v}:${cur.slice(3, 5) || "00"}`, 3); break; }
-    case "pk-m": { const bx = el.closest(".pk"), cur = bx.querySelector('input[type="hidden"]').value; pkSet(bx, `${cur.slice(0, 2) || "08"}:${v}`, 3); break; }
-    case "pk-sug": { const fm = el.closest("form"); fm.querySelector('[name="titulo"]').value = v; fm.querySelectorAll(".sug button").forEach(bt => bt.classList.toggle("on", bt === el)); break; }
+    case "pk-abrir": pkAbrir(el); break;
     case "tarefa-nova": fecharSheet(); abrirSheet(`<form class="stack" data-f="tarefa" data-nofocus><h2>Nova tarefa</h2><input class="input" name="titulo" required placeholder="O que fazer? Ex.: atividade sensorial" aria-label="O que fazer"><div class="pk-l">Dias</div><div class="chips dias">${[1,2,3,4,5,6,0].map(d => `<label class="opt"><input type="checkbox" name="dias" value="${d}" checked><span>${DIAS[d]}</span></label>`).join("")}</div><div class="pk-l">Horário <em>(opcional)</em></div>${pkHoraHTML("hora", "")}<div class="pk-foot"><button class="btn full" type="submit">Adicionar à rotina</button></div></form>`, "Nova tarefa"); break;
     case "tarefa-apagar": S.tarefas.items = S.tarefas.items.filter(t => t.id !== id); render(); salvar("tarefas").catch(() => {}); break;
     case "rede-novo": if (!plus()) { paywall("rede"); break; } abrirSheet(`<form class="stack" data-f="rede"><h2>Adicionar pessoa</h2><label class="f">Nome<input class="input" name="nome" required></label><label class="f">Papel<select class="input" name="papel">${["Mãe","Pai","Avó","Avô","Tia","Tio","Babá","Cuidador(a)","Irmão/Irmã","Professor(a)","Profissional","Outro"].map(x => `<option>${x}</option>`).join("")}</select></label><label class="f">Contato (opcional)<input class="input" name="contato" placeholder="Telefone ou e-mail"></label><label class="f">Observação (opcional)<input class="input" name="obs"></label><button class="btn full" type="submit">Adicionar</button><button class="btn sec full" type="button" data-a="fechar">Cancelar</button></form>`, "Adicionar pessoa"); break;
