@@ -81,14 +81,14 @@ with sync_playwright() as p:
     assert pg.evaluate("__db.perfis.length") == 1 and pg.evaluate("__db.perfis[0].crianca") == "Theo"
     pg.click("text=Terapia fixa")
     for d in ["1", "3"]: pg.click(f'label.opt:has(input[name="dias"][value="{d}"]) span')
-    pg.fill('input[name="hora"]', "10:00"); pg.click('form button[type="submit"]'); pg.wait_for_timeout(500)
+    pg.click('.tgrade .tc:has-text("10:00")'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(500)
     assert pg.evaluate("__db.tratamentos.length") == 1 and pg.evaluate("__db.tratamentos[0].dias") == [1, 3]
     assert pg.evaluate("__db.membros.length") == 1 and pg.evaluate("__db.membros[0].nome") == "Theo"
     assert pg.evaluate("__db.tratamentos[0].membro_id") == pg.evaluate("__db.membros[0].id")
     # consulta avulsa vai para o banco
     pg.evaluate("go('rotina',{},true)"); pg.wait_for_timeout(300)
     pg.click('button[data-a="consulta-nova"]'); pg.wait_for_timeout(300)
-    pg.fill('form[data-f="consulta"] input[name="titulo"]', "Neuropediatra"); pg.fill('form[data-f="consulta"] input[name="data"]', "2026-11-26"); pg.fill('form[data-f="consulta"] input[name="hora"]', "23:00")
+    pg.fill('form[data-f="consulta"] input[name="titulo"]', "Neuropediatra"); pg.fill('form[data-f="consulta"] .pk[data-pk="data"] .pk-nat', "2026-11-26"); pg.fill('form[data-f="consulta"] .pk[data-pk="hora"] .pk-nat', "23:00")
     pg.click('form[data-f="consulta"] button[type="submit"]'); pg.wait_for_timeout(500)
     assert pg.evaluate("__db.consultas.length") == 1 and pg.evaluate("__db.consultas[0].hora") == "23:00"
     pg.evaluate("go('rotina',{data:'2026-11-16'},true)"); pg.wait_for_timeout(400)

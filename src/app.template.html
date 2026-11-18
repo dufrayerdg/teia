@@ -63,10 +63,44 @@ h3{font-size:14px;font-weight:600}
 .art .sb{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .art .m{margin-top:5px!important}
 .pil{background:var(--f);color:var(--t);display:inline-block;font-size:10px;font-weight:500;letter-spacing:.2px;padding:2px 7px;border-radius:999px;line-height:1.4}
-.sec{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:6px 2px -4px}
+.secao{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:6px 2px -4px}
 .minis{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px 4px;scroll-padding:0 18px;scroll-snap-type:x mandatory;scrollbar-width:none}
 .minis::-webkit-scrollbar{display:none}
 .mini{background:var(--f);flex:none;width:128px;scroll-snap-align:start;border:none;border-radius:14px;padding:11px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;font-family:inherit;color:var(--ink);cursor:pointer}
+
+.btn svg{flex:none}.qa .btn{padding:0 8px;gap:6px;font-size:13px;height:44px}
+/* seletor de dia e hora */
+.pk{display:flex;flex-direction:column;gap:8px}
+.pk-l{font-size:11px;font-weight:600;margin-bottom:-2px}.pk-l em{font-style:normal;font-weight:500;color:var(--muted)}
+.dstrip{position:relative;display:flex;gap:6px;overflow-x:auto;margin:0 calc(var(--pkm,16px) * -1);padding:2px var(--pkm,16px) 6px;scroll-snap-type:x proximity;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dstrip::-webkit-scrollbar{display:none}
+.dc2{flex:none;position:relative;width:50px;height:56px;border-radius:15px;border:1px solid rgba(20,20,40,.06);background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:inherit;color:var(--ink);cursor:pointer;scroll-snap-align:center;padding:0}
+.dc2 small{font-size:10px;font-weight:500;color:var(--muted);line-height:1}
+.dc2 b{font-size:16px;font-weight:600;line-height:1;display:flex}
+.dc2.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 8px 16px -8px rgba(91,46,232,.55)}
+.dc2.on small{color:rgba(255,255,255,.82)}
+.dc2 input,.ptabs input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
+.ptabs{display:flex;gap:3px;background:rgba(20,20,40,.055);border-radius:14px;padding:3px}
+.ptabs button,.ptabs label{position:relative;flex:1;height:32px;border:none;border-radius:11px;background:none;font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.ptabs .on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(20,20,40,.12)}
+.tgrade{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.tc{height:36px;border-radius:12px;border:1px solid rgba(20,20,40,.06);background:rgba(255,255,255,.92);font-family:inherit;font-size:11.5px;font-weight:500;color:var(--ink);cursor:pointer;padding:0}
+.tc.on{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 6px 12px -6px rgba(91,46,232,.55)}
+.sug{display:flex;gap:6px;overflow-x:auto;margin:0 -16px;padding:0 16px 2px;scrollbar-width:none}.sug::-webkit-scrollbar{display:none}
+.sug button{flex:none;height:30px;padding:0 12px;border-radius:15px;border:1px solid rgba(20,20,40,.07);background:rgba(255,255,255,.9);font-family:inherit;font-size:11.5px;font-weight:500;color:var(--ink);cursor:pointer}
+.sug button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.mais{border-radius:14px;background:rgba(255,255,255,.6);border:1px solid rgba(20,20,40,.05);padding:0 12px}
+.mais summary{list-style:none;height:40px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink)}
+.mais summary::-webkit-details-marker{display:none}
+.mais summary:after{content:"+";font-size:18px;font-weight:400;color:var(--muted)}
+.mais[open] summary:after{content:"–"}
+.mais[open]{padding-bottom:12px}
+.pk-foot{position:sticky;bottom:-8px;z-index:2;display:flex;flex-direction:column;gap:8px;padding:10px 0 2px;margin-top:2px;background:linear-gradient(to top,var(--bg) 72%,transparent)}
+.chips.dias{flex-wrap:nowrap;gap:6px}.chips.dias .opt{flex:1}.chips.dias .opt span{width:100%;min-width:0;padding:0;height:40px}
+.sheet h2{line-height:1.2}
+html.escuro .dc2,html.escuro .tc,html.escuro .sug button,html.escuro .mais{background:#221E33;border-color:rgba(255,255,255,.08);color:var(--ink)}
+html.escuro .pk-foot{background:linear-gradient(to top,#17142A 72%,transparent)}html.escuro .ptabs{background:rgba(255,255,255,.07)}html.escuro .ptabs .on{background:#2F2950;color:#C9BCFF}
+html.escuro .dc2.on,html.escuro .tc.on,html.escuro .sug button.on{background:#7B5CF5;border-color:#7B5CF5;color:#fff}
 .mini .mi{background:var(--g)!important;color:#2E2A45;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
 .mini .mt{font-size:13px;font-weight:500;line-height:1.25}
 .mini .ms{font-size:11px;color:#4A5A55;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -483,7 +517,7 @@ function abrirSheet(html, rotulo = "Opções") {
   const id = ++SHEET_ID;
   document.getElementById("layer").innerHTML = `<div class="overlay" data-a="fechar-fundo"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(rotulo)}"><div class="grab-area" aria-hidden="true"><div class="grab"></div></div>${html}</div></div>`;
   const sh = document.querySelector("#layer .sheet"); arrastar(sh);
-  const f = sh.querySelector("input, button"); if (f) f.focus({ preventScroll: true });
+  const f = sh.querySelector("[data-nofocus]") ? null : sh.querySelector("input, button"); if (f) f.focus({ preventScroll: true });
   return id;
 }
 function fecharSheet(rapido = false) {
@@ -495,7 +529,7 @@ function fecharSheet(rapido = false) {
 }
 function arrastar(sh) {
   let y0 = null, t0 = 0, dy = 0, ativo = false;
-  const inicio = e => { if (sh.scrollTop > 0 && !e.target.closest(".grab-area")) return; if (e.target.closest("input, select, textarea")) return; y0 = e.clientY; t0 = performance.now(); dy = 0; ativo = false; };
+  const inicio = e => { if (sh.scrollTop > 0 && !e.target.closest(".grab-area")) return; if (e.target.closest("input, select, textarea, .dstrip, .sug")) return; y0 = e.clientY; t0 = performance.now(); dy = 0; ativo = false; };
   const mover = e => { if (y0 === null) return; dy = e.clientY - y0; if (!ativo && dy > 6) { ativo = true; sh.style.transition = "none"; sh.style.animation = "none"; try { sh.setPointerCapture(e.pointerId); } catch (er) {} } if (ativo) { e.preventDefault(); const d = dy > 0 ? dy : dy / 4; sh.style.transform = `translateY(${d}px)`; const ov = sh.parentElement; ov.style.background = `rgba(22,23,58,${Math.max(0, .35 - Math.max(0, dy) / 900)})`; } };
   const fim = () => { if (y0 === null) return; const v = dy / Math.max(1, performance.now() - t0); y0 = null; if (!ativo) return; ativo = false;
     if (dy > 55 || v > 0.45) { sh.style.transition = "transform .28s cubic-bezier(.4,0,1,1)"; sh.style.transform = "translateY(110%)"; const ov = sh.parentElement; ov.style.transition = "opacity .28s"; ov.style.opacity = "0"; const id = SHEET_ID; document.getElementById("dock").classList.remove("aberto"); setTimeout(() => { if (SHEET_ID === id) document.getElementById("layer").innerHTML = ""; }, 280); }
@@ -805,8 +839,8 @@ TELAS.conteudos = (p) => {
   ${cat === "todos" || cat === "direitos" ? `<button class="art guia" data-a="ir" data-v="direitos"><span class="th cor" style="--g:linear-gradient(135deg,#DDF7EE 0%,#FFF1D6 50%,#E9E0FF 100%)">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="sb">BPC, plano, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
   ${dest ? `<button class="tile au-indigo" data-a="ir" data-v="artigo" data-id="${dest.id}" style="border:1px solid rgba(255,255,255,.14);text-align:left;width:100%;padding:14px 16px;border-radius:20px;cursor:pointer;font-family:inherit"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Em destaque · ${CAT_NOME[dest.cat]}</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">${esc(dest.titulo)}</p><p style="font-size:12px;opacity:.85;margin-top:6px">${esc((ART_INFO[dest.id] || [])[1] || "")}${(ART_INFO[dest.id] || [])[1] ? " · " : ""}${dest.min} min de leitura</p></button>` : ""}
   ${cat === "todos" ? (() => { const resto = lista.slice(1); const dir = resto.filter(c => c.cat === "direitos"); const dia = resto.filter(c => c.cat === "artigo" || c.cat === "dica"); const outros = resto.filter(c => !dir.includes(c) && !dia.includes(c));
-      return `${dia.length ? `<p class="sec">Para o dia a dia</p>${dia.map(cardArtigo).join("")}` : ""}
-      ${dir.length ? `<p class="sec">Seus direitos</p><div class="minis">${dir.map(miniDireito).join("")}</div>` : ""}
+      return `${dia.length ? `<p class="secao">Para o dia a dia</p>${dia.map(cardArtigo).join("")}` : ""}
+      ${dir.length ? `<p class="secao">Seus direitos</p><div class="minis">${dir.map(miniDireito).join("")}</div>` : ""}
       ${outros.map(cardArtigo).join("")}`; })() : lista.map(cardArtigo).join("")}
   ${vazio ? `<div class="empty"><span class="ib c2" style="margin:0 auto 10px">${ic(cat === "video" ? "video" : "conteudos", 20)}</span><p class="b">${vazio[0]}</p><p class="small muted" style="margin-top:4px">${vazio[1]}</p></div>` : ""}
   <div class="card row" style="gap:12px"><span class="ib c1">${ic("medico", 20)}</span><div class="grow"><p class="b small">Feito com profissionais</p><p class="xs muted" style="margin-top:2px">Em breve, psicólogos, fonoaudiólogos, terapeutas ocupacionais e médicos parceiros vão publicar aqui.</p></div></div>
@@ -975,7 +1009,7 @@ TELAS.rotina = (p) => {
   ${venc.map(m => `<div class="card row" style="background:#FFF3E9;box-shadow:none"><span class="ib" style="background:#fff">${ic("alerta", 22)}</span><div class="grow"><p class="small b">A receita de ${esc(m.nome)} vence em ${fmtData(m.fim)}</p><p class="xs muted">${esc(m.medico || "Fale com o médico para renovar")}</p></div></div>`).join("")}
   ${itens.length ? `<div class="card" style="padding:6px 16px">${itens.map(it => { const f = feito(sel, it.key), q = f ? S.checks.d[sel][it.key] : null; return `<div class="task"><button class="check ${f ? "on" : ""}" data-a="check" data-v="${esc(it.key)}" data-d="${sel}" aria-pressed="${f}" aria-label="${f ? "Desmarcar" : "Marcar como feito"}: ${esc(it.titulo)}">${f ? ic("feito", 18) : ""}</button><div class="grow"><p class="b">${esc(it.titulo)}</p><p class="xs muted">${esc(it.sub)}${q ? ` · por ${esc(q.by)} às ${esc(q.at)}` : ""}</p></div><span class="tag ${it.cor}">${it.tag}</span></div>`; }).join("")}</div>`
     : `<div class="empty"><span class="ib c2" style="margin:0 auto 10px">${ic("rotina", 22)}</span><p class="b">Nada na rotina deste dia</p><p class="small muted" style="margin-top:4px">Fotografe uma receita ou cadastre terapias e tarefas.</p></div>`}
-  <div class="row" style="gap:10px"><button class="btn sec grow" data-a="ler" data-v="receita">${ic("camera", 20)}Receita</button><button class="btn sec grow" data-a="consulta-nova">${ic("consulta", 20)}Consulta</button><button class="btn sec grow" data-a="tarefa-nova">${ic("tarefa", 20)}Tarefa</button></div>
+  <div class="row qa" style="gap:8px"><button class="btn sec grow" data-a="ler" data-v="receita">${ic("camera", 18)}Receita</button><button class="btn sec grow" data-a="consulta-nova">${ic("consulta", 18)}Consulta</button><button class="btn sec grow" data-a="tarefa-nova">${ic("tarefa", 18)}Tarefa</button></div>
   ${S.meds.items.length ? `<div class="sec-title"><h2>Remédios</h2></div>${S.meds.items.map((m, i) => `<div class="list"><span class="ib ${C(i)}">${ic("medicacao", 22)}</span><div class="grow"><p class="b">${esc(m.nome)}</p><p class="xs muted">${esc([m.dose, (m.horarios || []).join(", "), m.fim ? "até " + fmtData(m.fim) : "uso contínuo"].filter(Boolean).join(" · "))}</p></div><button class="circle" data-a="med-editar" data-id="${m.id}" aria-label="Editar ${esc(m.nome)}" style="width:42px;height:42px;box-shadow:none;background:var(--soft)">${ic("editar", 18)}</button></div>`).join("")}` : ""}
   ${(() => { const h = iso(new Date()); const prox = S.consultas.items.filter(c => c.data >= h).sort((x, y) => (x.data + x.hora).localeCompare(y.data + y.hora)); return prox.length ? `<div class="sec-title"><h2>Consultas marcadas</h2></div>${prox.map(c => `<div class="list"><span class="ib c5">${ic("consulta", 20)}</span><div class="grow"><p class="b">${esc(c.titulo)}</p><p class="xs muted">${esc([fmtLonga(c.data), c.hora, c.profissional, c.local].filter(Boolean).join(" · "))}</p></div><button class="circle" data-a="consulta-editar" data-id="${c.id}" aria-label="Editar consulta" style="width:38px;height:38px;box-shadow:none;background:var(--soft)">${ic("editar", 16)}</button></div>`).join("")}` : ""; })()}
   ${S.tarefas.items.length ? `<div class="sec-title"><h2>Tarefas</h2></div>${S.tarefas.items.map((t, i) => `<div class="list"><span class="ib ${C(i + 2)}">${ic("tarefa", 22)}</span><div class="grow"><p class="b">${esc(t.titulo)}</p><p class="xs muted">${esc([(t.dias || []).map(d => DIAS[d]).join(", "), t.hora].filter(Boolean).join(" · "))}</p></div><button class="circle" data-a="tarefa-apagar" data-id="${t.id}" aria-label="Apagar ${esc(t.titulo)}" style="width:42px;height:42px;box-shadow:none;background:var(--soft)">${ic("lixo", 18)}</button></div>`).join("")}` : ""}
@@ -1034,7 +1068,7 @@ TELAS.tratform = (p) => { const t = S.trat.items.find(x => x.id === p.id) || {};
   <label class="f">Profissional<input class="input" name="profissional" value="${esc(t.profissional)}" placeholder="Ex.: Dra. Júlia"></label>
   <label class="f">Local<input class="input" name="local" value="${esc(t.local)}" placeholder="Clínica, escola, online"></label>
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Dias da semana</legend><div class="chips">${[1,2,3,4,5,6,0].map(d => `<label class="opt"><input type="checkbox" name="dias" value="${d}" ${(t.dias || []).includes(d) ? "checked" : ""}><span>${DIAS[d]}</span></label>`).join("")}</div></fieldset>
-  <label class="f">Horário<input class="input" type="time" name="hora" value="${esc(t.hora)}"></label>
+  <div class="pk-l">Horário</div>${pkHoraHTML("hora", t.hora || "")}
   <label class="f">Meta atual (opcional)<input class="input" name="meta" value="${esc(t.meta)}" placeholder="Ex.: pedir o que quer com duas palavras"></label>
   <label class="f">Progresso da meta: <output id="progout">${t.progresso || 0}%</output><input type="range" name="progresso" min="0" max="100" step="5" value="${t.progresso || 0}" data-a="range" style="accent-color:#2F3273"></label>
   <button class="btn full" type="submit">Salvar</button>
@@ -1042,9 +1076,9 @@ TELAS.tratform = (p) => { const t = S.trat.items.find(x => x.id === p.id) || {};
 </form>`; };
 
 TELAS.registro = (p = {}) => `${topo("Registrar o dia")}
-<form class="wrap stack" data-f="registro" style="padding-top:12px;gap:16px">
+<form class="wrap stack" data-f="registro" style="padding-top:12px;gap:16px;--pkm:18px">
   <div class="tile au-sol"><p class="xs b" style="opacity:.75">Leva 30 segundos</p><h2 style="margin-top:4px">Como foi o dia de ${esc(nomeCrianca())}?</h2></div>
-  <label class="f">Data<input class="input" type="date" name="data" value="${iso(new Date())}" required></label>
+  <div class="pk-l" style="margin-bottom:-8px">Dia</div>${pkDataHTML("data", iso(new Date()), 14, true)}
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Humor</legend><div class="mood">${HUMOR.map(([e, l], i) => `<label class="opt"><input type="radio" name="humor" value="${i + 1}" ${i === 3 ? "checked" : ""}><span>${ic(e, 26)}${l}</span></label>`).join("")}</div></fieldset>
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Sono</legend><div class="chips">${["Bom","Regular","Ruim"].map((s, i) => `<label class="opt"><input type="radio" name="sono" value="${s}" ${i === 0 ? "checked" : ""}><span>${s}</span></label>`).join("")}</div></fieldset>
   <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Teve crise?</legend><div class="chips">${["Não","Sim"].map((s, i) => `<label class="opt"><input type="radio" name="crise" value="${s}" ${(p.id === "crise" ? i === 1 : i === 0) ? "checked" : ""}><span>${s}</span></label>`).join("")}</div></fieldset>
@@ -1293,6 +1327,49 @@ DADOS: ${contexto()}`;
   if (TELA.nome === "assistente") { render(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }
 }
 
+/* ---------- Seletor de dia e hora ---------- */
+const PERIODOS = [["Manhã", 7, 12], ["Tarde", 12, 18], ["Noite", 18, 22]];
+const periodoDe = h => { const n = parseInt(String(h).slice(0, 2), 10); return n < 12 ? 0 : n < 18 ? 1 : 2; };
+const rotuloDia = k => { const h = iso(new Date()); return k === h ? "hoje" : k === iso(addDays(new Date(), 1)) ? "amanhã" : k === iso(addDays(new Date(), -1)) ? "ontem" : `${DIAS[parseISO(k).getDay()].toLowerCase()}, ${fmtData(k).slice(0, 5)}`; };
+function pkDataHTML(nome, valor, dias = 14, passado = false) {
+  const val = valor || iso(new Date()); let achou = false; const ini = passado ? -(dias - 1) : 0;
+  const chips = Array.from({ length: dias }, (_, j) => { const i = ini + j, d = addDays(new Date(), i), k = iso(d), on = k === val; if (on) achou = true;
+    const nome3 = i === 0 ? "Hoje" : i === 1 ? "Amanhã" : i === -1 ? "Ontem" : DIAS[d.getDay()];
+    return `<button type="button" class="dc2${on ? " on" : ""}" data-a="pk-data" data-v="${k}" aria-pressed="${on}"><small>${nome3}</small><b>${d.getDate()}</b></button>`; }).join("");
+  const dv = parseISO(val);
+  const outra = `<label class="dc2${achou ? "" : " on"}"><small>${achou ? "Outra" : MESES[dv.getMonth()].slice(0, 3)}</small><b>${achou ? ic("rotina", 18) : dv.getDate()}</b><input type="date" class="pk-nat" value="${val}" aria-label="Escolher outra data"></label>`;
+  return `<div class="pk" data-pk="data" data-dias="${dias}" data-passado="${passado ? 1 : 0}"><input type="hidden" name="${nome}" value="${val}"><div class="dstrip">${chips}${outra}</div></div>`;
+}
+function pkHoraHTML(nome, valor, per) {
+  const v = valor || "", h = new Date().getHours();
+  const p = per != null ? per : v ? periodoDe(v) : (h >= 12 && h < 17 ? 1 : 0);
+  const [, a, b] = PERIODOS[p], slots = [];
+  for (let x = a; x < b; x++) slots.push(`${pad(x)}:00`, `${pad(x)}:30`);
+  const fora = v && !/:(00|30)$/.test(v) && periodoDe(v) === p;
+  const lista = fora ? [...slots, v].sort() : slots;
+  const grade = lista.map(t => `<button type="button" class="tc${t === v ? " on" : ""}" data-a="pk-hora" data-v="${t}" aria-pressed="${t === v}">${t}</button>`).join("");
+  const abas = PERIODOS.map(([n], i) => `<button type="button" class="${i === p ? "on" : ""}" data-a="pk-per" data-v="${i}">${n}</button>`).join("") + `<label>Outro<input type="time" class="pk-nat" value="${v}" aria-label="Escolher outro horário"></label>`;
+  return `<div class="pk" data-pk="hora" data-per="${p}"><input type="hidden" name="${nome}" value="${v}"><div class="ptabs">${abas}</div><div class="tgrade">${grade}</div></div>`;
+}
+function pkResumo(f) {
+  const b = f && f.querySelector("[data-resumo]"); if (!b) return;
+  const d = f.querySelector('input[name="data"]'), hh = f.querySelector('input[name="hora"]');
+  b.textContent = `${b.dataset.pre} ${rotuloDia(d ? d.value : iso(new Date()))}${hh && hh.value ? " às " + hh.value : ""}`;
+}
+function pkSet(box, valor, per) {
+  const nome = box.querySelector('input[type="hidden"]').name, tmp = document.createElement("div"), sc = box.querySelector(".dstrip"), x = sc ? sc.scrollLeft : 0;
+  tmp.innerHTML = box.dataset.pk === "data" ? pkDataHTML(nome, valor, Number(box.dataset.dias) || 14, box.dataset.passado === "1") : pkHoraHTML(nome, valor, per);
+  const el = tmp.firstElementChild; box.replaceWith(el);
+  const ns = el.querySelector(".dstrip"); if (ns) { ns.scrollLeft = x; ns.dataset.ok = "1"; }
+  pkResumo(el.closest("form"));
+}
+function pkAjustar() {
+  document.querySelectorAll(".dstrip:not([data-ok])").forEach(st => { st.dataset.ok = "1"; const on = st.querySelector(".dc2.on"); if (on) st.scrollLeft = on.offsetLeft - (st.clientWidth - on.offsetWidth) / 2; });
+}
+new MutationObserver(pkAjustar).observe(document.body, { childList: true, subtree: true });
+document.addEventListener("change", e => { const i = e.target; if (!i.classList || !i.classList.contains("pk-nat") || !i.value) return; const box = i.closest(".pk"); if (box.dataset.pk === "data") pkSet(box, i.value); else pkSet(box, i.value, periodoDe(i.value)); });
+const SUG_CONSULTA = ["Neuropediatra", "Pediatra", "Psiquiatra", "Psicologia", "Fonoaudiologia", "Terapia ocupacional", "Dentista", "Exames"];
+
 /* ---------- Ações ---------- */
 document.addEventListener("click", async e => {
   const el = e.target.closest("[data-a]"); if (!el) return;
@@ -1315,7 +1392,7 @@ document.addEventListener("click", async e => {
     case "marco-novo": fecharSheet(true); abrirSheet(`<form class="stack" data-f="marco"><h2>Novo marco de ${esc(nomeCrianca())}</h2>
       <div class="chips">${MARCOS_SUG.slice(0, 6).map(x => `<button type="button" class="chip" data-a="marco-sug" data-v="${esc(x)}">${esc(x)}</button>`).join("")}</div>
       <label class="f">O que aconteceu<input class="input" name="titulo" id="marcotit" required placeholder="Ex.: Falou &quot;mamãe&quot; pela primeira vez"></label>
-      <label class="f">Quando<input class="input" type="date" name="data" value="${iso(new Date())}" required></label>
+      <div class="pk-l">Quando</div>${pkDataHTML("data", iso(new Date()), 14, true)}
       <label class="f">Como foi (opcional)<textarea class="input" name="nota" placeholder="Conte como foi"></textarea></label>
       <label class="f">Foto (opcional)<input class="input" type="file" name="foto" accept="image/*" style="padding:10px"></label>
       <button class="btn full" type="submit">Guardar marco</button></form>`, "Novo marco"); break;
@@ -1363,13 +1440,17 @@ document.addEventListener("click", async e => {
     case "doc-apagar": confirmar("Apagar documento?", "Ele sai da pasta. Não dá para desfazer.", "Apagar", async () => { S.docs.items = S.docs.items.filter(d => d.id !== id); await salvar("docs").catch(() => {}); voltar(); toast("Documento apagado."); }); break;
     case "recs-add": { const d = S.docs.items.find(x => x.id === id); if (!d) break; let n = 0; for (const r of d.recomendacoes || []) { const tipo = (TERAPIAS.find(([nm]) => r.terapia && r.terapia.toLowerCase().includes(nm.split(" ")[0].toLowerCase().slice(0, 5))) || ["Outra"])[0]; if (tipo === "Outra" || !S.trat.items.some(t => t.tipo === tipo)) { addItem("trat", { id: uid(), tipo, profissional: "", local: "", dias: [], hora: "", meta: tipo === "Outra" ? r.terapia : "", progresso: 0 }); n++; } } await salvar("trat").catch(() => {}); toast(n ? `${n} tratamento(s) adicionado(s). Defina dias e horários.` : "Já estavam cadastrados."); go("tratamentos"); break; }
     case "trat-novo": fecharSheet(); go("tratform", {}); break;
-    case "consulta-nova": case "consulta-editar": { const c = (a === "consulta-editar" && S.consultas.items.find(x => x.id === id)) || (v ? { data: v } : {}); fecharSheet(true); abrirSheet(`<form class="stack" data-f="consulta" data-id="${esc(c.id || "")}"><h2>${c.id ? "Editar consulta" : "Nova consulta"}</h2><p class="small muted" style="margin-top:-4px">Para ${esc(nomeCrianca())}</p>
-      <label class="f">Com quem ou qual especialidade<input class="input" name="titulo" required value="${esc(c.titulo)}" placeholder="Ex.: Neuropediatra, Dra. Ana"></label>
-      <div class="row" style="gap:10px"><label class="f grow">Dia<input class="input" type="date" name="data" required value="${esc(c.data || iso(new Date()))}"></label><label class="f grow">Hora<input class="input" type="time" name="hora" value="${esc(c.hora)}"></label></div>
-      <label class="f">Profissional (opcional)<input class="input" name="profissional" value="${esc(c.profissional)}"></label>
-      <label class="f">Local (opcional)<input class="input" name="local" value="${esc(c.local)}" placeholder="Clínica, hospital, online"></label>
-      <label class="f">Observação (opcional)<input class="input" name="obs" value="${esc(c.obs)}" placeholder="Ex.: levar exames"></label>
-      <button class="btn full" type="submit">Salvar consulta</button>${c.id ? `<button class="btn danger full" type="button" data-a="consulta-apagar" data-id="${c.id}">Apagar consulta</button>` : ""}</form>`, "Consulta"); break; }
+    case "consulta-nova": case "consulta-editar": { const c = (a === "consulta-editar" && S.consultas.items.find(x => x.id === id)) || (v ? { data: v } : {}); const dv = c.data || iso(new Date()), pre = c.id ? "Salvar para" : "Marcar para"; fecharSheet(true); abrirSheet(`<form class="stack" data-f="consulta" data-nofocus data-id="${esc(c.id || "")}">
+      <div class="row" style="justify-content:space-between;align-items:baseline"><h2>${c.id ? "Editar consulta" : "Nova consulta"}</h2><span class="xs muted">para <b>${esc(nomeCrianca())}</b></span></div>
+      <div class="sug">${SUG_CONSULTA.map(n => `<button type="button" class="${c.titulo === n ? "on" : ""}" data-a="pk-sug" data-v="${esc(n)}">${esc(n)}</button>`).join("")}</div>
+      <input class="input" name="titulo" required value="${esc(c.titulo)}" placeholder="Com quem ou qual especialidade" aria-label="Com quem ou qual especialidade">
+      <div class="pk-l">Dia</div>${pkDataHTML("data", dv)}
+      <div class="pk-l">Horário <em>(opcional)</em></div>${pkHoraHTML("hora", c.hora || "")}
+      <details class="mais" ${c.profissional || c.local || c.obs ? "open" : ""}><summary>Mais detalhes</summary><div class="stack">
+        <label class="f">Profissional<input class="input" name="profissional" value="${esc(c.profissional)}" placeholder="Ex.: Dra. Ana"></label>
+        <label class="f">Local<input class="input" name="local" value="${esc(c.local)}" placeholder="Clínica, hospital, online"></label>
+        <label class="f">Observação<input class="input" name="obs" value="${esc(c.obs)}" placeholder="Ex.: levar exames"></label></div></details>
+      <div class="pk-foot"><button class="btn full" type="submit" data-resumo data-pre="${pre}">${pre} ${rotuloDia(dv)}${c.hora ? " às " + c.hora : ""}</button>${c.id ? `<button class="btn danger full" type="button" data-a="consulta-apagar" data-id="${c.id}">Apagar consulta</button>` : ""}</div></form>`, "Consulta"); pkAjustar(); break; }
     case "consulta-apagar": S.consultas.items = S.consultas.items.filter(x => x.id !== id); fecharSheet(); render(); salvar("consultas").catch(() => {}); toast("Consulta apagada."); break;
     case "trat-editar": go("tratform", { id }); break;
     case "trat-apagar": confirmar("Apagar tratamento?", "As sessões saem da rotina.", "Apagar", async () => { S.trat.items = S.trat.items.filter(t => t.id !== id); await salvar("trat").catch(() => {}); go("tratamentos", {}, true); }); break;
@@ -1379,7 +1460,11 @@ document.addEventListener("click", async e => {
     case "med-remover": { if (document.querySelectorAll("[data-med]").length > 1) el.closest("[data-med]").remove(); else toast("A receita precisa de pelo menos um remédio."); break; }
     case "med-editar": go("medform", { id }); break;
     case "med-apagar": confirmar("Tirar da rotina?", "O remédio deixa de aparecer na rotina.", "Tirar", async () => { S.meds.items = S.meds.items.filter(m => m.id !== id); await salvar("meds").catch(() => {}); go("rotina", {}, true); }); break;
-    case "tarefa-nova": fecharSheet(); abrirSheet(`<form class="stack" data-f="tarefa"><h2>Nova tarefa</h2><label class="f">O que fazer<input class="input" name="titulo" required placeholder="Ex.: atividade sensorial"></label><fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Dias</legend><div class="chips">${[1,2,3,4,5,6,0].map(d => `<label class="opt"><input type="checkbox" name="dias" value="${d}" checked><span>${DIAS[d]}</span></label>`).join("")}</div></fieldset><label class="f">Horário (opcional)<input class="input" type="time" name="hora"></label><button class="btn full" type="submit">Adicionar à rotina</button><button class="btn sec full" type="button" data-a="fechar">Cancelar</button></form>`, "Nova tarefa"); break;
+    case "pk-data": pkSet(el.closest(".pk"), v); break;
+    case "pk-per": { const bx = el.closest(".pk"); pkSet(bx, bx.querySelector('input[type="hidden"]').value, Number(v)); break; }
+    case "pk-hora": { const bx = el.closest(".pk"); pkSet(bx, bx.querySelector('input[type="hidden"]').value === v ? "" : v, Number(bx.dataset.per)); break; }
+    case "pk-sug": { const fm = el.closest("form"); fm.querySelector('[name="titulo"]').value = v; fm.querySelectorAll(".sug button").forEach(bt => bt.classList.toggle("on", bt === el)); break; }
+    case "tarefa-nova": fecharSheet(); abrirSheet(`<form class="stack" data-f="tarefa" data-nofocus><h2>Nova tarefa</h2><input class="input" name="titulo" required placeholder="O que fazer? Ex.: atividade sensorial" aria-label="O que fazer"><div class="pk-l">Dias</div><div class="chips dias">${[1,2,3,4,5,6,0].map(d => `<label class="opt"><input type="checkbox" name="dias" value="${d}" checked><span>${DIAS[d]}</span></label>`).join("")}</div><div class="pk-l">Horário <em>(opcional)</em></div>${pkHoraHTML("hora", "")}<div class="pk-foot"><button class="btn full" type="submit">Adicionar à rotina</button></div></form>`, "Nova tarefa"); break;
     case "tarefa-apagar": S.tarefas.items = S.tarefas.items.filter(t => t.id !== id); render(); salvar("tarefas").catch(() => {}); break;
     case "rede-novo": if (!plus()) { paywall("rede"); break; } abrirSheet(`<form class="stack" data-f="rede"><h2>Adicionar pessoa</h2><label class="f">Nome<input class="input" name="nome" required></label><label class="f">Papel<select class="input" name="papel">${["Mãe","Pai","Avó","Avô","Tia","Tio","Babá","Cuidador(a)","Irmão/Irmã","Professor(a)","Profissional","Outro"].map(x => `<option>${x}</option>`).join("")}</select></label><label class="f">Contato (opcional)<input class="input" name="contato" placeholder="Telefone ou e-mail"></label><label class="f">Observação (opcional)<input class="input" name="obs"></label><button class="btn full" type="submit">Adicionar</button><button class="btn sec full" type="button" data-a="fechar">Cancelar</button></form>`, "Adicionar pessoa"); break;
     case "rede-apagar": S.rede.items = S.rede.items.filter(r => r.id !== id); render(); salvar("rede").catch(() => {}); break;
