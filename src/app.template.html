@@ -1124,7 +1124,7 @@ TELAS.perfil = () => { const p = S.perfil || {}; const m = membroAtivo() || {}; 
 let CHAT = [];
 TELAS.assistente = () => `${topo("Pergunte à teIA")}
 <div class="wrap stack" style="padding-top:12px;padding-bottom:20px" id="chat">
-  ${CHAT.length ? "" : `<div class="tile au-indigo"><span style="width:52px;height:52px;border-radius:16px;background:#F1EDFF;display:flex;align-items:center;justify-content:center">${simbolo(30)}</span><h2 style="margin-top:12px">Pergunte sobre ${esc(nomeCrianca())}</h2><p class="small" style="opacity:.9;margin-top:6px">Oi, eu sou a teIA. Respondo em poucas palavras com base no que está guardado aqui. Se você pedir uma opinião, eu anoto o que aconteceu para você levar à consulta.</p></div>
+  ${CHAT.length ? "" : `<div class="tile au-indigo"><span style="width:52px;height:52px;border-radius:16px;background:#F1EDFF;display:flex;align-items:center;justify-content:center">${simbolo(30)}</span><h2 style="margin-top:12px">Pergunte sobre ${esc(nomeCrianca())}</h2><p class="small" style="opacity:.9;margin-top:6px">Oi, eu sou a teIA. Respondo com base no que está guardado aqui. Se algo te preocupar, eu te escuto, digo quem pode ajudar e anoto para a próxima consulta.</p></div>
   <div class="chips">${[`Quais remédios ${nomeCrianca()} toma hoje?`,"Quando é a próxima consulta?","O que diz o último laudo?",`Devo me preocupar com o sono de ${nomeCrianca()}?`].map(q => `<button class="chip" data-a="perguntar" data-v="${esc(q)}">${esc(q)}</button>`).join("")}</div>`}
   ${CHAT.map(m => { const n = m.nota && S.notas.items.find(x => x.id === m.nota); return `<div class="bubble ${m.role === "user" ? "me" : "ai"}">${esc(m.content)}</div>` + (n ? `<button class="notacard" data-a="ir" data-v="consulta"><span class="ib c1" style="width:30px;height:30px">${ic("diario", 16)}</span><span class="grow"><b>Anotado para a consulta</b><span class="tx">${esc(n.titulo)}: ${esc(n.texto)}</span></span></button>` : ""); }).join("")}
   ${plus() ? "" : `<p class="xs" style="text-align:center;color:var(--navy)">${restam("pergunta")} de ${LIMITE.pergunta} perguntas grátis este mês</p>`}
@@ -1268,10 +1268,16 @@ async function perguntar(q) {
   if (!SAMPLE) { CHAT.push({ role: "user", content: q }, { role: "assistant", content: "A teIA não está disponível nesta visualização." }); render(); return; }
   CHAT.push({ role: "user", content: q }, { role: "assistant", content: "…" }); render(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   const sys = `Você é a teIA, a assistente da teia, um app de cuidado em família. Você fala com ${nomeUsuario() || "quem cuida"}${(S.perfil || {}).papel ? " (" + S.perfil.papel + ")" : ""} sobre ${nomeCrianca()}. Chame as pessoas pelo nome. Regras:
-1) Responda em português do Brasil em NO MÁXIMO 2 frases curtas (até 35 palavras), sem listas e sem detalhes desnecessários.
-2) Use SOMENTE os dados abaixo. Se a informação não estiver neles, diga isso em uma frase.
-3) Nunca diagnostique, nem opine sobre saúde, comportamento ou tratamento, nem recomende remédios ou doses.
-4) Se a pessoa pedir opinião, conselho ou orientação (por exemplo "devo", "é normal", "o que faço", "o que acha"), NÃO opine. Diga em uma frase que isso é para o profissional avaliar e preencha "anotacao" com uma nota objetiva para levar à consulta: 1 a 3 frases descrevendo o que ${nomeCrianca()} fez ou está fazendo (só fatos dos dados e da fala da pessoa, sem interpretar) e a pergunta a fazer. "para" é a especialidade mais indicada entre os profissionais e terapias dos dados, ou null. Nos demais casos, "anotacao" é null.
+1) Fale como alguém próximo e gentil: português do Brasil, tom caloroso e simples, sem formalidade e sem frieza. Seja breve: até 3 frases curtas (até 55 palavras), sem listas.
+2) Use os dados abaixo para fatos sobre ${nomeCrianca()} (remédios, horários, consultas, documentos). Se um fato não estiver neles, diga com gentileza que ainda não há essa informação no app.
+3) Nunca diagnostique, nem diga se algo é normal ou preocupante no caso de ${nomeCrianca()}, nem recomende remédios, doses ou mudanças de tratamento.
+4) Se a pessoa pedir opinião, conselho ou orientação, ou contar uma preocupação (por exemplo "devo", "é normal", "o que faço", "o que acha", "estou preocupado(a)"):
+ a) Comece acolhendo em poucas palavras, reconhecendo o que a pessoa sente e o cuidado dela (por exemplo: "Faz todo sentido ficar de olho nisso.").
+ b) Se ajudar, dê em uma frase uma informação geral e tranquilizadora, sem falar do caso de ${nomeCrianca()} e sem dizer o que fazer (por exemplo: mudanças no sono são um tema comum de conversa com profissionais).
+ c) Diga com carinho qual profissional pode avaliar isso (de preferência um dos profissionais ou terapias dos dados) e que você anotou para levar à consulta.
+ Preencha "anotacao" com uma nota objetiva: 1 a 3 frases com o que ${nomeCrianca()} fez ou está fazendo (só fatos dos dados e da fala da pessoa, sem interpretar) e a pergunta a fazer. "para" é a especialidade mais indicada, ou null. Nos demais casos, "anotacao" é null.
+5) Se a pessoa demonstrar cansaço, tristeza ou sobrecarga, acolha primeiro, com calor, antes de qualquer informação.
+6) Se houver sinal de emergência ou risco à vida de alguém, acolha e oriente com calma a ligar 192 (SAMU); se for sofrimento emocional intenso de quem cuida, lembre que o CVV atende no 188, a qualquer hora.
 Responda APENAS com JSON: {"resposta":string,"anotacao":null|{"titulo":string (até 6 palavras),"texto":string,"para":string|null}}
 DADOS: ${contexto()}`;
   const hist = CHAT.slice(0, -1).slice(-10); while (hist.length && hist[0].role !== "user") hist.shift();
