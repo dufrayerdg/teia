@@ -69,6 +69,20 @@ h3{font-size:14px;font-weight:600}
 .art .th{width:44px;height:44px;border-radius:11px;flex:none;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#7C58F0,#5B2EE8)}
 .art .t{font-size:13.5px;font-weight:500;line-height:1.3}
 .art .m{font-size:11.5px;color:var(--muted);margin-top:3px}
+.art .sb{display:block;font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.art .m{margin-top:5px!important}
+.pil{background:var(--f);color:var(--t);display:inline-block;font-size:10px;font-weight:500;letter-spacing:.2px;padding:2px 7px;border-radius:999px;line-height:1.4}
+.sec{font-size:11px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:6px 2px -4px}
+.minis{display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:2px 18px 4px;scroll-padding:0 18px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.minis::-webkit-scrollbar{display:none}
+.mini{background:var(--f);flex:none;width:128px;scroll-snap-align:start;border:none;border-radius:14px;padding:11px 12px;text-align:left;display:flex;flex-direction:column;gap:4px;font-family:inherit;color:var(--ink);cursor:pointer}
+.mini .mi{color:var(--t);width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.75);display:flex;align-items:center;justify-content:center;margin-bottom:2px}
+.mini .mt{font-size:13px;font-weight:500;line-height:1.25}
+.mini .ms{font-size:11px;color:#4A5A55;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.escuro .mini .ms{color:#A9C2BA}html.escuro .mini .mi{color:var(--t);background:rgba(255,255,255,.08)}
+.art .th.cor{background:var(--f)!important;color:var(--t)!important}
+html.escuro .art .th.cor,html.escuro .pil{background:color-mix(in srgb,var(--t) 26%,#1A1726)!important;color:color-mix(in srgb,var(--t) 45%,#fff)!important}
+html.escuro .mini{background:color-mix(in srgb,var(--t) 20%,#1A1726)!important}html.escuro .mini .mi{color:color-mix(in srgb,var(--t) 45%,#fff)}
 .dc{display:flex;gap:12px;width:100%;text-align:left;background:#fff;border:none;border-radius:14px;padding:12px;box-shadow:var(--sh);color:var(--ink);align-items:flex-start;font-family:inherit}
 .dc .th{width:38px;height:38px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#EEE8FC,#DDD2F8);color:var(--navy)}
 .dc .tt{font-size:13.5px;font-weight:500;line-height:1.3}
@@ -784,7 +798,23 @@ ${c.eu || "[seu nome]"}
 ${c.contato || "[telefone ou e-mail]"}` },
 ];
 function dadosModelo() { const m = membroAtivo() || {}; const n = new Date(); return { eu: nomeUsuario(), pessoa: m.nome || "[nome da pessoa]", diag: m.diagnosticos || "", plano: m.plano || "", carteirinha: "", terapias: S.trat.items.map(t => `- ${t.tipo}${(t.dias || []).length ? ` — ${t.dias.length} vez(es) por semana` : ""}${t.profissional ? ` (${t.profissional})` : ""}`).join("\n"), hoje: `${n.getDate()} de ${MESES[n.getMonth()]} de ${n.getFullYear()}`, cidade: "", contato: "", escola: "", turma: "" }; }
-const cardArtigo = c => `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th">${ic(CAT_ICON[c.cat] || "artigo", 20)}</span><span class="grow"><span class="t" style="display:block">${esc(c.titulo)}</span><span class="m" style="display:block">${CAT_NOME[c.cat]} · ${c.min} min de leitura</span></span>${ic("seta", 16)}</button>`;
+const CAT_COR = { artigo: ["#F1EDFF","#5B2EE8"], dica: ["#FFF3DC","#9A5B00"], direitos: ["#E3F5EE","#0B7552"], noticia: ["#E7F0FF","#1E5BC6"], video: ["#FDE8EF","#AE2457"] };
+const ART_INFO = {
+  "rotina-visual": ["rotina", "Fotos e desenhos para prever o dia"],
+  "consulta": ["consulta", "Antes e depois, em poucos passos"],
+  "ciptea": ["perfil", "Carteira que comprova o diagnóstico", "CIPTEA"],
+  "bpc": ["familia", "Quem tem direito e como pedir", "BPC"],
+  "plano-terapias": ["medico", "Sessões sem limite pelo plano", "Terapias no plano"],
+  "escola": ["escola", "Matrícula garantida, sem taxa extra", "Escola"],
+  "passe-livre": ["rede", "Ônibus entre estados sem pagar", "Passe Livre"],
+  "carro": ["ajustes", "Isenção de impostos na compra", "Carro"],
+  "cuidar": ["bemestar", "Pausas curtas que fazem diferença"],
+  "seletividade": ["humor", "Pequenos passos à mesa"],
+};
+const corCat = k => CAT_COR[k] || CAT_COR.artigo;
+const pilCat = k => { const [f, t] = corCat(k); return `<span class="pil" style="--f:${f};--t:${t}">${CAT_NOME[k] || ""}</span>`; };
+const cardArtigo = c => { const [f, t] = corCat(c.cat); const [i, sub] = ART_INFO[c.id] || [CAT_ICON[c.cat] || "artigo", ""]; return `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th cor" style="--f:${f};--t:${t}">${ic(i, 20)}</span><span class="grow" style="min-width:0"><span class="t" style="display:block">${esc(c.titulo)}</span>${sub ? `<span class="sb">${esc(sub)}</span>` : ""}<span class="m" style="display:flex;align-items:center;gap:6px">${pilCat(c.cat)}<span>${c.min} min</span></span></span>${ic("seta", 16)}</button>`; };
+const miniDireito = c => { const [f, t] = corCat("direitos"); const [i, sub, curto] = ART_INFO[c.id] || ["direitos", "", ""]; return `<button class="mini" data-a="ir" data-v="artigo" data-id="${c.id}" style="--f:${f};--t:${t}"><span class="mi">${ic(i, 18)}</span><span class="mt">${esc(curto || c.titulo.split(":")[0])}</span><span class="ms">${esc(sub)}</span></button>`; };
 
 /* ---------- Telas ---------- */
 const TELAS = {};
@@ -891,9 +921,12 @@ TELAS.conteudos = (p) => {
   return `${topoRaiz("Conteúdos")}
 <div class="wrap stack" style="padding-top:8px;gap:12px">
   <div class="cat" role="tablist" aria-label="Categorias">${CATS.map(([k, l]) => `<button role="tab" aria-selected="${k === cat}" class="${k === cat ? "on" : ""}" data-a="cont-cat" data-v="${k}">${l}</button>`).join("")}</div>
-  ${cat === "todos" || cat === "direitos" ? `<button class="art" data-a="ir" data-v="direitos"><span class="th">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="m" style="display:block">BPC, plano de saúde, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
-  ${dest ? `<button class="tile au-indigo" data-a="ir" data-v="artigo" data-id="${dest.id}" style="border:1px solid rgba(255,255,255,.14);text-align:left;width:100%;padding:14px 16px;border-radius:20px;cursor:pointer;font-family:inherit"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Em destaque · ${CAT_NOME[dest.cat]}</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">${esc(dest.titulo)}</p><p style="font-size:12px;opacity:.85;margin-top:6px">${dest.min} min de leitura</p></button>` : ""}
-  ${(dest ? lista.slice(1) : lista).map(cardArtigo).join("")}
+  ${cat === "todos" || cat === "direitos" ? `<button class="art guia" data-a="ir" data-v="direitos"><span class="th" style="background:#0B7552!important;color:#fff!important">${ic("direitos", 20)}</span><span class="grow"><span class="t" style="display:block">Guia de direitos</span><span class="sb">BPC, plano, escola, passe livre e modelos prontos</span></span>${ic("seta", 16)}</button>` : ""}
+  ${dest ? `<button class="tile au-indigo" data-a="ir" data-v="artigo" data-id="${dest.id}" style="border:1px solid rgba(255,255,255,.14);text-align:left;width:100%;padding:14px 16px;border-radius:20px;cursor:pointer;font-family:inherit"><p style="font-size:10.5px;letter-spacing:.9px;text-transform:uppercase;font-weight:500;opacity:.82">Em destaque · ${CAT_NOME[dest.cat]}</p><p style="font-size:17px;font-weight:500;letter-spacing:-.3px;margin-top:4px;line-height:1.25">${esc(dest.titulo)}</p><p style="font-size:12px;opacity:.85;margin-top:6px">${esc((ART_INFO[dest.id] || [])[1] || "")}${(ART_INFO[dest.id] || [])[1] ? " · " : ""}${dest.min} min de leitura</p></button>` : ""}
+  ${cat === "todos" ? (() => { const resto = lista.slice(1); const dir = resto.filter(c => c.cat === "direitos"); const dia = resto.filter(c => c.cat === "artigo" || c.cat === "dica"); const outros = resto.filter(c => !dir.includes(c) && !dia.includes(c));
+      return `${dia.length ? `<p class="sec">Para o dia a dia</p>${dia.map(cardArtigo).join("")}` : ""}
+      ${dir.length ? `<p class="sec">Seus direitos</p><div class="minis">${dir.map(miniDireito).join("")}</div>` : ""}
+      ${outros.map(cardArtigo).join("")}`; })() : lista.map(cardArtigo).join("")}
   ${vazio ? `<div class="empty"><span class="ib c2" style="margin:0 auto 10px">${ic(cat === "video" ? "video" : "conteudos", 20)}</span><p class="b">${vazio[0]}</p><p class="small muted" style="margin-top:4px">${vazio[1]}</p></div>` : ""}
   <div class="card row" style="gap:12px"><span class="ib c1">${ic("medico", 20)}</span><div class="grow"><p class="b small">Feito com profissionais</p><p class="xs muted" style="margin-top:2px">Em breve, psicólogos, fonoaudiólogos, terapeutas ocupacionais e médicos parceiros vão publicar aqui.</p></div></div>
 </div>`;
@@ -902,7 +935,7 @@ TELAS.artigo = (p) => {
   const c = nomeConteudo(p.id); if (!c) return `${topo("Conteúdo")}<div class="wrap"><div class="empty"><p class="b">Conteúdo não encontrado</p></div></div>`;
   return `${topo("")}
 <div class="wrap" style="padding-top:6px">
-  <p class="xs b" style="color:var(--navy);text-transform:uppercase;letter-spacing:.8px">${CAT_NOME[c.cat]} · ${c.min} min</p>
+  <p class="xs" style="display:flex;align-items:center;gap:6px;color:var(--muted)">${pilCat(c.cat)}<span>${c.min} min de leitura</span></p>
   <h1 style="font-size:22px;font-weight:600;letter-spacing:-.5px;margin:6px 0 4px">${esc(c.titulo)}</h1>
   <p class="xs muted" style="margin-bottom:16px">Por ${esc(c.autor)}</p>
   <div class="prose">${c.corpo.map(b => typeof b === "string" ? `<p>${esc(b)}</p>` : b[0] === "h" ? `<h3>${esc(b[1])}</h3>` : `<ul>${b[1].map(x => `<li>${esc(x)}</li>`).join("")}</ul>`).join("")}</div>
