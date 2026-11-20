@@ -41,6 +41,7 @@ window.TEIA_CONFIG_FORCE = true;
   functions: { async invoke(nome, { body }) {
     window.__inv = (window.__inv || []).concat([[nome, body.tarefa || body.acao]]);
     if (nome === "assinatura") { db.assinaturas[0] = { user_id: "u1", plano: body.acao === "assinar" ? "plus" : "gratis", status: body.acao === "assinar" ? "teste" : "cancelada", ciclo: body.ciclo }; persist(); return { data: { ok: true }, error: null }; }
+    if (window.__forcaErro) return { data: null, error: { context: { status: window.__forcaErro === "servico_ocupado" ? 503 : 429, json: async () => ({ erro: window.__forcaErro, motivo: "pergunta" }) } } };
     const u = db.uso_ia[0] || (db.uso_ia[0] = { user_id: "u1", mes: new Date().toISOString().slice(0, 7), leituras: 0, perguntas: 0 });
     const plus = db.assinaturas[0].plano === "plus";
     const lim = (k, n, m) => { if (!plus && u[k] >= n) return { data: null, error: { context: { status: 402, json: async () => ({ erro: "limite", motivo: m }) } } }; };
@@ -75,10 +76,12 @@ with sync_playwright() as p:
     assert pg.evaluate("window.__anon") == 1 and pg.evaluate("USER.id") == "u1", "sem login anônimo"
     assert pg.evaluate("document.body.innerText.includes('Já tenho conta')") is False
     pg.click("text=Começar"); pg.wait_for_timeout(500); assert pg.evaluate("TELA.nome") == "cadastro", pg.evaluate("TELA.nome")
-    pg.fill('input[name="mae"]', "Camila"); pg.click('form button[type="submit"]')
-    pg.fill('input[name="crianca"]', "Theo"); pg.fill('input[name="nascimento"]', "2023-03-10"); pg.click('form button[type="submit"]')
+    pg.fill('input[name="mae"]', "Camila"); pg.set_input_files('input[data-foto]', "/tmp/art/foto_teste.jpg"); pg.wait_for_timeout(400); pg.click('form button[type="submit"]')
+    pg.fill('input[name="crianca"]', "Theo"); pg.set_input_files('input[data-foto]', "/tmp/art/foto_teste.jpg"); pg.wait_for_timeout(400); pg.fill('input[name="nascimento"]', "2023-03-10"); pg.click('form button[type="submit"]')
     pg.click('label.opt:has(input[value="TEA"]) span'); pg.check('input[name="consent"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(400); pg.click('button[data-a="tour-fim"] >> nth=0'); pg.wait_for_timeout(300); pg.wait_for_timeout(600)
     assert pg.evaluate("__db.perfis.length") == 1 and pg.evaluate("__db.perfis[0].crianca") == "Theo"
+    assert str(pg.evaluate("__db.perfis[0].foto")).startswith("data:image/jpeg"), "foto de quem cuida não foi para o banco"
+    assert str(pg.evaluate("__db.membros[0].foto")).startswith("data:image/jpeg"), "foto de quem recebe o cuidado não foi para o banco"
     pg.click("text=Terapia fixa")
     for d in ["1", "3"]: pg.click(f'label.opt:has(input[name="dias"][value="{d}"]) span')
     pg.click(' .pk[data-pk="hora"] .pkf[data-k="h"]'); pg.click('.pkpop button[data-v="10"]'); pg.click(' .pk[data-pk="hora"] .pkf[data-k="n"]'); pg.click('.pkpop button[data-v="00"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(500)
@@ -98,6 +101,10 @@ with sync_playwright() as p:
     pg.evaluate("go('assistente',{},true)"); pg.wait_for_timeout(300)
     pg.fill("#pergunta", "Devo me preocupar?"); pg.press("#pergunta", "Enter"); pg.wait_for_timeout(800)
     assert pg.evaluate("__db.notas_consulta.length") == 1
+    for cod, trecho in [("limite_plus", "300 perguntas deste mês"), ("limite_dia", "limite de perguntas de hoje"), ("servico_ocupado", "muito concorrida")]:
+        pg.evaluate(f"window.__forcaErro = '{cod}'"); pg.fill("#pergunta", "Oi " + cod); pg.press("#pergunta", "Enter"); pg.wait_for_timeout(700)
+        ult = pg.evaluate("[...document.querySelectorAll('.bubble.ai')].pop().textContent"); assert trecho in ult, (cod, ult)
+    pg.evaluate("window.__forcaErro = null"); assert pg.evaluate("TELA.nome") == "assistente", "limite do teia+ não deve levar ao paywall"
     # leitura de laudo (imagem)
     pg.evaluate("go('inicio',{},true)"); pg.wait_for_timeout(400)
     img = "/tmp/laudo_teste.png"

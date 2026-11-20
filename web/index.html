@@ -481,6 +481,17 @@ html.escuro .grupo>.list{background:transparent !important}
 .chat-av{background:linear-gradient(135deg,#F0EBFE,#DDD3FB) !important}
 .chat-av svg path{fill:#7B5CE6}
 .lk{color:#7B5CE6}
+/* fotos de perfil */
+.av img,.pa img,.ib img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block}
+.av,.pa{overflow:hidden}
+.fotoc{display:flex;align-items:center;gap:16px;padding:4px 0 8px}
+.fotoav{position:relative;width:88px;height:88px;border-radius:50%;flex:none;cursor:pointer;display:block}
+.fotoimg{width:100%;height:100%;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#EEEEF3,#DADAE3);color:var(--ink);font-size:32px;font-weight:600;box-shadow:0 0 0 .5px rgba(60,60,67,.18)}
+.fotoimg img{width:100%;height:100%;object-fit:cover;display:block}
+.fotoav .cam{position:absolute;right:-4px;bottom:-4px;width:32px;height:32px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px #fff;font-style:normal}
+.fotoav:focus-within{outline:2px solid var(--navy);outline-offset:3px}
+.fotoacoes{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:0}
+.fotoacoes .link[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -570,8 +581,8 @@ const MAPA = {
           r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, hora: r.hora, profissional: r.profissional, local: r.local, obs: r.obs })],
   marcos: ["marcos", x => ({ membro_id: nul(x.membroId), titulo: x.titulo, data: x.data, nota: x.nota || "", foto: x.foto || "" }),
           r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, nota: r.nota, foto: r.foto })],
-  membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "" }),
-          r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude })],
+  membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "", foto: m.foto || null }),
+          r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, foto: r.foto || "" })],
 };
 const SINC = {}; const filas = {};
 function linhasDe(nome) {
@@ -580,7 +591,7 @@ function linhasDe(nome) {
 }
 async function sincronizar(nome) {
   if (nome === "plano") return;
-  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: DONO(), tour: !!p.tour, lembretes: p.lembretes || {}, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
+  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: DONO(), tour: !!p.tour, lembretes: p.lembretes || {}, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", foto: p.foto || null, consentimento_em: p.consentEm || null }); if (error) throw error; return; }
   const tabela = nome === "checks" ? "marcacoes" : MAPA[nome][0];
   const atual = linhasDe(nome), antes = SINC[nome] || new Map();
   const mudou = [...atual].filter(([k, v]) => antes.get(k) !== JSON.stringify(v)).map(([, v]) => ({ ...v, user_id: DONO() }));
@@ -604,7 +615,7 @@ async function carregar() {
     SB.from("perfis").select("*").eq("user_id", DONO()).maybeSingle(), SB.from("assinaturas").select("*").eq("user_id", DONO()).maybeSingle(), SB.from("uso_ia").select("*").eq("user_id", DONO()).eq("mes", mesAtual()).maybeSingle(),
     ...Object.values(MAPA).map(([t]) => pega(t)), SB.from("marcacoes").select("dia,chave,por,hora").eq("user_id", DONO()).gte("dia", iso(addDays(new Date(), -150)))]);
   const err = [perfil, assin, uso, ...cols].find(r => r.error); if (err) throw err.error;
-  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em, tour: !!r.tour, lembretes: r.lembretes || {} } : null;
+  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, foto: r.foto || "", consent: !!r.consentimento_em, consentEm: r.consentimento_em, tour: !!r.tour, lembretes: r.lembretes || {} } : null;
   Object.keys(MAPA).forEach((n, i) => { S[n] = { items: (cols[i].data || []).map(MAPA[n][2]) }; });
   S.checks = { d: {} }; for (const m of cols[cols.length - 1].data || []) { (S.checks.d[m.dia] = S.checks.d[m.dia] || {})[m.chave] = { by: m.por, at: m.hora }; }
   prepararMembros();
@@ -661,9 +672,12 @@ let SEM_INSTALAR = false; try { SEM_INSTALAR = !!localStorage.getItem("teia.semI
 /* IA no servidor (Edge Function "ia") */
 async function ia(tarefa, dados) {
   const { data, error } = await SB.functions.invoke("ia", { body: { tarefa, ...dados } });
-  if (error) { const st = error.context && error.context.status; let b = {}; try { b = await error.context.json(); } catch (e) {} const er = new Error(b.erro || "falha"); er.code = st === 402 ? "limite" : st === 429 ? "rate_limited" : (b.erro || "falha"); er.motivo = b.motivo; throw er; }
+  if (error) { const st = error.context && error.context.status; let b = {}; try { b = await error.context.json(); } catch (e) {} const er = new Error(b.erro || "falha"); er.code = st === 402 ? "limite" : (b.erro === "limite_plus" || b.erro === "limite_dia" || b.erro === "servico_ocupado") ? b.erro : st === 429 ? "rate_limited" : (b.erro || "falha"); er.motivo = b.motivo; throw er; }
   return data.resultado;
 }
+const MSG_LIMITE = (c, t) => c === "limite_plus" ? (t === "leitura" ? "Você usou as 30 leituras deste mês. Elas voltam no mês que vem." : t === "resumo" ? "Você chegou ao limite de resumos deste mês. Volta no mês que vem." : "Você usou as 300 perguntas deste mês. Elas voltam no mês que vem.")
+  : c === "limite_dia" ? (t === "leitura" ? "Você chegou ao limite de leituras de hoje. Volte amanhã." : t === "resumo" ? "Você chegou ao limite de resumos de hoje. Volte amanhã." : "Você chegou ao limite de perguntas de hoje. Volte amanhã.")
+  : c === "servico_ocupado" ? "A teIA está muito concorrida agora. Tente de novo daqui a pouco." : "";
 const blobParaDataURL = b => new Promise((ok, erro) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = erro; fr.readAsDataURL(b); });
 let ENTRANDO = false;
 async function iniciar() {
@@ -838,7 +852,7 @@ const restam = k => Math.max(0, LIMITE[k] - usado(k));
 function contarUso(k) { if (plus()) return; const m = mesAtual(); S.plano.uso = S.plano.uso || {}; for (const x of Object.keys(S.plano.uso)) if (x < m) delete S.plano.uso[x]; S.plano.uso[m] = S.plano.uso[m] || {}; S.plano.uso[m][k] = (S.plano.uso[m][k] || 0) + 1; }
 const MOTIVOS = { leitura: "Você usou as 3 leituras grátis da teIA deste mês.", pergunta: "Você usou as 5 perguntas grátis deste mês.", relatorio: "O resumo mensal para as terapeutas faz parte do teia+.", rede: "Ter outros perfis de quem cuida faz parte do teia+.", membro: "Cuidar de mais de uma pessoa no mesmo app faz parte do teia+.", perfil: "" };
 function paywall(motivo, extra = {}) { fecharSheet(true); go("teiaplus", { motivo, ...extra }); }
-const BENEFICIOS = [["ia","Leituras da teIA sem limite","Receitas, laudos e exames, sem limite"],["chat","teIA sem limite","Pergunte quando quiser, com anotações para a consulta"],["relatorio","Resumo mensal","Um relatório pronto para levar às terapeutas"],["familia","Mais de uma pessoa","Filhos, pais ou avós na mesma conta"],["rede","Quem cuida junto","Perfis de pai, avó, babá e outros cuidadores"]];
+const BENEFICIOS = [["ia","Muito mais leituras da teIA","Até 30 por mês: receitas, laudos e exames"],["chat","Converse com a teIA à vontade","Até 300 perguntas por mês, com anotações para a consulta"],["relatorio","Resumo mensal","Um relatório pronto para levar às terapeutas"],["familia","Mais de uma pessoa","Filhos, pais ou avós na mesma conta"],["rede","Quem cuida junto","Perfis de pai, avó, babá e outros cuidadores"]];
 
 /* ---------- Conteúdos ---------- */
 const CATS = [["todos","Todos"],["artigo","Artigos"],["noticia","Notícias"],["video","Vídeos"],["dica","Dicas"],["direitos","Direitos"]];
@@ -997,6 +1011,7 @@ TELAS.entrar = (p) => `${topo("Entrar")}
 const CAD = {};
 TELAS.cadastro = (p) => {
   if (p.membro !== undefined) { const m = S.membros.items.find(x => x.id === p.membro) || {}; return `${topo(m.id ? "Editar " + (m.nome || "pessoa") : "Nova pessoa")}<form class="wrap stack" data-f="membro" data-id="${esc(m.id || "")}">
+    ${fotoCampo(m.foto, m.nome, "Foto de quem recebe o cuidado")}
     <label class="f">Nome<input class="input" name="nome" required value="${esc(m.nome)}"></label>
     <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Para você, essa pessoa é</legend><div class="chips">${RELACOES.map(x => `<label class="opt"><input type="radio" name="relacao" value="${esc(x)}" ${(m.relacao || "") === x ? "checked" : ""}><span>${esc(x)}</span></label>`).join("")}</div></fieldset>
     <label class="f">Nascimento<input class="input" type="date" name="nascimento" value="${esc(m.nascimento)}"></label>
@@ -1004,12 +1019,13 @@ TELAS.cadastro = (p) => {
     <label class="f">Plano de saúde<input class="input" name="plano" value="${esc(m.plano)}"></label>
     <button class="btn full" type="submit">Salvar</button>${m.id && S.membros.items.length > 1 ? `<button class="btn danger full" type="button" data-a="membro-apagar" data-id="${m.id}">Remover ${esc(m.nome)} e os dados dela(e)</button>` : ""}</form>`; }
   if (S.perfil && !p.novo) { const pf = S.perfil; return `${topo("Seu perfil")}<form class="wrap stack" data-f="perfil-editar">
+    ${fotoCampo(pf.foto, pf.mae, "Sua foto")}
     <label class="f">Seu nome<input class="input" name="mae" required value="${esc(pf.mae)}"></label>
     <fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Você é</legend><div class="chips">${PAPEIS.map(x => `<label class="opt"><input type="radio" name="papel" value="${esc(x)}" ${(pf.papel || "") === x ? "checked" : ""}><span>${esc(x)}</span></label>`).join("")}</div></fieldset>
     <button class="btn full" type="submit">Salvar</button></form>`; }
   const s = Number(p.step || 1); const cores = ["", "au-rosa", "au-ceu", "au-menta"]; const titulos = ["", "Como podemos te chamar?", "Quem você vai acompanhar?", "O que faz parte da jornada?"]; const subs = ["", "E qual é o seu papel no cuidado?", "A rotina, os laudos e a evolução ficam no nome dessa pessoa.", "Isso ajuda a organizar. Você pode mudar depois."];
-  const corpo = s === 1 ? `<label class="f">Seu nome<input class="input" name="mae" required autocomplete="given-name" value="${esc(CAD.mae)}"></label><fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Você é</legend><div class="chips">${PAPEIS.map(x => `<label class="opt"><input type="radio" name="papel" value="${esc(x)}" ${(CAD.papel || "") === x ? "checked" : ""}><span>${esc(x)}</span></label>`).join("")}</div></fieldset>`
-    : s === 2 ? `<label class="f">Nome de quem você cuida<input class="input" name="crianca" required value="${esc(CAD.crianca)}"></label><label class="f">Data de nascimento<input class="input" type="date" name="nascimento" value="${esc(CAD.nascimento)}"></label>`
+  const corpo = s === 1 ? `${fotoCampo(CAD.foto, CAD.mae, "Sua foto (opcional)")}<label class="f">Seu nome<input class="input" name="mae" required autocomplete="given-name" value="${esc(CAD.mae)}"></label><fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Você é</legend><div class="chips">${PAPEIS.map(x => `<label class="opt"><input type="radio" name="papel" value="${esc(x)}" ${(CAD.papel || "") === x ? "checked" : ""}><span>${esc(x)}</span></label>`).join("")}</div></fieldset>`
+    : s === 2 ? `${fotoCampo(CAD.fotoCrianca, CAD.crianca, "Foto de quem você cuida (opcional)")}<label class="f">Nome de quem você cuida<input class="input" name="crianca" required value="${esc(CAD.crianca)}"></label><label class="f">Data de nascimento<input class="input" type="date" name="nascimento" value="${esc(CAD.nascimento)}"></label>`
     : `<fieldset style="border:none;padding:0;margin:0"><legend class="small b" style="margin-bottom:8px">Diagnósticos ou condições (escolha quantos quiser)</legend><div class="chips">${DIAGS.map(d => `<label class="opt"><input type="checkbox" name="diag" value="${esc(d)}" ${(CAD.diag || []).includes(d) ? "checked" : ""}><span>${esc(d)}</span></label>`).join("")}</div></fieldset>
        <label class="f">Plano de saúde (opcional)<input class="input" name="plano" value="${esc(CAD.plano)}"></label>
        <label class="row small card" style="align-items:flex-start;gap:12px"><input type="checkbox" name="consent" required style="width:22px;height:22px;margin-top:2px;flex:none;accent-color:#2F3273"><span>Sou responsável por esse cuidado e autorizo guardar estes dados de saúde para organizar a rotina. Ficam privados na minha conta e posso apagar quando quiser.</span></label>`;
@@ -1028,8 +1044,8 @@ TELAS.inicio = () => {
   const estado = !sem.tot ? "começa por aqui" : sem.pct >= 70 ? "segue bem" : sem.pct >= 40 ? "vai evoluindo" : "está começando";
   const pd = prox ? parseISO(prox.data) : null;
   return `<div class="topbar">${logo(26)}<span class="grow"></span><button class="circle" data-a="ir" data-v="assistente" aria-label="Perguntar à teIA">${ic("ia", 20)}</button><button class="circle" data-a="ir" data-v="linha" aria-label="Linha do tempo">${ic("notificacao", 20)}</button></div>
-<div class="hd" style="padding-top:20px"><div class="av" aria-hidden="true">${esc((p.mae || nomeCrianca() || "T").slice(0,1).toUpperCase())}</div><div class="grow"><h1 class="hello">Olá${p.mae ? ", " + esc(p.mae) : ""}!</h1><p class="muted" style="margin-top:2px;font-size:13px">Cuidar junto é mais leve.</p></div></div>
-<div class="pessoas" role="tablist" aria-label="Pessoas que você cuida">${S.membros.items.map(m => `<button role="tab" aria-selected="${m.id === ATIVO}" class="pessoa ${m.id === ATIVO ? "on" : ""}" data-a="membro-trocar" data-v="${m.id}"><span class="pa">${esc((m.nome || "?").slice(0, 1).toUpperCase())}</span>${esc(m.nome)}</button>`).join("")}<button class="pessoa add" data-a="membro-novo" aria-label="Adicionar pessoa">${ic("mais", 16)}${S.membros.items.length < 2 ? "Adicionar" : ""}${plus() ? "" : `<span class="plus-tag" style="height:16px;font-size:9.5px;padding:0 4px">teia+</span>`}</button></div>
+<div class="hd" style="padding-top:20px"><div class="av" aria-hidden="true">${p.foto ? `<img src="${esc(p.foto)}" alt="">` : esc((p.mae || nomeCrianca() || "T").slice(0,1).toUpperCase())}</div><div class="grow"><h1 class="hello">Olá${p.mae ? ", " + esc(p.mae) : ""}!</h1><p class="muted" style="margin-top:2px;font-size:13px">Cuidar junto é mais leve.</p></div></div>
+<div class="pessoas" role="tablist" aria-label="Pessoas que você cuida">${S.membros.items.map(m => `<button role="tab" aria-selected="${m.id === ATIVO}" class="pessoa ${m.id === ATIVO ? "on" : ""}" data-a="membro-trocar" data-v="${m.id}"><span class="pa">${fotoDentro(m.foto, m.nome)}</span>${esc(m.nome)}</button>`).join("")}<button class="pessoa add" data-a="membro-novo" aria-label="Adicionar pessoa">${ic("mais", 16)}${S.membros.items.length < 2 ? "Adicionar" : ""}${plus() ? "" : `<span class="plus-tag" style="height:16px;font-size:9.5px;padding:0 4px">teia+</span>`}</button></div>
 <div class="wrap stack" style="padding-top:16px;gap:16px">
   <button class="tile au-indigo hero" data-a="aba" data-v="rotina" aria-label="Rotina da semana: ${sem.pct}% concluída">
     <div class="hero-top"><span>A jornada de ${esc(crianca)}</span><span>Rotina da semana</span></div>
@@ -1118,7 +1134,7 @@ TELAS.teiaplus = (p) => {
 <div class="wrap stack" style="padding-top:0;gap:12px">
   <div style="text-align:center;padding:4px 0 8px"><div class="row" style="justify-content:center;gap:8px">${logo(34)}<span class="plus-tag" style="height:26px;font-size:15px">+</span></div>
     <h1 style="font-size:22px;font-weight:600;letter-spacing:-.5px;margin-top:16px;line-height:1.25">Mais tempo com ${esc(nomeCrianca())},<br>menos papelada.</h1>
-    ${m ? `<p class="small" style="margin-top:8px;color:var(--navy);font-weight:500">${esc(m)}</p>` : `<p class="small muted" style="margin-top:8px">Tudo o que a teIA faz, sem limites.</p>`}</div>
+    ${m ? `<p class="small" style="margin-top:8px;color:var(--navy);font-weight:500">${esc(m)}</p>` : `<p class="small muted" style="margin-top:8px">Tudo o que a teIA faz, com folga para o mês inteiro.</p>`}</div>
   <div class="card" style="padding:8px 16px">${BENEFICIOS.map(([i, t, d]) => `<div class="task" style="padding:12px 0"><span class="ib" style="width:32px;height:32px">${ic(i, 17)}</span><div class="grow"><p class="small b">${t}</p><p class="xs muted">${d}</p></div></div>`).join("")}</div>
   <button class="plan ${pl === "anual" ? "on" : ""}" data-a="plus-plano" data-v="anual" aria-pressed="${pl === "anual"}"><span class="badge">7 dias grátis</span><span class="rd"></span><span class="grow"><b style="display:block;font-size:14.5px;font-weight:600">Anual</b><span class="xs muted">R$ 149,00 por ano · economize 37%</span></span><span style="text-align:right"><b style="display:block;font-size:15px;font-weight:600">R$ 12,42</b><span class="xs muted">por mês</span></span></button>
   <button class="plan ${pl === "mensal" ? "on" : ""}" data-a="plus-plano" data-v="mensal" aria-pressed="${pl === "mensal"}"><span class="rd"></span><span class="grow"><b style="display:block;font-size:14.5px;font-weight:600">Mensal</b><span class="xs muted">Cancele quando quiser</span></span><span style="text-align:right"><b style="display:block;font-size:15px;font-weight:600">R$ 19,90</b><span class="xs muted">por mês</span></span></button>
@@ -1379,12 +1395,12 @@ TELAS.familia = () => `${topoRaiz("Quem cuida junto", `<button class="circle" da
 
 TELAS.perfil = () => { const p = S.perfil || {}; const m = membroAtivo() || {}; return `${topoRaiz("Perfil")}
 <div class="wrap stack" style="padding-top:12px;gap:12px">
-  <button class="card row" data-a="cad-editar" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="av" style="width:46px;height:46px;font-size:18px">${esc((p.mae || "?").slice(0, 1).toUpperCase())}</span><span class="grow"><b style="display:block;font-size:15px;font-weight:600">${esc(p.mae || "Seu perfil")}</b><span class="xs muted">${esc(p.papel || "Toque para dizer seu papel no cuidado")}</span></span>${ic("editar", 18)}</button>
+  <button class="card row" data-a="cad-editar" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="av" style="width:48px;height:48px;font-size:18px">${fotoDentro(p.foto, p.mae)}</span><span class="grow"><b style="display:block;font-size:15px;font-weight:600">${esc(p.mae || "Seu perfil")}</b><span class="xs muted">${esc(p.papel || "Toque para dizer seu papel no cuidado")}</span></span>${ic("editar", 18)}</button>
   <div class="sec-title"><h2>Quem você cuida</h2><button class="lk" data-a="membro-novo">${ic("mais", 14)} Adicionar</button></div>
-  ${S.membros.items.map(x => `<div class="list"><span class="ib ${x.id === ATIVO ? "" : "c2"}" style="${x.id === ATIVO ? "background:var(--navy) !important;color:#fff !important;" : ""}font-weight:600">${esc((x.nome || "?").slice(0, 1).toUpperCase())}</span><button class="grow" data-a="membro-trocar" data-v="${x.id}" style="border:none;background:none;text-align:left;padding:0;font-family:inherit;color:var(--ink)"><b style="display:block;font-size:14px;font-weight:600">${esc(x.nome)}${x.id === ATIVO ? ' <span class="tg" style="margin-left:4px">vendo agora</span>' : ""}</b><span class="xs muted">${esc([x.relacao, x.nascimento ? idade(x.nascimento) : "", x.diagnosticos].filter(Boolean).join(" · ") || "Complete os dados")}</span></button><button class="circle" data-a="membro-editar" data-v="${x.id}" aria-label="Editar ${esc(x.nome)}" style="width:38px;height:38px;box-shadow:none;background:var(--soft)">${ic("editar", 16)}</button></div>`).join("")}
+  ${S.membros.items.map(x => `<div class="list"><span class="ib ${x.id === ATIVO ? "" : "c2"}" style="${x.id === ATIVO ? "background:var(--navy) !important;color:#fff !important;" : ""}font-weight:600;overflow:hidden">${fotoDentro(x.foto, x.nome)}</span><button class="grow" data-a="membro-trocar" data-v="${x.id}" style="border:none;background:none;text-align:left;padding:0;font-family:inherit;color:var(--ink)"><b style="display:block;font-size:14px;font-weight:600">${esc(x.nome)}${x.id === ATIVO ? ' <span class="tg" style="margin-left:4px">vendo agora</span>' : ""}</b><span class="xs muted">${esc([x.relacao, x.nascimento ? idade(x.nascimento) : "", x.diagnosticos].filter(Boolean).join(" · ") || "Complete os dados")}</span></button><button class="circle" data-a="membro-editar" data-v="${x.id}" aria-label="Editar ${esc(x.nome)}" style="width:38px;height:38px;box-shadow:none;background:var(--soft)">${ic("editar", 16)}</button></div>`).join("")}
   ${[["relatorio","relatorio","c5","Relatório para a consulta"],["consulta","diario","c4","Para a consulta"],["agenda","rotina","c2","Agenda"],["lembretes","lembrete","c1","Lembretes"],["conta","privacidade","c3","Conta e família"],["familia","rede","c2","Quem cuida junto"],["direitos","direitos","c1","Direitos"],["tratamentos","rotina","c2","Tratamentos"],["documentos","pasta","c5","Documentos"],["evolucao","evolucao","c3","Evolução"],["linha","linha","c4","Linha do tempo"],["assistente","ia","c1","Pergunte à teIA"]].map(([v, i, c, l]) => `<button class="list" data-a="ir" data-v="${v}"><span class="ib ${c}">${ic(i, 22)}</span><span class="grow b">${l}</span>${ic("seta", 18)}</button>`).join("")}
   <div class="card stack" style="gap:8px"><div class="row" style="gap:12px"><span class="ib c2">${ic("privacidade", 22)}</span><h3>Privacidade</h3></div><p class="small muted">Os dados de saúde ficam privados na sua conta. A teIA lê receitas e laudos, e você confere tudo antes de salvar. O app organiza e explica, mas não substitui a orientação médica.</p></div>
-  <button class="card row" data-a="ir" data-v="teiaplus" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib" style="width:38px;height:38px">${ic("conquista", 18)}</span><span class="grow"><b style="display:block;font-size:14px;font-weight:600">${plus() ? "Você é teia+" : "Conheça o teia+"}</b><span class="xs muted">${plus() ? "Leituras e perguntas sem limite" : `Plano grátis · ${restam("leitura")} leituras e ${restam("pergunta")} perguntas restantes`}</span></span>${plus() ? `<span class="plus-tag">+</span>` : ic("seta", 16)}</button>
+  <button class="card row" data-a="ir" data-v="teiaplus" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib" style="width:38px;height:38px">${ic("conquista", 18)}</span><span class="grow"><b style="display:block;font-size:14px;font-weight:600">${plus() ? "Você é teia+" : "Conheça o teia+"}</b><span class="xs muted">${plus() ? "Até 30 leituras e 300 perguntas por mês" : `Plano grátis · ${restam("leitura")} leituras e ${restam("pergunta")} perguntas restantes`}</span></span>${plus() ? `<span class="plus-tag">+</span>` : ic("seta", 16)}</button>
   <div class="card"><p class="b small" style="margin-bottom:8px">Aparência</p><div class="chips">${[["auto","Automático"],["claro","Claro"],["escuro","Escuro"]].map(([k, l]) => `<button class="chip ${TEMA === k ? "on" : ""}" data-a="tema" data-v="${k}">${l}</button>`).join("")}</div></div>
   <button class="btn sec full" data-a="exportar">${ic("upload", 18)}Baixar todos os meus dados</button>
   ${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<p class="xs muted" style="text-align:center;line-height:1.5">Acesso livre: seus dados ficam guardados e ligados a este aparelho. Em breve você vai poder criar uma conta para entrar de outros lugares.</p>` : ""}
@@ -1393,7 +1409,7 @@ TELAS.perfil = () => { const p = S.perfil || {}; const m = membroAtivo() || {}; 
 </div>`; };
 
 let CHAT = [];
-TELAS.assistente = () => `<div class="chat-top"><button class="circle" data-a="voltar" aria-label="Voltar">${ic("voltar", 22)}</button><div class="chat-id"><span class="chat-av">${simbolo(20)}</span><div style="min-width:0"><b>teIA</b><span>${plus() ? "Sem limite de perguntas" : `${restam("pergunta")} de ${LIMITE.pergunta} perguntas grátis este mês`}</span></div></div></div>
+TELAS.assistente = () => `<div class="chat-top"><button class="circle" data-a="voltar" aria-label="Voltar">${ic("voltar", 22)}</button><div class="chat-id"><span class="chat-av">${simbolo(20)}</span><div style="min-width:0"><b>teIA</b><span>${plus() ? "teia+ · até 300 perguntas por mês" : `${restam("pergunta")} de ${LIMITE.pergunta} perguntas grátis este mês`}</span></div></div></div>
 <div class="wrap stack" id="chat">
   <div class="bubble ai">Oi, ${esc(nomeUsuario() || "tudo bem")}! Que bom ter você aqui. Pode me perguntar sobre ${esc(nomeCrianca())}. Se algo te preocupar, eu te escuto e anoto para levar à consulta.</div>
   ${CHAT.length ? "" : `<p class="sugs-t">Para começar</p><div class="stack" style="gap:12px">${[`Quais remédios ${nomeCrianca()} toma hoje?`,"Quando é a próxima consulta?","O que diz o último laudo?",`Devo me preocupar com o sono de ${nomeCrianca()}?`].map(q => `<button class="list sug sem-ic" data-a="perguntar" data-v="${esc(q)}"><span class="grow">${esc(q)}</span>${ic("seta", 16)}</button>`).join("")}</div>`}
@@ -1526,7 +1542,7 @@ const aoArquivo = async e => {
   try {
     const r = await lerComIA(tipo, imgs); contarUso("leitura"); atualizarPlano().catch(() => {}); clearInterval(relogio); passoScan(4); await new Promise(x => setTimeout(x, 450)); passoScan(5); await new Promise(x => setTimeout(x, 550));
     TELA = { nome: tipo === "receita" ? "confreceita" : "conflaudo", p: { r, lido: true } }; render("fwd");
-  } catch (err) { clearInterval(relogio); if (err && err.code === "limite") { SCAN = null; paywall(err.motivo || "leitura", { tipo }); return; } toast(err && err.code === "rate_limited" ? "Muitas leituras seguidas. Tente em alguns minutos." : "Não consegui ler o documento. Preencha os dados."); TELA = { nome: tipo === "receita" ? "confreceita" : "conflaudo", p: { r: {} } }; render("fwd"); }
+  } catch (err) { clearInterval(relogio); if (err && err.code === "limite") { SCAN = null; paywall(err.motivo || "leitura", { tipo }); return; } toast(err && MSG_LIMITE(err.code, "leitura") ? MSG_LIMITE(err.code, "leitura") : err && err.code === "rate_limited" ? "Muitas leituras seguidas. Tente em alguns minutos." : "Não consegui ler o documento. Preencha os dados."); TELA = { nome: tipo === "receita" ? "confreceita" : "conflaudo", p: { r: {} } }; render("fwd"); }
 };
 ["filein", "fin-camera", "fin-galeria", "fin-pdf"].forEach(id => document.getElementById(id).addEventListener("change", aoArquivo));
 function contexto() {
@@ -1562,9 +1578,24 @@ DADOS: ${contexto()}`;
     ult().content = (j && j.resposta) || r.text || ult().content;
     const an = j && j.anotacao;
     if (an && an.texto) { const n = { id: uid(), data: iso(new Date()), titulo: String(an.titulo || "Para a consulta").slice(0, 80), texto: String(an.texto).slice(0, 500), para: an.para ? String(an.para).slice(0, 60) : "", feito: false, origem: "ia", pergunta: q }; addItem("notas", n); ult().nota = n.id; await salvar("notas").catch(() => {}); }
-  } catch (e) { if (e && e.code === "limite") { CHAT.splice(-2, 2); paywall(e.motivo || "pergunta"); return; } ult().content = e && e.code === "rate_limited" ? "Muitas perguntas seguidas. Tente em alguns minutos." : "Não consegui responder agora."; }
+  } catch (e) { if (e && e.code === "limite") { CHAT.splice(-2, 2); paywall(e.motivo || "pergunta"); return; } ult().content = e && MSG_LIMITE(e.code, "pergunta") ? MSG_LIMITE(e.code, "pergunta") : e && e.code === "rate_limited" ? "Muitas perguntas seguidas. Tente em alguns minutos." : "Não consegui responder agora."; }
   if (TELA.nome === "assistente") { render(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }
 }
+
+/* ---------- Fotos de perfil (reduzidas no aparelho, guardadas como imagem pequena) ---------- */
+const iniciaDe = n => esc(String(n || "?").trim().slice(0, 1).toUpperCase() || "?");
+const fotoDentro = (foto, nome) => foto ? `<img src="${esc(foto)}" alt="">` : iniciaDe(nome);
+async function fotoQuadrada(file, lado = 320) {
+  const b = await createImageBitmap(file); const k = Math.min(b.width, b.height), sx = (b.width - k) / 2, sy = (b.height - k) / 2;
+  const c = document.createElement("canvas"); c.width = c.height = lado; c.getContext("2d").drawImage(b, sx, sy, k, k, 0, 0, lado, lado);
+  let q = .82, url = c.toDataURL("image/jpeg", q); while (url.length > 90000 && q > .45) { q -= .1; url = c.toDataURL("image/jpeg", q); } return url;
+}
+const fotoCampo = (valor, nome, rotulo) => `<div class="fotoc" data-ini="${iniciaDe(nome)}"><label class="fotoav" aria-label="${esc(rotulo)}"><input type="file" accept="image/*" class="sr" data-foto="1"><span class="fotoimg">${fotoDentro(valor, nome)}</span><i class="cam">${ic("camera", 16)}</i></label><input type="hidden" name="foto" value="${esc(valor || "")}"><div class="fotoacoes"><b class="small">${esc(rotulo)}</b><span class="xs muted">Toque na foto para escolher ou tirar uma.</span><button type="button" class="link" data-a="foto-remover" ${valor ? "" : "hidden"}>Remover foto</button></div></div>`;
+document.addEventListener("change", async e => {
+  const inp = e.target.closest && e.target.closest("input[data-foto]"); if (!inp || !inp.files[0]) return; const box = inp.closest(".fotoc");
+  try { const url = await fotoQuadrada(inp.files[0]); box.querySelector('input[name="foto"]').value = url; box.querySelector(".fotoimg").innerHTML = `<img src="${url}" alt="">`; box.querySelector('[data-a="foto-remover"]').hidden = false; }
+  catch (er) { toast("Não consegui usar essa foto. Tente outra."); } inp.value = "";
+});
 
 /* ---------- Seletor de dia e hora: campos com lista suspensa ---------- */
 const MES_ABR = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
@@ -1692,6 +1723,7 @@ document.addEventListener("click", async e => {
     case "confirmar-ok": { const f = window.__ok; fecharSheet(); if (f) await f(); break; }
     case "cad-ir": if (Number(v) < 1) { go("boasvindas", {}, true); break; } TELA.nome === "cadastro" ? (TELA.p = { step: Number(v), novo: true }, render("back")) : go("cadastro", { step: Number(v), novo: true }); break;
     case "cad-editar": go("cadastro", {}); break;
+    case "foto-remover": { const box = el.closest(".fotoc"); box.querySelector('input[name="foto"]').value = ""; box.querySelector(".fotoimg").innerHTML = box.dataset.ini; el.hidden = true; break; }
     case "membro-editar": go("cadastro", { membro: v || ATIVO }); break;
     case "membro-novo": if (!plus()) { paywall("membro"); break; } go("cadastro", { membro: "" }); break;
     case "membro-trocar": escolherMembro(v); render("aba"); toast(`Agora você está vendo ${nomeCrianca()}.`); break;
@@ -1768,7 +1800,7 @@ async function gerarRelatorio(btn) {
   btn.disabled = true; out.innerHTML = `<div class="card stack" style="gap:12px"><p id="reltxt" class="small" style="white-space:pre-wrap;line-height:1.5">Escrevendo o resumo…</p><button class="btn sec" data-a="copiar">Copiar resumo</button></div>`;
   const prompt = `Escreva em português do Brasil um resumo curto (até 170 palavras) do mês de ${MESES[ref.getMonth()]} de ${nomeCrianca()}, para ${nomeUsuario() || "a família"} levar aos profissionais. Tom acolhedor e objetivo. Organize em: Presença nas terapias; Como foram os dias; Conquistas; Pontos para conversar. Sem diagnósticos nem recomendações clínicas. Use só os dados abaixo.\nSessões: ${JSON.stringify(sess)}\nRegistros: ${JSON.stringify(regs)}`;
   try { const r = await ia("resumo", { membro: ATIVO, sessoes: sess }); const el = document.getElementById("reltxt"); if (el && r && r.texto) el.textContent = r.texto; }
-  catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && err.code === "rate_limited" ? "Muitos pedidos seguidos. Tente em alguns minutos." : "Não consegui gerar o resumo agora."}</p>`; }
+  catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && MSG_LIMITE(err.code, "resumo") ? MSG_LIMITE(err.code, "resumo") : err && err.code === "rate_limited" ? "Muitos pedidos seguidos. Tente em alguns minutos." : "Não consegui gerar o resumo agora."}</p>`; }
   btn.disabled = false;
 }
 
@@ -1781,14 +1813,14 @@ document.addEventListener("submit", async e => {
   try {
     if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui enviar o link. Confira o e-mail."); return; } TELA.p = { enviado: true, email }; render(); return; }
     if (tipo === "cad") { const s = Number(f.dataset.step);
-      if (s === 1) { CAD.mae = g("mae"); CAD.papel = g("papel"); } if (s === 2) { CAD.crianca = g("crianca"); CAD.nascimento = g("nascimento"); }
+      if (s === 1) { CAD.mae = g("mae"); CAD.papel = g("papel"); CAD.foto = g("foto"); } if (s === 2) { CAD.crianca = g("crianca"); CAD.nascimento = g("nascimento"); CAD.fotoCrianca = g("foto"); }
       if (s < 3) { TELA.p = { step: s + 1, novo: true }; render("fwd"); return; }
       CAD.diag = fd.getAll("diag"); CAD.plano = g("plano");
-      S.membros.items = [{ id: "principal", nome: CAD.crianca, nascimento: CAD.nascimento || "", diagnosticos: CAD.diag.join(", "), plano: CAD.plano || "", relacao: "" }]; escolherMembro("principal");
-      S.perfil = { mae: CAD.mae, papel: CAD.papel || "", crianca: CAD.crianca, nascimento: CAD.nascimento, diagnosticos: CAD.diag.join(", "), plano: CAD.plano, consent: true, consentEm: new Date().toISOString() };
+      S.membros.items = [{ id: "principal", nome: CAD.crianca, nascimento: CAD.nascimento || "", diagnosticos: CAD.diag.join(", "), plano: CAD.plano || "", relacao: "", foto: CAD.fotoCrianca || "" }]; escolherMembro("principal");
+      S.perfil = { mae: CAD.mae, papel: CAD.papel || "", crianca: CAD.crianca, nascimento: CAD.nascimento, diagnosticos: CAD.diag.join(", "), plano: CAD.plano, foto: CAD.foto || "", consent: true, consentEm: new Date().toISOString() };
       await salvar("perfil").catch(() => {}); await salvar("membros").catch(() => {}); go("tour", { i: 0 }, true); }
-    if (tipo === "perfil-editar") { S.perfil = { ...S.perfil, mae: g("mae"), papel: g("papel") }; await salvar("perfil").catch(() => {}); voltar(); toast("Perfil salvo."); }
-    if (tipo === "membro") { const mid = f.dataset.id; const dados = { nome: g("nome"), relacao: g("relacao"), nascimento: g("nascimento"), diagnosticos: g("diagnosticos"), plano: g("plano") };
+    if (tipo === "perfil-editar") { S.perfil = { ...S.perfil, mae: g("mae"), papel: g("papel"), foto: g("foto") }; await salvar("perfil").catch(() => {}); voltar(); toast("Perfil salvo."); }
+    if (tipo === "membro") { const mid = f.dataset.id; const dados = { nome: g("nome"), relacao: g("relacao"), nascimento: g("nascimento"), diagnosticos: g("diagnosticos"), plano: g("plano"), foto: g("foto") };
       if (mid) S.membros.items = S.membros.items.map(x => x.id === mid ? { ...x, ...dados } : x); else { const nid = uid(); S.membros.items.push({ id: nid, ...dados }); escolherMembro(nid); }
       if (S.perfil && (mid || "principal") === membroPadrao()) S.perfil = { ...S.perfil, crianca: S.membros.items[0].nome, nascimento: S.membros.items[0].nascimento, diagnosticos: S.membros.items[0].diagnosticos, plano: S.membros.items[0].plano };
       await salvar("membros").catch(() => {}); await salvar("perfil").catch(() => {}); go("inicio", {}, true); toast(mid ? "Dados atualizados." : `${dados.nome} foi adicionada(o) à sua área de cuidado.`); }

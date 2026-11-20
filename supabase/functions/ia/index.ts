@@ -1,7 +1,7 @@
 // teia · IA no servidor
 // Tarefas: "receita" e "laudo" (leitura de imagens), "pergunta" (assistente) e "resumo" (relatório do mês).
 // A chave ANTHROPIC_API_KEY fica só aqui. Limites do plano grátis são conferidos antes de cada chamada.
-import { CORS, json, contexto, LIMITE, ehPlus, usoDoMes, mesAtual, donoDe } from "../_shared/comum.ts";
+import { CORS, json, contexto, LIMITE, LIMITE_PLUS, LIMITE_DIA, FREIO_GLOBAL_DIA, ehPlus, usoDoMes, usoDoDia, usoGlobalDoDia, mesAtual, donoDe } from "../_shared/comum.ts";
 import { P_RECEITA, P_LAUDO } from "../_shared/prompts.ts";
 
 const MODELO_LEITURA = Deno.env.get("MODELO_LEITURA") ?? "claude-sonnet-5-5";
@@ -72,6 +72,31 @@ async function dadosDaFamilia(usuario: any, dono: string, membroPedido?: string)
   };
 }
 
+type Tipo = "leitura" | "pergunta" | "resumo";
+/** Confere limites do mês (grátis ou teia+), do dia e o freio global. Devolve a resposta de bloqueio, ou null se pode seguir. */
+function barrar(tipo: Tipo, plus: boolean, mes: any, dia: any, glob: { leituras: number; perguntas: number }) {
+  const col = tipo === "leitura" ? "leituras" : tipo === "pergunta" ? "perguntas" : "resumos";
+  const motivo = tipo === "resumo" ? "relatorio" : tipo;
+  if (tipo !== "resumo" && glob[col as "leituras" | "perguntas"] >= FREIO_GLOBAL_DIA[tipo]) return json({ erro: "servico_ocupado" }, 503);
+  if (!plus) {
+    if (tipo === "resumo") return json({ erro: "limite", motivo }, 402);
+    if (mes[col] >= LIMITE[tipo]) return json({ erro: "limite", motivo }, 402);
+  } else if (mes[col] >= LIMITE_PLUS[tipo]) return json({ erro: "limite_plus", motivo, limite: LIMITE_PLUS[tipo] }, 429);
+  if (dia[col] >= LIMITE_DIA[tipo]) return json({ erro: "limite_dia", motivo, limite: LIMITE_DIA[tipo] }, 429);
+  return null;
+}
+
+/** Mantém o contexto enviado ao modelo pequeno (e o custo por pergunta baixo e previsível). */
+function enxugar(d: any): string {
+  const corta = (t: unknown, n: number) => (typeof t === "string" ? t.slice(0, n) : t);
+  d.documentos = (d.documentos ?? []).slice(0, 12).map((x: any) => ({ ...x, resumo: corta(x.resumo, 500) }));
+  d.registros = (d.registros ?? []).slice(0, 30).map((r: any) => ({ ...r, nota: corta(r.nota, 200) }));
+  let j = JSON.stringify(d);
+  if (j.length > 14000) { d.registros = d.registros.slice(0, 10); d.documentos = d.documentos.map((x: any) => ({ ...x, resumo: corta(x.resumo, 250), recomendacoes: undefined, medicamentos: undefined })); j = JSON.stringify(d); }
+  if (j.length > 14000) { d.documentos = d.documentos.slice(0, 5); d.registros = []; j = JSON.stringify(d); }
+  return j;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ erro: "metodo" }, 405);
@@ -84,11 +109,11 @@ Deno.serve(async (req) => {
   try { corpo = await req.json(); } catch { return json({ erro: "corpo_invalido" }, 400); }
   const tarefa = String(corpo?.tarefa || "");
   const plus = await ehPlus(admin, dono);
-  const uso = await usoDoMes(admin, dono);
+  const [uso, usoDia, glob] = await Promise.all([usoDoMes(admin, dono), usoDoDia(admin, dono), usoGlobalDoDia(admin)]);
 
   try {
     if (tarefa === "receita" || tarefa === "laudo") {
-      if (!plus && uso.leituras >= LIMITE.leitura) return json({ erro: "limite", motivo: "leitura" }, 402);
+      { const b = barrar("leitura", plus, uso, usoDia, glob); if (b) return b; }
       const imagens = (Array.isArray(corpo.imagens) ? corpo.imagens : []).slice(0, MAX_IMAGENS);
       if (!imagens.length) return json({ erro: "sem_imagem" }, 400);
       const blocos = [...imagens.map(imagemParaBloco), { type: "text", text: tarefa === "receita" ? P_RECEITA : P_LAUDO }];
@@ -99,10 +124,10 @@ Deno.serve(async (req) => {
     }
 
     if (tarefa === "pergunta") {
-      if (!plus && uso.perguntas >= LIMITE.pergunta) return json({ erro: "limite", motivo: "pergunta" }, 402);
+      { const b = barrar("pergunta", plus, uso, usoDia, glob); if (b) return b; }
       const historico: Msg[] = (Array.isArray(corpo.historico) ? corpo.historico : [])
         .filter((m: any) => (m.role === "user" || m.role === "assistant") && typeof m.content === "string")
-        .slice(-10).map((m: any) => ({ role: m.role, content: m.content.slice(0, 2000) }));
+        .slice(-6).map((m: any) => ({ role: m.role, content: m.content.slice(0, 1000) }));
       while (historico.length && historico[0].role !== "user") historico.shift();
       if (!historico.length || historico[historico.length - 1].role !== "user") return json({ erro: "sem_pergunta" }, 400);
       const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
@@ -123,15 +148,15 @@ Deno.serve(async (req) => {
 8) Gênero: ajuste a concordância ao gênero de quem fala com você (veja o papel nos dados e o nome). Mãe, avó, tia, irmã: feminino. Pai, avô, tio, irmão: masculino. Se o papel for "Cuidador(a)", "Outro" ou vazio, só use o gênero do primeiro nome quando for inequívoco; na dúvida, use formas neutras que não flexionam (por exemplo "você cuida com tanto carinho", "foi ótimo ter anotado", "que bom você estar de olho"). Faça o mesmo com ${pessoa} (ele/ela, atento/atenta) usando o relacionamento e o nome, e nunca presuma que quem pergunta é mulher.
 9) Varie as aberturas das respostas. Se quiser, use no máximo um 💜, e só de vez em quando.
 Responda APENAS com JSON: {"resposta":string,"anotacao":null|{"titulo":string (até 6 palavras),"texto":string,"para":string|null}}
-DADOS: ${JSON.stringify(dados)}`;
-      const texto = await claude(MODELO_CONVERSA, historico, sistema, 700);
+DADOS: ${enxugar(dados)}`;
+      const texto = await claude(MODELO_CONVERSA, historico, sistema, 400);
       let resultado: any; try { resultado = extrairJSON(texto); } catch { resultado = { resposta: texto, anotacao: null }; }
       await admin.rpc("registrar_uso_ia", { p_user: dono, p_tipo: "pergunta" });
       return json({ resultado });
     }
 
     if (tarefa === "resumo") {
-      if (!plus) return json({ erro: "limite", motivo: "relatorio" }, 402);
+      { const b = barrar("resumo", plus, uso, usoDia, glob); if (b) return b; }
       const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
       const mes = mesAtual();
       const regs = dados.registros.filter((r: any) => String(r.data).startsWith(mes));

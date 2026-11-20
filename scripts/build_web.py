@@ -35,8 +35,8 @@ const MAPA = {
           r => ({ id: r.id, membroId: r.membro_id || "", data: r.data, titulo: r.titulo, texto: r.texto, para: r.para, feito: r.feito, origem: r.origem, pergunta: r.pergunta })],
   consultas: ["consultas", c => ({ membro_id: nul(c.membroId), titulo: c.titulo, data: c.data, hora: c.hora || "", profissional: c.profissional || "", local: c.local || "", obs: c.obs || "" }),
           r => ({ id: r.id, membroId: r.membro_id || "", titulo: r.titulo, data: r.data, hora: r.hora, profissional: r.profissional, local: r.local, obs: r.obs })],
-  membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "" }),
-          r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude })],
+  membros: ["membros", m => ({ nome: m.nome, relacao: m.relacao || "", nascimento: nul(m.nascimento), diagnosticos: m.diagnosticos || "", plano_saude: m.plano || "", foto: m.foto || null }),
+          r => ({ id: r.id, nome: r.nome, relacao: r.relacao, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, foto: r.foto || "" })],
 };
 const SINC = {}; const filas = {};
 function linhasDe(nome) {
@@ -45,7 +45,7 @@ function linhasDe(nome) {
 }
 async function sincronizar(nome) {
   if (nome === "plano") return;
-  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: USER.id, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", consentimento_em: p.consentEm || null }); if (error) throw error; return; }
+  if (nome === "perfil") { if (!S.perfil) return; const p = S.perfil; const { error } = await SB.from("perfis").upsert({ user_id: USER.id, mae: p.mae || "", papel: p.papel || "", crianca: p.crianca || "", nascimento: nul(p.nascimento), diagnosticos: p.diagnosticos || "", plano_saude: p.plano || "", foto: p.foto || null, consentimento_em: p.consentEm || null }); if (error) throw error; return; }
   const tabela = nome === "checks" ? "marcacoes" : MAPA[nome][0];
   const atual = linhasDe(nome), antes = SINC[nome] || new Map();
   const mudou = [...atual].filter(([k, v]) => antes.get(k) !== JSON.stringify(v)).map(([, v]) => ({ ...v, user_id: USER.id }));
@@ -68,7 +68,7 @@ async function carregar() {
     SB.from("perfis").select("*").maybeSingle(), SB.from("assinaturas").select("*").maybeSingle(), SB.from("uso_ia").select("*").eq("mes", mesAtual()).maybeSingle(),
     ...Object.values(MAPA).map(([t]) => pega(t)), SB.from("marcacoes").select("dia,chave,por,hora").gte("dia", iso(addDays(new Date(), -150)))]);
   const err = [perfil, assin, uso, ...cols].find(r => r.error); if (err) throw err.error;
-  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, consent: !!r.consentimento_em, consentEm: r.consentimento_em } : null;
+  const r = perfil.data; S.perfil = r ? { mae: r.mae, papel: r.papel || "", crianca: r.crianca, nascimento: r.nascimento || "", diagnosticos: r.diagnosticos, plano: r.plano_saude, foto: r.foto || "", consent: !!r.consentimento_em, consentEm: r.consentimento_em } : null;
   Object.keys(MAPA).forEach((n, i) => { S[n] = { items: (cols[i].data || []).map(MAPA[n][2]) }; });
   S.checks = { d: {} }; for (const m of cols[cols.length - 1].data || []) { (S.checks.d[m.dia] = S.checks.d[m.dia] || {})[m.chave] = { by: m.por, at: m.hora }; }
   prepararMembros();
@@ -86,9 +86,12 @@ async function carregarConteudos() {
 /* IA no servidor (Edge Function "ia") */
 async function ia(tarefa, dados) {
   const { data, error } = await SB.functions.invoke("ia", { body: { tarefa, ...dados } });
-  if (error) { const st = error.context && error.context.status; let b = {}; try { b = await error.context.json(); } catch (e) {} const er = new Error(b.erro || "falha"); er.code = st === 402 ? "limite" : st === 429 ? "rate_limited" : (b.erro || "falha"); er.motivo = b.motivo; throw er; }
+  if (error) { const st = error.context && error.context.status; let b = {}; try { b = await error.context.json(); } catch (e) {} const er = new Error(b.erro || "falha"); er.code = st === 402 ? "limite" : (b.erro === "limite_plus" || b.erro === "limite_dia" || b.erro === "servico_ocupado") ? b.erro : st === 429 ? "rate_limited" : (b.erro || "falha"); er.motivo = b.motivo; throw er; }
   return data.resultado;
 }
+const MSG_LIMITE = (c, t) => c === "limite_plus" ? (t === "leitura" ? "Você usou as 30 leituras deste mês. Elas voltam no mês que vem." : t === "resumo" ? "Você chegou ao limite de resumos deste mês. Volta no mês que vem." : "Você usou as 300 perguntas deste mês. Elas voltam no mês que vem.")
+  : c === "limite_dia" ? (t === "leitura" ? "Você chegou ao limite de leituras de hoje. Volte amanhã." : t === "resumo" ? "Você chegou ao limite de resumos de hoje. Volte amanhã." : "Você chegou ao limite de perguntas de hoje. Volte amanhã.")
+  : c === "servico_ocupado" ? "A teIA está muito concorrida agora. Tente de novo daqui a pouco." : "";
 const blobParaDataURL = b => new Promise((ok, erro) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = erro; fr.readAsDataURL(b); });
 let ENTRANDO = false;
 async function iniciar() {
@@ -142,15 +145,15 @@ rep('`<a class="btn sec grow" href="/_blob/${esc(a)}" target="_blank" rel="noope
 a = s.index('async function lerComIA(tipo, imgs) {'); b = s.index('\n', a)
 s = s[:a] + 'async function lerComIA(tipo, imgs) { const imagens = await Promise.all(imgs.slice(0, 4).map(blobParaDataURL)); return await ia(tipo, { imagens }); }' + s[b:]
 rep('const r = await lerComIA(tipo, imgs); contarUso("leitura");', 'const r = await lerComIA(tipo, imgs); contarUso("leitura"); atualizarPlano().catch(() => {});')
-rep('} catch (err) { clearInterval(relogio); toast(err && err.code === "rate_limited"', '} catch (err) { clearInterval(relogio); if (err && err.code === "limite") { SCAN = null; paywall(err.motivo || "leitura", { tipo }); return; } toast(err && err.code === "rate_limited"')
+rep('} catch (err) { clearInterval(relogio); toast(err && err.code === "rate_limited"', '} catch (err) { clearInterval(relogio); if (err && err.code === "limite") { SCAN = null; paywall(err.motivo || "leitura", { tipo }); return; } toast(err && MSG_LIMITE(err.code, "leitura") ? MSG_LIMITE(err.code, "leitura") : err && err.code === "rate_limited"')
 # assistente
 rep('const r = await SAMPLE(msgs, { modelTier: "default", cache: false }); contarUso("pergunta");',
     'const r = { text: JSON.stringify(await ia("pergunta", { membro: ATIVO, historico: hist.map(m => ({ role: m.role, content: m.content })) })) }; contarUso("pergunta"); atualizarPlano().catch(() => {});')
-rep('} catch (e) { ult().content = e && e.code === "rate_limited"', '} catch (e) { if (e && e.code === "limite") { CHAT.splice(-2, 2); paywall(e.motivo || "pergunta"); return; } ult().content = e && e.code === "rate_limited"')
+rep('} catch (e) { ult().content = e && e.code === "rate_limited"', '} catch (e) { if (e && e.code === "limite") { CHAT.splice(-2, 2); paywall(e.motivo || "pergunta"); return; } ult().content = e && MSG_LIMITE(e.code, "pergunta") ? MSG_LIMITE(e.code, "pergunta") : e && e.code === "rate_limited"')
 # resumo
 rep('try { const r = await SAMPLE(prompt, { modelTier: "default", onText: ({ text }) => { const el = document.getElementById("reltxt"); if (el) el.textContent = text; } }); const el = document.getElementById("reltxt"); if (el && r.text) el.textContent = r.text; }',
     'try { const r = await ia("resumo", { membro: ATIVO, sessoes: sess }); const el = document.getElementById("reltxt"); if (el && r && r.texto) el.textContent = r.texto; }')
-rep('catch (err) { out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"', 'catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"')
+rep('catch (err) { out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"', 'catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && MSG_LIMITE(err.code, "resumo") ? MSG_LIMITE(err.code, "resumo") : err && err.code === "rate_limited"')
 # teia+ via servidor
 rep('    case "plus-assinar": S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; await salvar("plano").catch(() => {}); voltar(); toast("Boas-vindas ao teia+!"); break;',
     '    case "plus-assinar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "assinar", ciclo: v } }); if (error) { toast("O pagamento ainda não está disponível."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; voltar(); toast("Boas-vindas ao teia+!"); break;')
