@@ -33,6 +33,7 @@ window.TEIA_CONFIG_FORCE = true;
    onAuthStateChange(cb) { cbs.push(cb); return { data: { subscription: { unsubscribe() {} } } }; },
    async getSession() { return { data: { session: logged ? { user } : null } }; },
    async signInWithOtp({ email }) { window.__otp = (window.__otp_n = (window.__otp_n || 0) + 1, email); return { error: null }; },
+   async verifyOtp(a) { window.__verify = a; if (a.token !== '123456') return { error: { message: 'invalid' } }; window.__login(); return { error: null }; },
    async signInWithOAuth(a) { window.__oauth = a; return { error: null }; },
    async linkIdentity(a) { window.__link = a; return { error: null }; },
    async signInAnonymously() { window.__anon = (window.__anon || 0) + 1; logged = true; sessionStorage.setItem("logado", "1"); return { data: { user, session: { user } }, error: null }; },
@@ -83,7 +84,9 @@ with sync_playwright() as p:
     assert pg.evaluate("window.__otp") == "camila@exemplo.com", pg.evaluate("window.__otp")
     assert "Confira seu e-mail" in pg.evaluate("document.body.innerText") and pg.evaluate("document.getElementById('reenviar').disabled") is True
     pg.evaluate("document.getElementById('reenviar').disabled = false"); pg.click("#reenviar"); pg.wait_for_timeout(300); assert pg.evaluate("window.__otp_n") == 2
-    pg.evaluate("window.__login()"); pg.wait_for_timeout(1200)
+    pg.fill('input[name="codigo"]', "000000"); pg.click('form[data-f="codigo"] button'); pg.wait_for_timeout(400); assert pg.evaluate("TELA.nome") == "entrar", "código errado não pode entrar"
+    pg.fill('input[name="codigo"]', "123456"); pg.click('form[data-f="codigo"] button'); pg.wait_for_timeout(1200)
+    assert pg.evaluate("window.__verify.type") == "email" and pg.evaluate("window.__verify.email") == "camila@exemplo.com"
     assert pg.evaluate("TELA.nome") == "cadastro" and pg.input_value('input[name="mae"]') == "Camila", "nome do Google não veio preenchido"
     pg.goto(URL); pg.wait_for_timeout(1000)
     assert pg.evaluate("TELA.nome") == "cadastro", "sessão deve voltar logada: " + pg.evaluate("TELA.nome")

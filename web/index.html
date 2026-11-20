@@ -701,7 +701,7 @@ async function entrou() {
 }
 const pendenteConvite = () => { try { return !!localStorage.getItem("teia.convite"); } catch (e) { return false; } };
 let RELOGIO_REENVIO = null;
-function esperarReenvio() { clearInterval(RELOGIO_REENVIO); let t = 30; const atualiza = () => { const b = document.getElementById("reenviar"); if (!b || TELA.nome !== "entrar") { clearInterval(RELOGIO_REENVIO); return; } b.disabled = t > 0; b.textContent = t > 0 ? `Reenviar link (${t}s)` : "Reenviar link"; t--; }; atualiza(); RELOGIO_REENVIO = setInterval(atualiza, 1000); }
+function esperarReenvio() { clearInterval(RELOGIO_REENVIO); let t = 30; const atualiza = () => { const b = document.getElementById("reenviar"); if (!b || TELA.nome !== "entrar") { clearInterval(RELOGIO_REENVIO); return; } b.disabled = t > 0; b.textContent = t > 0 ? `Reenviar código (${t}s)` : "Reenviar código"; t--; }; atualiza(); RELOGIO_REENVIO = setInterval(atualiza, 1000); }
 async function sair() { await SB.auth.signOut().catch(() => {}); for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; USER = null; go("boasvindas", {}, true); }
 
 /* ---------- Navegação ---------- */
@@ -1004,11 +1004,12 @@ TELAS.boasvindas = () => `<div class="bv">
 TELAS.entrar = (p) => `${topo("Entrar com e-mail")}
 <div class="wrap stack" style="padding-top:16px;gap:16px">
   <div style="display:flex;justify-content:center;padding:8px 0 4px">${logo(40)}</div>
-  ${p.enviado ? `<div class="card stack" style="gap:8px;text-align:center;padding:24px 16px"><span class="ib" style="margin:0 auto">${ic("feito", 20)}</span><p class="b" style="font-size:17px">Confira seu e-mail</p><p class="small muted">Enviamos um link de acesso para <b>${esc(p.email)}</b>. Toque no link para entrar. Se não encontrar, olhe também o spam.</p></div>
-    <button class="btn sec full" data-a="reenviar" data-v="${esc(p.email)}" id="reenviar" disabled>Reenviar link</button>
+  ${p.enviado ? `<div class="card stack" style="gap:8px;text-align:center;padding:24px 16px"><span class="ib" style="margin:0 auto">${ic("feito", 20)}</span><p class="b" style="font-size:17px">Confira seu e-mail</p><p class="small muted">Enviamos um código de 6 números para <b>${esc(p.email)}</b>. Digite abaixo. Se não achar, olhe o spam.</p></div>
+    <form class="stack" data-f="codigo"><input class="input" name="codigo" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}" required placeholder="000000" style="text-align:center;font-size:24px;letter-spacing:8px"><button class="btn full" type="submit">Entrar</button></form>
+    <button class="btn sec full" data-a="reenviar" data-v="${esc(p.email)}" id="reenviar" disabled>Reenviar código</button>
     <button class="link" style="align-self:center" data-a="entrar-de-novo">Usar outro e-mail</button>`
-  : `<div class="stack" style="gap:4px;text-align:center"><h1 style="font-size:24px">Qual é o seu e-mail?</h1><p class="muted small">Sem senha: enviamos um link para você entrar.</p></div>
-  <form class="stack" data-f="entrar"><label class="f">E-mail<input class="input" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" required placeholder="voce@email.com" value="${esc(p.email || "")}"></label><button class="btn full" type="submit">Enviar link de acesso</button></form>`}
+  : `<div class="stack" style="gap:4px;text-align:center"><h1 style="font-size:24px">Qual é o seu e-mail?</h1><p class="muted small">Sem senha: enviamos um código para você entrar.</p></div>
+  <form class="stack" data-f="entrar"><label class="f">E-mail<input class="input" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" required placeholder="voce@email.com" value="${esc(p.email || "")}"></label><button class="btn full" type="submit">Enviar código</button></form>`}
   <p class="xs muted" style="text-align:center;line-height:1.5">Ao entrar, você concorda em guardar na sua conta os dados de saúde de quem você cuida. Eles ficam privados e você pode apagar quando quiser.</p>
 </div>`;
 
@@ -1690,7 +1691,7 @@ document.addEventListener("click", async e => {
     case "instalar-nao": SEM_INSTALAR = true; try { localStorage.setItem("teia.semInstalar", "1"); } catch (e) {} render(); break;
     case "entrar-de-novo": TELA.p = {}; render(); break;
     case "entrar-google": { const volta = location.origin + location.pathname; const { error } = USER && USER.is_anonymous ? await SB.auth.linkIdentity({ provider: "google", options: { redirectTo: volta } }) : await SB.auth.signInWithOAuth({ provider: "google", options: { redirectTo: volta, queryParams: { prompt: "select_account" } } }); if (error) toast(/already|exists/i.test(error.message || "") ? "Essa conta Google já tem um cadastro. Saia e entre com ela." : "Não consegui abrir o Google agora. Tente com o e-mail."); break; }
-    case "reenviar": { const email = v; const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); toast(error ? (error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui reenviar. Tente de novo.") : "Link enviado de novo."); if (!error) esperarReenvio(); break; }
+    case "reenviar": { const email = v; const { error } = TELA.p && TELA.p.converter ? await SB.auth.updateUser({ email }) : await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); toast(error ? (error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui reenviar. Tente de novo.") : "Código enviado de novo."); if (!error) esperarReenvio(); break; }
     case "sair": confirmar("Sair da conta?", "Seus dados continuam guardados. Para voltar, é só entrar com a mesma conta.", "Sair", sair); break;
     case "ver-original": { const w = window.open("", "_blank"); const { data, error } = await SB.storage.from("documentos").createSignedUrl(v, 300); if (error || !data) { if (w) w.close(); toast("Não consegui abrir o arquivo."); } else if (w) w.location = data.signedUrl; else location.href = data.signedUrl; break; }
     case "aba": go(v, {}, true); break;
@@ -1820,7 +1821,9 @@ document.addEventListener("submit", async e => {
   const fd = new FormData(f), g = k => (fd.get(k) || "").toString().trim();
   const btn = f.querySelector('[type="submit"]'); if (btn) btn.disabled = true;
   try {
-    if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitos e-mails em pouco tempo. Espere um minuto e tente de novo." : /invalid|valid/i.test(error.message || "") ? "Esse e-mail não parece certo. Confira." : "Não consegui enviar o link. Tente de novo."); return; } TELA.p = { enviado: true, email }; render(); esperarReenvio(); return; }
+    if (tipo === "codigo") { const email = TELA.p.email, token = g("codigo").replace(/\D/g, ""); const { error } = await SB.auth.verifyOtp({ email, token, type: TELA.p.converter ? "email_change" : "email" }); if (error) { toast(/expired|invalid/i.test(error.message || "") ? "Código errado ou vencido. Confira ou peça outro." : "Não consegui entrar. Tente de novo."); return; } if (TELA.p.converter) { toast("Conta salva! Seus dados continuam aqui."); await SB.auth.refreshSession(); go("perfil", {}, true); } return; }
+    if (tipo === "conta-email" || tipo === "entrar-email") { const email = g("email").toLowerCase(), converter = tipo === "conta-email"; const { error } = converter && USER && USER.is_anonymous ? await SB.auth.updateUser({ email }) : await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitos e-mails em pouco tempo. Espere um minuto." : "Não consegui enviar o código. Confira o e-mail."); return; } go("entrar", { enviado: true, email, converter: converter && !!(USER && USER.is_anonymous) }); esperarReenvio(); return; }
+    if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitos e-mails em pouco tempo. Espere um minuto e tente de novo." : /invalid|valid/i.test(error.message || "") ? "Esse e-mail não parece certo. Confira." : "Não consegui enviar o código. Tente de novo."); return; } TELA.p = { enviado: true, email }; render(); esperarReenvio(); return; }
     if (tipo === "cad") { const s = Number(f.dataset.step);
       if (s === 1) { CAD.mae = g("mae"); CAD.papel = g("papel"); CAD.foto = g("foto"); } if (s === 2) { CAD.crianca = g("crianca"); CAD.nascimento = g("nascimento"); CAD.fotoCrianca = g("foto"); }
       if (s < 3) { TELA.p = { step: s + 1, novo: true }; render("fwd"); return; }

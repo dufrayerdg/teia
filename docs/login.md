@@ -9,3 +9,10 @@ Supabase (Authentication):
 Google Cloud (ID do cliente OAuth, tipo Web):
 - Origem JavaScript: https://minhateia.vercel.app
 - URI de redirecionamento: https://sdubzubcfizfvgbsuucw.supabase.co/auth/v1/callback
+
+## E-mail com código (6 dígitos)
+Em Authentication > Emails > Templates, nos modelos "Magic link" e "Confirm signup" (e "Change email address"), inclua o código no corpo:
+
+    <p>Seu código da teia: <b>{{ .Token }}</b></p>
+
+Em Providers > Email, deixe o tamanho do código em 6 e a validade em 600 s.
