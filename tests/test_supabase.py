@@ -9,7 +9,7 @@ window.TEIA_CONFIG_FORCE = true;
  const salvo = sessionStorage.getItem("__db"); const db = window.__db = salvo ? JSON.parse(salvo) : { perfis: [], medicamentos: [], tratamentos: [], tarefas: [], marcacoes: [], documentos: [], registros: [], rede: [], notas_consulta: [], membros: [], consultas: [], marcos: [], acessos: [], convites: [], links_profissional: [], push_inscricoes: [], assinaturas: [{ user_id: "u1", plano: "gratis", status: "ativa" }], uso_ia: [], conteudos: [{ id: "c1", categoria: "artigo", titulo: "Artigo do banco", minutos: 2, autor: "Equipe teia", corpo: [{ p: "Texto" }, { h: "Título" }, { ul: ["a", "b"] }], destaque: true, publicado: true }] };
  const files = window.__files = JSON.parse(sessionStorage.getItem("__files") || "[]");
  const persist = () => { sessionStorage.setItem("__db", JSON.stringify(db)); sessionStorage.setItem("__files", JSON.stringify(files)); };
- const user = { id: "u1", email: "", is_anonymous: true };
+ const user = { id: "u1", email: "camila@exemplo.com", is_anonymous: false, user_metadata: { full_name: "Camila Souza" }, app_metadata: { provider: "google" } };
  let logged = !!sessionStorage.getItem("logado");
  function q(t) {
   let rows = () => db[t], filtros = [], op = "select", payload = null, single = false;
@@ -32,7 +32,9 @@ window.TEIA_CONFIG_FORCE = true;
   auth: {
    onAuthStateChange(cb) { cbs.push(cb); return { data: { subscription: { unsubscribe() {} } } }; },
    async getSession() { return { data: { session: logged ? { user } : null } }; },
-   async signInWithOtp({ email }) { window.__otp = email; return { error: null }; },
+   async signInWithOtp({ email }) { window.__otp = (window.__otp_n = (window.__otp_n || 0) + 1, email); return { error: null }; },
+   async signInWithOAuth(a) { window.__oauth = a; return { error: null }; },
+   async linkIdentity(a) { window.__link = a; return { error: null }; },
    async signInAnonymously() { window.__anon = (window.__anon || 0) + 1; logged = true; sessionStorage.setItem("logado", "1"); return { data: { user, session: { user } }, error: null }; },
    async signOut() { logged = false; sessionStorage.removeItem("logado"); cbs.forEach(c => c("SIGNED_OUT", null)); return { error: null }; },
   },
@@ -73,9 +75,19 @@ with sync_playwright() as p:
     pg = ctx.new_page(); pg.on("pageerror", lambda e: erros.append(str(e))); pg.on("console", lambda m: m.type == "error" and erros.append("console: " + m.text + " " + str([a.json_value() for a in m.args][:2])))
     pg.goto(URL); pg.wait_for_timeout(800)
     assert pg.evaluate("TELA.nome") == "boasvindas", pg.evaluate("TELA.nome")
-    assert pg.evaluate("window.__anon") == 1 and pg.evaluate("USER.id") == "u1", "sem login anônimo"
-    assert pg.evaluate("document.body.innerText.includes('Já tenho conta')") is False
-    pg.click("text=Começar"); pg.wait_for_timeout(500); assert pg.evaluate("TELA.nome") == "cadastro", pg.evaluate("TELA.nome")
+    assert pg.evaluate("window.__anon") is None and pg.evaluate("USER") is None, "não deve criar conta anônima"
+    corpo = pg.evaluate("document.body.innerText"); assert "Continuar com Google" in corpo and "Continuar com e-mail" in corpo
+    pg.click("text=Continuar com Google"); pg.wait_for_timeout(300); assert pg.evaluate("window.__oauth.provider") == "google" and pg.evaluate("window.__oauth.options.redirectTo").endswith("/index.html")
+    pg.click("text=Continuar com e-mail"); pg.wait_for_timeout(300); assert pg.evaluate("TELA.nome") == "entrar"
+    pg.fill('input[name="email"]', "Camila@Exemplo.com"); pg.click('form[data-f="entrar"] button[type="submit"]'); pg.wait_for_timeout(400)
+    assert pg.evaluate("window.__otp") == "camila@exemplo.com", pg.evaluate("window.__otp")
+    assert "Confira seu e-mail" in pg.evaluate("document.body.innerText") and pg.evaluate("document.getElementById('reenviar').disabled") is True
+    pg.evaluate("document.getElementById('reenviar').disabled = false"); pg.click("#reenviar"); pg.wait_for_timeout(300); assert pg.evaluate("window.__otp_n") == 2
+    pg.evaluate("window.__login()"); pg.wait_for_timeout(1200)
+    assert pg.evaluate("TELA.nome") == "cadastro" and pg.input_value('input[name="mae"]') == "Camila", "nome do Google não veio preenchido"
+    pg.goto(URL); pg.wait_for_timeout(1000)
+    assert pg.evaluate("TELA.nome") == "cadastro", "sessão deve voltar logada: " + pg.evaluate("TELA.nome")
+    pg.evaluate("go('cadastro', { step: 1, novo: true }, true)"); pg.wait_for_timeout(300)
     pg.fill('input[name="mae"]', "Camila"); pg.set_input_files('input[data-foto]', "/tmp/art/foto_teste.jpg"); pg.wait_for_timeout(400); pg.click('form button[type="submit"]')
     pg.fill('input[name="crianca"]', "Theo"); pg.set_input_files('input[data-foto]', "/tmp/art/foto_teste.jpg"); pg.wait_for_timeout(400); pg.fill('input[name="nascimento"]', "2023-03-10"); pg.click('form button[type="submit"]')
     pg.click('label.opt:has(input[value="TEA"]) span'); pg.check('input[name="consent"]'); pg.click('form button[type="submit"]'); pg.wait_for_timeout(400); pg.click('button[data-a="tour-fim"] >> nth=0'); pg.wait_for_timeout(300); pg.wait_for_timeout(600)
@@ -132,7 +144,7 @@ with sync_playwright() as p:
     pg.click('button.bn[data-v="laudo"]'); pg.wait_for_timeout(500); assert pg.evaluate("TELA.nome") == "teiaplus"
     pg.click('button[data-a="plus-assinar"]'); pg.wait_for_timeout(600); assert pg.evaluate("S.plano.plus") is True
     pg.evaluate("go('perfil',{},true)"); pg.wait_for_timeout(500); pg.screenshot(path=f"{OUT}/s_perfil.png", full_page=True)
-    assert pg.evaluate("!!document.querySelector('[data-a=sair]')") is False and "Acesso livre" in pg.evaluate("document.body.innerText")
+    assert pg.evaluate("!!document.querySelector('[data-a=sair]')") is True and "Acesso livre" not in pg.evaluate("document.body.innerText")
     # link para o profissional (com servidor)
     pg.evaluate("go('relatorio',{},true)"); pg.wait_for_timeout(400)
     pg.evaluate("navigator.clipboard && (navigator.clipboard.writeText = async t => { window.__clip = t; })")

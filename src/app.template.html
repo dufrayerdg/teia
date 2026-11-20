@@ -483,6 +483,8 @@ html.escuro .grupo>.list{background:transparent !important}
 .fotoav:focus-within{outline:2px solid var(--navy);outline-offset:3px}
 .fotoacoes{display:flex;flex-direction:column;gap:4px;align-items:flex-start;min-width:0}
 .fotoacoes .link[hidden]{display:none}
+/* botão Google (logo colorido sobre fundo branco) */
+.btn.gbtn{background:#fff !important;color:var(--ink) !important;box-shadow:0 0 0 .5px rgba(60,60,67,.22) !important}
 </style>
 </head>
 <body>
@@ -716,6 +718,7 @@ function saudacao() { const h = new Date().getHours(); return h < 12 ? "Bom dia"
 
 
 /* ---------- recursos que dependem do servidor (o site liga; o protótipo mostra o aviso) ---------- */
+const GOOGLE_G = '<svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true" style="flex:none"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>';
 const NUVEM = { ativo: false, conta: null, compartilhar: null, links: null, revogarLink: null, entrarEmail: null, convidar: null, aceitarConvite: null, acessos: null, pushAtivar: null, pushDesativar: null, pushAtivo: null, dono: null };
 const soNoApp = () => toast("Disponível no app instalado em minhateia.vercel.app.");
 
@@ -1108,8 +1111,11 @@ TELAS.conta = () => { const c = NUVEM.conta ? NUVEM.conta() : null; const ac = N
   return `${topo("Conta e família")}
 <div class="wrap stack" style="padding-top:8px;gap:12px">
   ${!NUVEM.ativo ? `<div class="card"><p class="b small">Disponível no app</p><p class="small muted" style="margin-top:4px">Criar conta, entrar em outros aparelhos e convidar a família funcionam em minhateia.vercel.app.</p></div>` : `
-  <div class="card stack" style="gap:8px"><p class="b small">${c && c.email ? "Sua conta" : "Guarde seus dados com uma conta"}</p>${c && c.email ? `<p class="small">${esc(c.email)}</p><p class="xs muted">Entre com este e-mail em qualquer aparelho para ver tudo.</p>` : `<p class="xs muted">Hoje seus dados estão ligados só a este aparelho. Com o seu e-mail, nada se perde e você entra de outros lugares.</p><form class="stack" data-f="conta-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com" autocomplete="email"><button class="btn full" type="submit">Proteger com meu e-mail</button></form>`}</div>
-  <div class="card stack" style="gap:8px"><p class="b small">Já tem conta em outro aparelho?</p><form class="stack" data-f="entrar-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com"><button class="btn sec full" type="submit">Receber link para entrar</button></form></div>
+  ${c && c.email && !c.anonimo ? `<div class="card stack" style="gap:8px"><p class="b small">Sua conta</p><p class="small">${esc(c.email)}</p><p class="xs muted">Você entra com ${c.provedor === "google" ? "o Google" : "link por e-mail"}. Use a mesma conta em qualquer aparelho para ver tudo.</p></div>`
+  : `<div class="card stack" style="gap:12px"><div><p class="b small">Guarde seus dados com uma conta</p><p class="xs muted" style="margin-top:4px">Hoje seus dados estão ligados só a este aparelho. Com uma conta, nada se perde e você entra de outros lugares.</p></div>
+    <button class="btn gbtn full" type="button" data-a="entrar-google">${GOOGLE_G}Conectar com Google</button>
+    <form class="stack" data-f="conta-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com" autocomplete="email"><button class="btn sec full" type="submit">Proteger com meu e-mail</button></form></div>
+  <div class="card stack" style="gap:8px"><p class="b small">Já tem conta em outro aparelho?</p><form class="stack" data-f="entrar-email" style="gap:8px"><input class="input" type="email" name="email" required placeholder="seu@email.com"><button class="btn sec full" type="submit">Receber link para entrar</button></form></div>`}
   <div class="sec-title"><h2>Família com acesso</h2>${plus() ? `<button class="lk" data-a="convidar">${ic("mais", 14)} Convidar</button>` : ""}</div>
   ${!plus() ? `<button class="art" data-a="ir" data-v="teiaplus"><span class="th">${ic("rede", 20)}</span><span class="grow"><span class="t" style="display:block">Cuidar junto com o mesmo app</span><span class="m" style="display:block">Pai, avó e babá entram com o próprio acesso. Faz parte do teia+.</span></span>${ic("seta", 16)}</button>` : ac.length ? ac.map(x => `<div class="list"><span class="ib c2">${ic("cuidador", 20)}</span><div class="grow"><p class="b small">${esc(x.nome || x.email || "Convite")}</p><p class="xs muted">${esc(x.status)}</p></div></div>`).join("") : `<p class="small muted">Ninguém ainda. Toque em Convidar e mande o link pelo WhatsApp.</p>`}
   <div class="card stack" style="gap:8px"><p class="b small">Recebeu um convite?</p><form class="row" data-f="aceitar-convite" style="gap:8px"><input class="input grow" name="codigo" required placeholder="Código do convite" style="text-transform:uppercase"><button class="btn" type="submit" style="height:46px">Entrar</button></form></div>`}

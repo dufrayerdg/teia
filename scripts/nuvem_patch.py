@@ -58,7 +58,7 @@ let ACESSOS = [], PUSH_ON = false, INSTALAR = null;
 function ligarNuvem() {
   if (!SB) return;
   NUVEM.ativo = true;
-  NUVEM.conta = () => USER ? { email: USER.is_anonymous ? (USER.new_email || "") : (USER.email || ""), anonimo: !!USER.is_anonymous, convidado: DONO() !== USER.id } : null;
+  NUVEM.conta = () => USER ? { email: USER.is_anonymous ? (USER.new_email || "") : (USER.email || ""), anonimo: !!USER.is_anonymous, convidado: DONO() !== USER.id, provedor: (USER.app_metadata && USER.app_metadata.provider) || "" } : null;
   NUVEM.entrarEmail = async (email, converter) => {
     const volta = location.origin + location.pathname;
     if (converter && USER && USER.is_anonymous) { const { error } = await SB.auth.updateUser({ email }, { emailRedirectTo: volta }); if (error) throw error; return true; }
@@ -68,7 +68,7 @@ function ligarNuvem() {
   NUVEM.acessos = () => ACESSOS;
   NUVEM.aceitarConvite = async (codigo) => { const { error } = await SB.rpc("aceitar_convite", { p_codigo: codigo, p_nome: nomeUsuario() || "" });
     if (error) { const m = error.message || ""; return /convite_proprio/.test(m) ? "Esse convite é seu." : /sem_plus/.test(m) ? "Quem convidou precisa ter o teia+." : "Código inválido ou vencido."; }
-    for (const k of Object.keys(SINC)) delete SINC[k]; await carregar(); go(S.perfil ? "inicio" : "boasvindas", {}, true); return true; };
+    for (const k of Object.keys(SINC)) delete SINC[k]; await carregar(); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); return true; };
   NUVEM.pushAtivo = () => PUSH_ON;
   NUVEM.pushAtivar = async () => {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return /iPhone|iPad/.test(navigator.userAgent) ? "No iPhone, adicione o app à tela de início primeiro (Compartilhar, depois Adicionar à Tela de Início)." : "Este navegador não recebe notificações.";
@@ -91,15 +91,13 @@ let SEM_INSTALAR = false; try { SEM_INSTALAR = !!localStorage.getItem("teia.semI
 
 /* IA no servidor (Edge Function "ia") */'''
 rep3('/* IA no servidor (Edge Function "ia") */', NUVEM_JS.replace("__VAPID__", VAPID_PUBLICA))
-rep3("async function iniciar() {", "async function iniciar() {\n  ligarNuvem();")
-rep3('  try { await carregar(); go(S.perfil ? "inicio" : "boasvindas", {}, true); }',
-     '  try { await carregar(); const cv = new URLSearchParams(location.search).get("convite"); if (cv) { history.replaceState(null, "", location.pathname); const r = await NUVEM.aceitarConvite(cv.toUpperCase()); toast(r === true ? "Pronto! Agora você cuida junto." : r); if (r === true) return; }\n'
-     '    carregarAcessos().catch(() => {}); estadoPush().catch(() => {}); go(S.perfil ? "inicio" : "boasvindas", {}, true); }')
-
-# convite e conta a partir das boas-vindas
-rep3('<p class="xs muted" style="text-align:center;margin-top:12px">Seus dados de saúde ficam privados.</p>',
-     '<p class="xs muted" style="text-align:center;margin-top:12px">Seus dados de saúde ficam privados.</p>\n'
-     '  ${SB ? `<button class="link" style="align-self:center;margin-top:4px" data-a="ir" data-v="conta">Recebi um convite ou já tenho conta</button>` : ""}')
+rep3("async function iniciar() {", "async function iniciar() {\n  ligarNuvem();\n  try { const c = new URLSearchParams(location.search).get(\"convite\"); if (c) { localStorage.setItem(\"teia.convite\", c.toUpperCase()); history.replaceState(null, \"\", location.pathname); } } catch (e) {}")
+rep3('  try { await carregar(); if (!S.perfil) {',
+     '  try { await carregar(); const cv = (() => { try { return localStorage.getItem("teia.convite") || ""; } catch (e) { return ""; } })();\n'
+     '    if (cv) { try { localStorage.removeItem("teia.convite"); } catch (e) {} const r = await NUVEM.aceitarConvite(cv.toUpperCase()); toast(r === true ? "Pronto! Agora você cuida junto." : r); if (r === true) return; }\n'
+     '    if (!S.perfil) {')
+rep3('go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }',
+     'carregarAcessos().catch(() => {}); estadoPush().catch(() => {}); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }')
 
 # instalar o app (cartão na Início)
 rep3('  <div class="qts">\n',

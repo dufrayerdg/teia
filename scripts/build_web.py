@@ -97,41 +97,45 @@ let ENTRANDO = false;
 async function iniciar() {
   { const lm = document.getElementById("loadmark"); if (lm) lm.innerHTML = simbolo(64); }
   if (!SB) { go(S.perfil ? "inicio" : "boasvindas", {}, true); return; }
-  SB.auth.onAuthStateChange((ev, sess) => { if (ev === "SIGNED_IN" && sess && (!USER || USER.id !== sess.user.id)) { USER = sess.user; entrou(); } if (ev === "SIGNED_OUT") { USER = null; go("boasvindas", {}, true); } });
+  SB.auth.onAuthStateChange((ev, sess) => { if (sess && sess.user && ["SIGNED_IN", "USER_UPDATED", "TOKEN_REFRESHED"].includes(ev)) { const novo = !USER || USER.id !== sess.user.id; USER = sess.user; if (novo && ev === "SIGNED_IN") entrou(); else if (ev === "USER_UPDATED" && TELA.nome === "conta") render(); } if (ev === "SIGNED_OUT") { USER = null; go("boasvindas", {}, true); } });
   const { data } = await SB.auth.getSession();
   if (data && data.session) { USER = data.session.user; await entrou(); } else go("boasvindas", {}, true);
 }
 async function entrou() {
   if (ENTRANDO) return; ENTRANDO = true;
-  try { await carregar(); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }
+  try { await carregar(); if (!S.perfil) { const m = USER.user_metadata || {}; const nome = m.given_name || String(m.full_name || m.name || "").trim().split(" ")[0]; if (nome && !CAD.mae) CAD.mae = nome; } go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }
   catch (e) { console.error(e); toast("Não consegui carregar seus dados. Tente de novo."); go("boasvindas", {}, true); }
   finally { ENTRANDO = false; }
 }
+const pendenteConvite = () => { try { return !!localStorage.getItem("teia.convite"); } catch (e) { return false; } };
+let RELOGIO_REENVIO = null;
+function esperarReenvio() { clearInterval(RELOGIO_REENVIO); let t = 30; const atualiza = () => { const b = document.getElementById("reenviar"); if (!b || TELA.nome !== "entrar") { clearInterval(RELOGIO_REENVIO); return; } b.disabled = t > 0; b.textContent = t > 0 ? `Reenviar link (${t}s)` : "Reenviar link"; t--; }; atualiza(); RELOGIO_REENVIO = setInterval(atualiza, 1000); }
 async function sair() { await SB.auth.signOut().catch(() => {}); for (const k of Object.keys(SINC)) delete SINC[k]; S.perfil = null; for (const n of Object.keys(MAPA)) S[n] = { items: [] }; S.checks = { d: {} }; CHAT = []; USER = null; go("boasvindas", {}, true); }
 
 ''' + s[b:]
 
 # banner do modo de teste
-rep('Modo de teste: os dados não ficam salvos nesta visualização.', 'Modo de demonstração: configure o Supabase em config.js para salvar os dados.')
+rep('Modo de teste: os dados não ficam salvos nesta visualização.', 'Modo de demonstração: os dados não estão sendo salvos agora.')
 
 # tela de entrar
-rep("const CAD = {};", r'''TELAS.entrar = (p) => `${topo("Entrar")}
-<div class="wrap stack" style="padding-top:20px;gap:14px">
-  <div style="display:flex;justify-content:center;padding:10px 0 4px">${logo(40)}</div>
-  ${p.enviado ? `<div class="card stack" style="gap:8px;text-align:center"><span class="ib" style="margin:0 auto">${ic("feito", 20)}</span><p class="b">Confira seu e-mail</p><p class="small muted">Enviamos um link de acesso para <b>${esc(p.email)}</b>. Abra o e-mail neste celular e toque no link para entrar.</p></div>
-    <button class="btn sec full" data-a="entrar-de-novo">Usar outro e-mail</button>`
-  : `<p class="muted small" style="text-align:center">Sem senha: enviamos um link de acesso para o seu e-mail.</p>
-  <form class="stack" data-f="entrar"><label class="f">Seu e-mail<input class="input" type="email" name="email" autocomplete="email" inputmode="email" required placeholder="voce@email.com"></label><button class="btn full" type="submit">Receber link de acesso</button></form>`}
-  <p class="xs muted" style="text-align:center;line-height:1.5">Ao entrar, você concorda em guardar os dados de saúde da criança na sua conta. Eles ficam privados e você pode apagar quando quiser.</p>
+rep("const CAD = {};", r'''TELAS.entrar = (p) => `${topo("Entrar com e-mail")}
+<div class="wrap stack" style="padding-top:16px;gap:16px">
+  <div style="display:flex;justify-content:center;padding:8px 0 4px">${logo(40)}</div>
+  ${p.enviado ? `<div class="card stack" style="gap:8px;text-align:center;padding:24px 16px"><span class="ib" style="margin:0 auto">${ic("feito", 20)}</span><p class="b" style="font-size:17px">Confira seu e-mail</p><p class="small muted">Enviamos um link de acesso para <b>${esc(p.email)}</b>. Toque no link para entrar. Se não encontrar, olhe também o spam.</p></div>
+    <button class="btn sec full" data-a="reenviar" data-v="${esc(p.email)}" id="reenviar" disabled>Reenviar link</button>
+    <button class="link" style="align-self:center" data-a="entrar-de-novo">Usar outro e-mail</button>`
+  : `<div class="stack" style="gap:4px;text-align:center"><h1 style="font-size:24px">Qual é o seu e-mail?</h1><p class="muted small">Sem senha: enviamos um link para você entrar.</p></div>
+  <form class="stack" data-f="entrar"><label class="f">E-mail<input class="input" type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" required placeholder="voce@email.com" value="${esc(p.email || "")}"></label><button class="btn full" type="submit">Enviar link de acesso</button></form>`}
+  <p class="xs muted" style="text-align:center;line-height:1.5">Ao entrar, você concorda em guardar na sua conta os dados de saúde de quem você cuida. Eles ficam privados e você pode apagar quando quiser.</p>
 </div>`;
 
 const CAD = {};''')
 rep('<button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>',
-    '<button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>\n  ${SB ? `<button class="link" style="align-self:center;margin-top:6px" data-a="ir" data-v="entrar">Já tenho conta</button>` : ""}')
+    '${SB ? `${pendenteConvite() ? `<div class="card row" style="gap:12px;margin-bottom:12px"><span class="ib c2">${ic("rede", 20)}</span><p class="small grow">Você recebeu um convite para cuidar junto. Entre para aceitar.</p></div>` : ""}<div class="stack" style="gap:12px"><button class="btn gbtn full" data-a="entrar-google">${GOOGLE_G}Continuar com Google</button><button class="btn full" data-a="ir" data-v="entrar">Continuar com e-mail</button></div>` : `<button class="btn full" data-a="cad-ir" data-v="1">Começar ${ic("seta-dir", 18)}</button>`}')
 rep('    case "cad-ir": ', '    case "cad-ir": if (SB && !USER) { go("entrar"); break; } ')
-rep('    case "voltar": voltar(); break;', '    case "voltar": voltar(); break;\n    case "entrar-de-novo": TELA.p = {}; render(); break;\n    case "sair": confirmar("Sair da conta?", "Seus dados continuam guardados. Para voltar, é só entrar com o mesmo e-mail.", "Sair", sair); break;\n    case "ver-original": { const w = window.open("", "_blank"); const { data, error } = await SB.storage.from("documentos").createSignedUrl(v, 300); if (error || !data) { if (w) w.close(); toast("Não consegui abrir o arquivo."); } else if (w) w.location = data.signedUrl; else location.href = data.signedUrl; break; }')
-rep('const SEM_DOCK = ["tour","teiaplus",', 'const SEM_DOCK = ["tour","entrar","teiaplus",')
-rep('    if (tipo === "cad") {', r'''    if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui enviar o link. Confira o e-mail."); return; } TELA.p = { enviado: true, email }; render(); return; }
+rep('    case "voltar": voltar(); break;', '    case "voltar": voltar(); break;\n    case "entrar-de-novo": TELA.p = {}; render(); break;\n    case "entrar-google": { const volta = location.origin + location.pathname; const { error } = USER && USER.is_anonymous ? await SB.auth.linkIdentity({ provider: "google", options: { redirectTo: volta } }) : await SB.auth.signInWithOAuth({ provider: "google", options: { redirectTo: volta, queryParams: { prompt: "select_account" } } }); if (error) toast(/already|exists/i.test(error.message || "") ? "Essa conta Google já tem um cadastro. Saia e entre com ela." : "Não consegui abrir o Google agora. Tente com o e-mail."); break; }\n    case "reenviar": { const email = v; const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); toast(error ? (error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui reenviar. Tente de novo.") : "Link enviado de novo."); if (!error) esperarReenvio(); break; }\n    case "sair": confirmar("Sair da conta?", "Seus dados continuam guardados. Para voltar, é só entrar com a mesma conta.", "Sair", sair); break;\n    case "ver-original": { const w = window.open("", "_blank"); const { data, error } = await SB.storage.from("documentos").createSignedUrl(v, 300); if (error || !data) { if (w) w.close(); toast("Não consegui abrir o arquivo."); } else if (w) w.location = data.signedUrl; else location.href = data.signedUrl; break; }')
+rep('const SEM_DOCK = ["tour","teiaplus",', 'const SEM_DOCK = ["tour","entrar","boasvindas","teiaplus",')
+rep('    if (tipo === "cad") {', r'''    if (tipo === "entrar") { const email = g("email").toLowerCase(); const { error } = await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); if (error) { toast(error.status === 429 ? "Muitos e-mails em pouco tempo. Espere um minuto e tente de novo." : /invalid|valid/i.test(error.message || "") ? "Esse e-mail não parece certo. Confira." : "Não consegui enviar o link. Tente de novo."); return; } TELA.p = { enviado: true, email }; render(); esperarReenvio(); return; }
     if (tipo === "cad") {''')
 # após cadastro, recarrega sincronização base
 # arquivos originais -> Storage
@@ -174,27 +178,13 @@ rep('salvar("plano").catch(() => {}); }', '}')
 s = s.replace('<p class="xs muted" style="text-align:center;line-height:1.5">${pl === "anual" ? "Depois dos 7 dias, R$ 149,00 por ano. Cancele antes e não paga nada." : "Renova todo mês. Cancele quando quiser."}<br>Protótipo: nenhuma cobrança é feita.</p>',
               '<p class="xs muted" style="text-align:center;line-height:1.5">${pl === "anual" ? "Depois dos 7 dias, R$ 149,00 por ano. Cancele antes e não paga nada." : "Renova todo mês. Cancele quando quiser."}<br>Versão beta: nenhuma cobrança é feita ainda.</p>')
 
-# ---------- acesso livre (provisório): conta anônima, sem tela de login ----------
+# ---------- conta: pessoa sem conta (acesso antigo) e banner ----------
 def rep2(a, b):
     global s
     assert a in s, "MISS2: " + a[:90]
     s = s.replace(a, b, 1)
-rep2("""  const { data } = await SB.auth.getSession();
-  if (data && data.session) { USER = data.session.user; await entrou(); } else go("boasvindas", {}, true);
-}""", """  const { data } = await SB.auth.getSession();
-  if (data && data.session) { USER = data.session.user; await entrou(); return; }
-  /* acesso livre (provisório): conta anônima ligada a este aparelho */
-  const { data: an, error } = await SB.auth.signInAnonymously();
-  if (error || !an || !an.user) { console.error("login anônimo", error); MODO_DEMO = true; SAMPLE = null; SAMPLE_IMG = false; go("boasvindas", {}, true); return; }
-  USER = an.user; await entrou();
-}""")
-rep2('go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true);', 'go(S.perfil ? "inicio" : "boasvindas", {}, true);')
-rep2('    case "cad-ir": if (SB && !USER) { go("entrar"); break; } ', '    case "cad-ir": ')
-rep2('\n  ${SB ? `<button class="link" style="align-self:center;margin-top:6px" data-a="ir" data-v="entrar">Já tenho conta</button>` : ""}', '')
 rep2('${SB && USER ? `<button class="btn sec full" data-a="sair">Sair da conta</button>', '${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button>')
-rep2('<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}', '<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<p class="xs muted" style="text-align:center;line-height:1.5">Acesso livre: seus dados ficam guardados e ligados a este aparelho. Em breve você vai poder criar uma conta para entrar de outros lugares.</p>` : ""}')
-rep2('go(SB ? "cadastro" : "boasvindas", SB ? { step: 1, novo: true } : {}, true); toast("Tudo apagado.");', 'go("boasvindas", {}, true); toast("Tudo apagado.");')
-rep2('Modo de demonstração: configure o Supabase em config.js para salvar os dados.', 'Modo de demonstração: os dados não estão sendo salvos agora.')
+rep2('<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}', '<p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<button class="card row" data-a="ir" data-v="conta" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib c2">${ic("privacidade", 20)}</span><span class="grow"><b style="display:block;font-size:14px">Salve sua conta</b><span class="xs muted">Hoje seus dados estão só neste aparelho. Entre com Google ou e-mail para não perder nada.</span></span>${ic("seta", 16)}</button>` : ""}')
 
 exec(open(os.path.join(RAIZ, 'scripts', 'nuvem_patch.py'), encoding='utf-8').read())
 s = s.replace('/*__ICONS__*/', open(ICONS, encoding='utf-8').read())
