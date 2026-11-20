@@ -11,7 +11,7 @@ def rep(a, b, cnt=1):
 
 # head
 rep('<meta name="viewport" content="width=device-width, initial-scale=1">',
-    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="theme-color" content="#ffffff">\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n<script src="config.js"></script>')
+    '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<meta name="theme-color" content="#F8F5FE">\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n<script src="config.js"></script>')
 
 # ---------- camada de dados ----------
 a = s.index('const CL = (window.claude'); b = s.index('/* ---------- Navegação ---------- */')

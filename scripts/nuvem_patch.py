@@ -11,8 +11,8 @@ def rep3(a, b):
     s = s.replace(a, b, 1)
 
 
-rep3('<meta name="theme-color" content="#ffffff">',
-     '<meta name="theme-color" content="#ffffff">\n<link rel="manifest" href="/manifest.webmanifest">\n'
+rep3('<meta name="theme-color" content="#F8F5FE">',
+     '<meta name="theme-color" content="#F8F5FE">\n<link rel="manifest" href="/manifest.webmanifest">\n'
      '<link rel="apple-touch-icon" href="/icones/apple-touch-icon.png">\n<meta name="apple-mobile-web-app-capable" content="yes">\n'
      '<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="teia">\n'
      '<meta name="apple-mobile-web-app-status-bar-style" content="default">')
