@@ -1167,7 +1167,7 @@ TELAS.inicio = () => {
   <button class="tile au-indigo hero" data-a="aba" data-v="rotina" aria-label="Rotina da semana: ${sem.pct}% concluída">
     <div class="hero-top"><span>A jornada de ${esc(crianca)}</span><span>Rotina da semana</span></div>
     <div class="hero-mid"><p class="hero-t">${estado}</p><p class="hero-pct">${sem.pct}%</p></div>
-    <div class="jornada" style="--p:${Math.max(0, Math.min(100, sem.pct))}"><div class="hero-track"><i style="width:${sem.pct}%"></i></div>${[25, 50, 75].map(m => `<span class="marco-j ${sem.pct >= m ? "ok" : ""}" style="left:${m}%"></span>`).join("")}<span class="fim-j ${sem.pct >= 100 ? "ok" : ""}">${ic("conquista", 12)}</span><img class="didi-j" src="${DG_IMG}" alt="" aria-hidden="true"></div>
+    <div class="jornada" style="--p:${Math.max(0, Math.min(100, sem.pct))}"><div class="hero-track"><i style="width:${sem.pct}%"></i></div>${[25, 50, 75].map(m => `<span class="marco-j ${sem.pct >= m ? "ok" : ""}" style="left:calc((100% - 12px) * ${m} / 100)"></span>`).join("")}<span class="fim-j ${sem.pct >= 100 ? "ok" : ""}">${ic("conquista", 12)}</span><img class="didi-j" src="${DG_IMG}" alt="" aria-hidden="true"></div>
     <div class="hero-foot"><span>${sem.ok} de ${sem.tot} tarefas feitas</span><span style="display:inline-flex;align-items:center;gap:4px">Ver detalhes ${ic("seta-dir", 14)}</span></div>
   </button>
   ${(() => { const h = iso(new Date()), itens = itensDoDia(h), pend = itens.filter(x => !feito(h, x.key)); const meds = pend.filter(x => x.key.startsWith("med:")).length; const sess = itens.filter(x => x.key.startsWith("trat:") || x.key.startsWith("cons:")); const est = estoqueBaixo();
