@@ -690,12 +690,12 @@ function montarBots() {
   document.querySelectorAll(".obot:not([data-on])").forEach(el => {
     el.dataset.on = "1"; el.innerHTML = capiSVG(); const q = s => el.querySelector(s);
     const b = { el, base: el.dataset.mood || "idle", humor: el.dataset.mood || "idle", ate: 0, corpo: q(".c-corpo"), olho: q(".c-olho"), o1: q(".c-o1"), o2: q(".c-o2"), nariz: q(".c-nariz"), sombra: q(".c-sombra"), fx: q(".c-fx"),
-      y: capiMola(), rot: capiMola(), sx: capiMola(1), sy: capiMola(1), vira: capiMola(1), ox: capiMola(), oy: capiMola(), noAr: false, piscar: 0, prox: 1 + Math.random() * 3, fung: 0, proxF: 1 + Math.random() * 3, parts: [], tP: 0, fase: Math.random() * 6 };
+      y: capiMola(), rot: capiMola(), sx: capiMola(1), sy: capiMola(1), vira: capiMola(1), lado: 1, giro: null, ox: capiMola(), oy: capiMola(), noAr: false, piscar: 0, prox: 1 + Math.random() * 3, fung: 0, proxF: 1 + Math.random() * 3, parts: [], tP: 0, fase: Math.random() * 6 };
     BOTS.add(b); el.addEventListener("pointerdown", () => reagirBot(b));
   });
   if (!CAPI_RODANDO && BOTS.size) { CAPI_RODANDO = true; requestAnimationFrame(capiQuadro); }
 }
-function capiPular(b, f = 1) { b.sy.v = .86; b.sx.v = 1.1; setTimeout(() => { b.y.vel = -2.4 * f; b.noAr = true; }, 90); }
+function capiPular(b, f = 1) { b.sy.v = .95; b.sx.v = 1.03; setTimeout(() => { b.y.vel = -2.4 * f; b.noAr = true; }, 90); }
 function capiParticula(b, tipo) {
   if (b.el.offsetWidth < 44) return; const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.innerHTML = tipo === "c" ? '<path d="M0 2.4 C-3.6 -1 -2.8 -5 0 -3 C2.8 -5 3.6 -1 0 2.4Z" fill="#0B0B0C"/>' : '<circle r="1.5" fill="#0B0B0C"/>';
@@ -717,11 +717,12 @@ function capiQuadro(agora) {
     else if (b.humor === "thinking") { mx = 30; my = -40; }
     else if (PONTEIRO && b.el.dataset.segue !== "0") { mx = (PONTEIRO.x - (r.left + r.width / 2)) / r.width * 100; my = (PONTEIRO.y - (r.top + r.height / 2)) / r.height * 100; }
     if (r.width >= 56 && b.el.dataset.segue !== "0" && Math.abs(mx) > 60 && !b.noAr) b.vira.alvo = mx < 0 ? -1 : 1;
-    capiPasso(b.vira, .09, .2, f);
-    if (b.noAr) { b.y.vel += .2 * f; b.y.v += b.y.vel * f; if (b.y.v >= 0 && b.y.vel > 0) { b.y.v = 0; b.y.vel = 0; b.noAr = false; b.sy.v = .86; b.sx.v = 1.1; } }
+    if (b.vira.alvo !== b.lado) { b.lado = b.vira.alvo; b.giro = { t: 0, de: b.vira.v }; }
+    if (b.giro) { b.giro.t += dt / .24; const k = Math.min(1, b.giro.t), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; b.vira.v = b.giro.de + (b.lado - b.giro.de) * e; if (k >= 1) { b.vira.v = b.lado; b.giro = null; } }
+    if (b.noAr) { b.y.vel += .2 * f; b.y.v += b.y.vel * f; if (b.y.v >= 0 && b.y.vel > 0) { b.y.v = 0; b.y.vel = 0; b.noAr = false; b.sy.v = .95; b.sx.v = 1.03; } }
     const respira = REDUZ ? 0 : Math.sin(tm * 2 + b.fase) * .45;
     b.rot.alvo = (b.noAr ? -b.y.vel * 2 : 0) + (b.humor === "thinking" ? -5 : 0); capiPasso(b.rot, .08, .2, f);
-    b.sx.alvo = 1 - respira * .02; b.sy.alvo = 1 + respira * .025 + (b.noAr ? .06 : 0); capiPasso(b.sx, .16, .14, f); capiPasso(b.sy, .16, .14, f);
+    b.sx.alvo = 1 - respira * .02; b.sy.alvo = 1 + respira * .025 + (b.noAr ? .02 : 0); capiPasso(b.sx, .22, .34, f); capiPasso(b.sy, .22, .34, f);
     const dir = b.vira.v >= 0 ? 1 : -1;
     b.ox.alvo = Math.max(-1, Math.min(1, mx / 40)) * 2.2 * dir; b.oy.alvo = Math.max(-1, Math.min(1, my / 40)) * 2; capiPasso(b.ox, .2, .35, f); capiPasso(b.oy, .2, .35, f);
     b.prox -= dt; if (b.prox <= 0 && b.piscar <= 0) { b.piscar = .14; b.prox = 2.4 + Math.random() * 3; }
@@ -732,7 +733,8 @@ function capiQuadro(agora) {
     b.proxF -= dt; if (b.proxF <= 0) { b.fung = .5; b.proxF = 2 + Math.random() * 3; }
     let ny = 0; if (b.fung > 0) { b.fung -= dt; ny = Math.sin(b.fung * 40) * .5; }
     b.nariz.setAttribute("transform", `translate(0 ${ny.toFixed(2)})`);
-    b.corpo.setAttribute("transform", `translate(0 ${(b.y.v + 22).toFixed(2)}) rotate(${b.rot.v.toFixed(2)}) scale(${(b.sx.v * b.vira.v).toFixed(3)} ${b.sy.v.toFixed(3)}) translate(0 -22)`);
+    const pulinho = b.giro ? -Math.sin(Math.min(1, b.giro.t) * Math.PI) * 3 : 0;
+    b.corpo.setAttribute("transform", `translate(0 ${(b.y.v + pulinho + 22).toFixed(2)}) rotate(${b.rot.v.toFixed(2)}) scale(${(b.sx.v * b.vira.v).toFixed(3)} ${b.sy.v.toFixed(3)}) translate(0 -22)`);
     const alt = Math.max(0, -b.y.v) / 20; b.sombra.setAttribute("rx", (32 * (1 - alt * .4) * b.sx.v).toFixed(2)); b.sombra.setAttribute("opacity", (.08 * (1 - alt * .5)).toFixed(3));
     if (b.humor === "thinking" && agora - b.tP > 700) { b.tP = agora; capiParticula(b, "p"); }
     for (let i = b.parts.length - 1; i >= 0; i--) { const p = b.parts[i]; p.t += dt; p.x += p.vx * f; p.y += p.vy * f; const k = p.t / 1.5; p.g.setAttribute("transform", `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) scale(${Math.min(1, k * 6).toFixed(2)})`); p.g.setAttribute("opacity", (k > .6 ? 1 - (k - .6) / .4 : 1).toFixed(2)); if (k >= 1) { p.g.remove(); b.parts.splice(i, 1); } }
