@@ -536,6 +536,28 @@ html.escuro .grupo>.list{background:transparent !important}
 .cab-bt.cab-ia svg{color:#E9E2FF}
 .cab-bt:active{transform:scale(.94)}
 @media (prefers-reduced-motion:reduce){.cab-halo{animation:none}}
+.cabeca{display:flex;align-items:center;gap:12px;margin:0;padding:16px 20px 4px;background:none!important;border:none!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border-radius:0}
+.cab-didi{width:56px;height:56px;flex:none;display:block}
+.cab-txt{min-width:0}
+.cab-txt .hello{font-size:22px;line-height:1.15;letter-spacing:-.5px;margin:0}
+.cab-txt p{margin:2px 0 0;font-size:13px;color:var(--muted,#6B6D76)}
+.cab-bt{width:44px;height:44px;border-radius:50%;border:none;flex:none;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--ink);box-shadow:none!important;outline:1px solid rgba(60,60,67,.10);outline-offset:-1px}
+.cab-bt.cab-ia{background:var(--ink);color:#fff;outline:none}
+.cab-bt.cab-ia svg{color:#E9E2FF}
+.cab-bt:active{transform:scale(.94)}
+.ask{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:6px 6px 6px 16px;border:none;border-radius:26px;background:#fff;color:var(--muted,#6B6D76);font-family:inherit;font-size:15px;text-align:left;outline:1px solid rgba(60,60,67,.08);outline-offset:-1px;box-shadow:none}
+.ask-ic{color:#7B5CE6;display:flex}
+.ask-go{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.dock .add.didi{width:60px!important;height:60px!important;margin:-20px 4px 0!important;padding:0;background:none!important;box-shadow:none!important;border-radius:0;display:flex;align-items:center;justify-content:center}
+.dock .add.didi .obot{width:56px!important;height:56px!important}
+.sheet-didi{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sheet-didi h2{margin:0;font-size:20px}
+.sheet-didi .obot{flex:none}
+.chat-top{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:rgba(255,255,255,.97)!important}
+.au-indigo:has(.obot),.hero:has(.obot){-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.scan-dg{filter:none!important}
+.grupo>.list .grow.b{font-size:15px;font-weight:500}
+
 </style>
 </head>
 <body>
@@ -808,7 +830,6 @@ function render(anim) {
     if (!REDUZ) { app.classList.remove("enter-fwd", "enter-back", "enter-aba"); void app.offsetWidth; app.classList.add(anim === "back" ? "enter-back" : anim === "aba" ? "enter-aba" : "enter-fwd"); }
     revelar();
   }
-  { let fab = document.getElementById("dgfab"); if (!fab) { fab = document.createElement("button"); fab.id = "dgfab"; fab.className = "dg-fab"; fab.setAttribute("aria-label", "Falar com o Didi"); fab.innerHTML = bot(60, "idle", { papel: "teia" }); document.body.appendChild(fab); fab.addEventListener("click", () => go("assistente")); } fab.hidden = SEM_DENGO.includes(TELA.nome); }
   agruparListas(app); atualizarDock(); montarBots();
 }
 const SEM_DENGO = ["inicio","assistente","boasvindas","escaneando","processando","entrar","tour","cadastro"];
@@ -821,7 +842,7 @@ function atualizarDock() {
   const w = document.getElementById("dockw"), dock = document.getElementById("dock"); const sem = SEM_DOCK.includes(TELA.nome); w.hidden = sem; if (sem) return;
   if (!dock.dataset.pronto) {
     dock.innerHTML = '<span class="pin" aria-hidden="true"></span>' + ABAS.map(([k, l]) => k === "add"
-      ? `<button class="add" data-a="sheet-mais" aria-label="Adicionar: ler receita, ler laudo, registrar o dia">${ic("mais", 24)}</button>`
+      ? `<button class="add didi" data-a="sheet-mais" aria-label="Didi: conversar, ler receita, ler laudo, registrar o dia">${bot(56, "idle", { papel: "teia" })}</button>`
       : `<button data-a="aba" data-v="${k}" data-k="${k}" aria-label="${l}"></button>`).join("");
     dock.dataset.pronto = "1";
   }
@@ -1129,11 +1150,10 @@ TELAS.inicio = () => {
   const conq = [...S.regs.items].reverse().find(r => r.conquista); const crianca = nomeCrianca();
   const estado = !sem.tot ? "começa por aqui" : sem.pct >= 70 ? "segue bem" : sem.pct >= 40 ? "vai evoluindo" : "está começando";
   const pd = prox ? parseISO(prox.data) : null;
-  return `<div class="cabeca"><span class="cab-didi" role="img" aria-label="Didi"><span class="cab-halo"></span>${bot(64, "happy", { papel: "teia" })}</span><span class="grow"></span><button class="cab-bt cab-ia" data-a="ir" data-v="assistente" aria-label="Conversar com o Didi">${ic("ia", 22)}</button><button class="cab-bt" data-a="ir" data-v="linha" aria-label="Notificações">${ic("notificacao", 22)}</button></div>
-<div class="hd" style="padding-top:20px"><div class="av" aria-hidden="true">${p.foto ? `<img src="${esc(p.foto)}" alt="">` : esc((p.mae || nomeCrianca() || "T").slice(0,1).toUpperCase())}</div><div class="grow"><h1 class="hello">Olá${p.mae ? ", " + esc(p.mae) : ""}!</h1><p class="muted" style="margin-top:2px;font-size:13px">Cuidar junto é mais leve.</p></div></div>
+  return `<div class="cabeca"><span class="cab-didi">${bot(56, "happy", { papel: "teia" })}</span><div class="grow cab-txt"><h1 class="hello">Olá${p.mae ? ", " + esc(p.mae) : ""}!</h1><p>Cuidar junto é mais leve.</p></div><button class="cab-bt cab-ia" data-a="ir" data-v="assistente" aria-label="Conversar com o Didi">${ic("ia", 22)}</button><button class="cab-bt" data-a="ir" data-v="linha" aria-label="Notificações">${ic("notificacao", 22)}</button></div>
 <div class="pessoas" role="tablist" aria-label="Pessoas que você cuida">${S.membros.items.map(m => `<button role="tab" aria-selected="${m.id === ATIVO}" class="pessoa ${m.id === ATIVO ? "on" : ""}" data-a="membro-trocar" data-v="${m.id}"><span class="pa">${fotoDentro(m.foto, m.nome)}</span>${esc(m.nome)}</button>`).join("")}<button class="pessoa add" data-a="membro-novo" aria-label="Adicionar pessoa">${ic("mais", 16)}${S.membros.items.length < 2 ? "Adicionar" : ""}${plus() ? "" : `<span class="plus-tag" style="height:16px;font-size:9.5px;padding:0 4px">Didi+</span>`}</button></div>
 <div class="wrap stack" style="padding-top:16px;gap:16px">
-  <button class="card dg-home" data-a="ir" data-v="assistente" aria-label="Conversar com o Didi">${dengo("flutuar", 72)}<span class="grow"><b style="display:block;font-size:15px">Oi${p.mae ? ", " + esc(p.mae) : ""}! Eu sou o Didi.</b><span class="small muted">Pergunte qualquer coisa sobre ${esc(crianca)}.</span></span>${ic("seta", 16)}</button>
+  <button class="ask" data-a="ir" data-v="assistente"><span class="ask-ic">${ic("ia", 18)}</span><span class="grow">Pergunte ao Didi sobre ${esc(crianca)}…</span><span class="ask-go">${ic("enviar", 16)}</span></button>
   <button class="tile au-indigo hero" data-a="aba" data-v="rotina" aria-label="Rotina da semana: ${sem.pct}% concluída">
     <div class="hero-top"><span>A jornada de ${esc(crianca)}</span><span>Rotina da semana</span></div>
     <div class="hero-mid"><p class="hero-t">${estado}</p><p class="hero-pct">${sem.pct}%</p></div>
@@ -1824,7 +1844,7 @@ document.addEventListener("click", async e => {
     case "membro-trocar": escolherMembro(v); render("aba"); toast(`Agora você está vendo ${nomeCrianca()}.`); break;
     case "membro-apagar": confirmar(`Remover ${(S.membros.items.find(x => x.id === id) || {}).nome || "esta pessoa"}?`, "A rotina, os documentos e os registros dessa pessoa serão apagados.", "Remover", async () => { for (const n of POR_MEMBRO) ALL[n] = ALL[n].filter(x => (x.membroId || membroPadrao()) !== id); S.membros.items = S.membros.items.filter(x => x.id !== id); escolherMembro(membroPadrao()); for (const n of [...POR_MEMBRO, "membros"]) await salvar(n).catch(() => {}); go("inicio", {}, true); toast("Pessoa removida."); }); break;
     case "quem-sou": QUEM = v || ""; try { localStorage.setItem("teia.quem", QUEM); } catch (e) {} render(); toast(`Pronto: as marcações agora ficam no nome de ${nomeQuem()}.`); break;
-    case "sheet-mais": if (document.querySelector("#layer .overlay")) { fecharSheet(); break; } document.getElementById("dock").classList.add("aberto"); abrirSheet(`<h2 style="margin-bottom:12px">Adicionar</h2>` + opcoesSheet([["ler","receita","camera","c1","Ler receita","Foto vira rotina de remédios"],["ler","laudo","laudo","c5","Ler laudo ou exame","Explicado em palavras simples"],["ir-fechar","registro","diario","c3","Registrar o dia","Humor, sono, crises e conquistas"],["marco-novo","","conquista","c1","Novo marco","Uma conquista para guardar"],["consulta-nova","","consulta","c5","Nova consulta","Uma consulta avulsa, com dia e hora"],["trat-novo","","rotina","c2","Novo tratamento","Terapia com dias e horário"],["tarefa-nova","","tarefa","c4","Nova tarefa","Atividade sensorial, banho, escola…"]]), "Adicionar"); break;
+    case "sheet-mais": if (document.querySelector("#layer .overlay")) { fecharSheet(); break; } document.getElementById("dock").classList.add("aberto"); abrirSheet(`<div class="sheet-didi">${bot(64, "happy", { papel: "teia", segue: false })}<div><h2>O que vamos fazer?</h2><p class="small muted">Eu cuido disso com você.</p></div></div>` + opcoesSheet([["ir-fechar","assistente","ia","c1","Conversar com o Didi","Pergunte o que quiser sobre o cuidado"],["ler","receita","camera","c1","Ler receita","Foto vira rotina de remédios"],["ler","laudo","laudo","c5","Ler laudo ou exame","Explicado em palavras simples"],["ir-fechar","registro","diario","c3","Registrar o dia","Humor, sono, crises e conquistas"],["marco-novo","","conquista","c1","Novo marco","Uma conquista para guardar"],["consulta-nova","","consulta","c5","Nova consulta","Uma consulta avulsa, com dia e hora"],["trat-novo","","rotina","c2","Novo tratamento","Terapia com dias e horário"],["tarefa-nova","","tarefa","c4","Nova tarefa","Atividade sensorial, banho, escola…"]]), "Adicionar"); break;
     case "ir-fechar": fecharSheet(); go(v); break;
     case "sheet-doc": abrirSheet(`<h2 style="margin-bottom:12px">Adicionar documento</h2>` + opcoesSheet([["ler","laudo","ia","c5","Ler laudo ou exame com o Didi","Foto ou PDF, explicado em palavras simples"],["ler","receita","receita","c1","Ler receita com o Didi","Foto ou PDF, vira rotina de remédios"],["upload-manual","","upload","c2","Só guardar um arquivo","PDF ou imagem, sem leitura do Didi"]]), "Adicionar documento"); break;
     case "ler": escolherFonte(v); break;
