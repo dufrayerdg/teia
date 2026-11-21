@@ -517,6 +517,15 @@ html.escuro .grupo>.list{background:transparent !important}
 .obot{display:inline-block;flex:none;position:relative;vertical-align:middle;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .obot>img{width:100%;height:100%;object-fit:contain;display:block}
 .chat-av .obot{width:40px!important;height:40px!important}
+.msg-ai{display:flex;align-items:flex-end;gap:8px;align-self:flex-start;max-width:92%}
+.msg-ai .bubble.ai{max-width:100%;border-bottom-left-radius:6px}
+.msg-ai>.obot,.msg-ai>.obot-img{width:36px!important;height:36px!important;flex:none;margin-bottom:-2px}
+.scan-wrap{position:relative}
+.scan-dg{position:absolute;z-index:3;right:-10px;top:-34px;filter:drop-shadow(0 8px 14px rgba(35,36,40,.35))}
+.dg-fab{position:fixed;z-index:40;right:max(12px,calc(50% - 208px));bottom:calc(96px + env(safe-area-inset-bottom));border:none;background:none;padding:0;width:60px;height:60px;filter:drop-shadow(0 10px 16px rgba(35,36,40,.28));animation:dg-fab-in .5s cubic-bezier(.2,.8,.2,1) both}
+#dgfab[hidden]{display:none}
+@keyframes dg-fab-in{from{opacity:0;transform:translateY(12px) scale(.8)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.dg-fab{animation:none}}
 </style>
 </head>
 <body>
@@ -789,8 +798,10 @@ function render(anim) {
     if (!REDUZ) { app.classList.remove("enter-fwd", "enter-back", "enter-aba"); void app.offsetWidth; app.classList.add(anim === "back" ? "enter-back" : anim === "aba" ? "enter-aba" : "enter-fwd"); }
     revelar();
   }
+  { let fab = document.getElementById("dgfab"); if (!fab) { fab = document.createElement("button"); fab.id = "dgfab"; fab.className = "dg-fab"; fab.setAttribute("aria-label", "Falar com a teIA"); fab.innerHTML = bot(60, "idle", { papel: "teia" }); document.body.appendChild(fab); fab.addEventListener("click", () => go("assistente")); } fab.hidden = SEM_DENGO.includes(TELA.nome); }
   agruparListas(app); atualizarDock(); montarBots();
 }
+const SEM_DENGO = ["assistente","boasvindas","escaneando","processando","entrar","tour","cadastro"];
 function agruparListas(raiz) {
   raiz.querySelectorAll(".list").forEach(el => { if (el.parentElement.classList.contains("grupo")) return; const run = [el]; let n = el.nextElementSibling; while (n && n.classList.contains("list")) { run.push(n); n = n.nextElementSibling; } if (run.length < 2) return; const g = document.createElement("div"); g.className = "grupo"; el.before(g); run.forEach(x => g.appendChild(x)); });
 }
@@ -1481,16 +1492,16 @@ let CHAT = [];
 TELAS.assistente = () => `<div class="chat-top"><button class="circle" data-a="voltar" aria-label="Voltar">${ic("voltar", 22)}</button><div class="chat-id"><span class="chat-av">${simbolo(34)}</span><div style="min-width:0"><b>teIA</b><span>${plus() ? "teia+ · até 300 perguntas por mês" : `${restam("pergunta")} de ${LIMITE.pergunta} perguntas grátis este mês`}</span></div></div></div>
 <div class="wrap stack" id="chat">
   ${CHAT.length ? "" : `<div class="dg-oi">${dengo("oi", 132)}</div>`}
-  <div class="bubble ai">Oi, ${esc(nomeUsuario() || "tudo bem")}! Que bom ter você aqui. Pode me perguntar sobre ${esc(nomeCrianca())}. Se algo te preocupar, eu te escuto e anoto para levar à consulta.</div>
+  <div class="msg-ai">${bot(36, CHAT.length ? "idle" : "happy", { papel: "teia" })}<div class="bubble ai">Oi, ${esc(nomeUsuario() || "tudo bem")}! Que bom ter você aqui. Pode me perguntar sobre ${esc(nomeCrianca())}. Se algo te preocupar, eu te escuto e anoto para levar à consulta.</div></div>
   ${CHAT.length ? "" : `<p class="sugs-t">Para começar</p><div class="stack" style="gap:12px">${[`Quais remédios ${nomeCrianca()} toma hoje?`,"Quando é a próxima consulta?","O que diz o último laudo?",`Devo me preocupar com o sono de ${nomeCrianca()}?`].map(q => `<button class="list sug sem-ic" data-a="perguntar" data-v="${esc(q)}"><span class="grow">${esc(q)}</span>${ic("seta", 16)}</button>`).join("")}</div>`}
-  ${CHAT.map(m => { const n = m.nota && S.notas.items.find(x => x.id === m.nota); return `${m.role !== "user" && m.content === "…" ? `<div class="dg-pensa" role="status" aria-label="A teIA está pensando">${dengo("pensando", 64)}<div class="bubble ai typing"><i></i><i></i><i></i></div></div>` : `<div class="bubble ${m.role === "user" ? "me" : "ai"}">${esc(m.content)}</div>`}` + (n ? `<button class="notacard" data-a="ir" data-v="consulta"><span class="ib c1" style="width:32px;height:32px">${ic("diario", 16)}</span><span class="grow"><b>Anotado para a consulta</b><span class="tx">${esc(n.titulo)}: ${esc(n.texto)}</span></span></button>` : ""); }).join("")}
+  ${CHAT.map((m, i) => { const vivo = i >= CHAT.length - 6, ultima = i === CHAT.length - 1; const n = m.nota && S.notas.items.find(x => x.id === m.nota); return `${m.role !== "user" && m.content === "…" ? `<div class="msg-ai" role="status" aria-label="A teIA está pensando">${bot(36, "thinking", { papel: "teia" })}<div class="bubble ai typing"><i></i><i></i><i></i></div></div>` : m.role === "user" ? `<div class="bubble me">${esc(m.content)}</div>` : `<div class="msg-ai">${vivo ? bot(36, ultima ? "happy" : "idle", { papel: "teia" }) : `<img class="obot-img" src="${DG_IMG}" alt="">`}<div class="bubble ai">${esc(m.content)}</div></div>`}` + (n ? `<button class="notacard" data-a="ir" data-v="consulta"><span class="ib c1" style="width:32px;height:32px">${ic("diario", 16)}</span><span class="grow"><b>Anotado para a consulta</b><span class="tx">${esc(n.titulo)}: ${esc(n.texto)}</span></span></button>` : ""); }).join("")}
   <p class="chat-nota">A teIA organiza e resume. Para decisões de saúde, fale com os profissionais.</p>
 </div>
 <form class="composer" data-f="chat"><label class="sr" for="pergunta">Sua pergunta</label><input id="pergunta" name="q" placeholder="Pergunte à teIA" autocomplete="off" required><button type="submit" aria-label="Enviar">${ic("enviar", 20)}</button></form>`;
 
 TELAS.escaneando = () => { const sc = SCAN || {}; const passos = ["Preparando o documento", "Lendo o texto de cada página", "Encontrando data, profissional e origem", sc.tipo === "receita" ? "Separando remédios, doses e horários" : "Explicando em palavras simples", "Organizando na sua pasta"]; return `<div class="wrap stack" style="padding-top:24px;gap:20px">
   <div class="row"><span style="display:flex">${dengo("pensando", 52)}</span><div class="grow"><p class="b" style="font-size:17px">A teIA está lendo ${sc.tipo === "receita" ? "a receita" : "o documento"}</p><p class="xs muted">Leva alguns segundos. Não feche o app.</p></div></div>
-  <div class="scan-frame">${sc.preview ? `<img id="scanimg" src="${esc(sc.preview)}" alt="Documento sendo lido">` : `<img id="scanimg" alt="Documento sendo lido" style="opacity:0">`}<div class="scan-line"></div><span class="scan-corner a"></span><span class="scan-corner b"></span><span class="scan-corner c"></span><span class="scan-corner d"></span><div class="scan-badge"><span class="orb" style="width:14px;height:14px"></span><span>Escaneando</span><span id="scanpg" style="opacity:.75">${sc.paginas ? `${sc.paginas} página${sc.paginas === 1 ? "" : "s"}` : ""}</span></div></div>
+  <div class="scan-wrap"><span class="scan-dg">${bot(76, "thinking", { papel: "teia", segue: false })}</span><div class="scan-frame">${sc.preview ? `<img id="scanimg" src="${esc(sc.preview)}" alt="Documento sendo lido">` : `<img id="scanimg" alt="Documento sendo lido" style="opacity:0">`}<div class="scan-line"></div><span class="scan-corner a"></span><span class="scan-corner b"></span><span class="scan-corner c"></span><span class="scan-corner d"></span><div class="scan-badge"><span class="orb" style="width:14px;height:14px"></span><span>Escaneando</span><span id="scanpg" style="opacity:.75">${sc.paginas ? `${sc.paginas} página${sc.paginas === 1 ? "" : "s"}` : ""}</span></div></div></div>
   <div class="card" style="padding:8px 20px">${passos.map((t, i) => `<div class="passo ${i < (sc.passo || 0) ? "ok" : i === (sc.passo || 0) ? "ativo" : ""}"><span class="st">${i < (sc.passo || 0) ? ic("feito", 16) : ""}</span><p class="small b">${t}</p></div>`).join("")}</div>
 </div>`; };
 TELAS.processando = (p) => `<div class="wrap" style="padding-top:112px;text-align:center"><div class="tile au-indigo" style="border-radius:24px;padding:36px 24px"><span style="display:flex;justify-content:center">${dengo("pensando", 96)}</span><p class="b" style="font-size:19px;margin-top:20px">${p.tipo === "receita" ? "Lendo remédios, doses e horários…" : "Lendo e explicando em palavras simples…"}</p><p class="small" style="opacity:.85;margin-top:8px">Leva alguns segundos.</p></div></div>`;
