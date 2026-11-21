@@ -526,6 +526,16 @@ html.escuro .grupo>.list{background:transparent !important}
 #dgfab[hidden]{display:none}
 @keyframes dg-fab-in{from{opacity:0;transform:translateY(12px) scale(.8)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.dg-fab{animation:none}}
+.cabeca{display:flex;align-items:center;gap:12px;margin:12px 16px 0;padding:8px 12px 8px 8px;border-radius:32px;background:linear-gradient(135deg,rgba(255,255,255,.96) 0%,rgba(246,241,255,.94) 55%,rgba(236,243,255,.92) 100%);border:1px solid rgba(255,255,255,.9);box-shadow:0 18px 36px -22px rgba(60,47,120,.45),0 1px 0 #fff inset;-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.cab-didi{position:relative;width:64px;height:64px;flex:none;display:block}
+.cab-didi .obot{position:relative;z-index:1}
+.cab-halo{position:absolute;inset:-10px;border-radius:50%;background:radial-gradient(closest-side,rgba(155,123,240,.38),rgba(155,123,240,0));animation:cab-halo 3.2s ease-in-out infinite}
+@keyframes cab-halo{50%{transform:scale(1.12);opacity:.7}}
+.cab-bt{width:48px;height:48px;border-radius:50%;border:none;flex:none;display:inline-flex;align-items:center;justify-content:center;background:#fff;color:var(--ink);box-shadow:0 8px 18px -10px rgba(35,36,40,.35),0 0 0 1px rgba(60,60,67,.06)}
+.cab-bt.cab-ia{background:linear-gradient(140deg,#4A4B53 0%,#232428 55%,#3C2F58 100%);color:#fff;box-shadow:0 10px 22px -10px rgba(60,47,120,.7),inset 0 1px 0 rgba(255,255,255,.22)}
+.cab-bt.cab-ia svg{color:#E9E2FF}
+.cab-bt:active{transform:scale(.94)}
+@media (prefers-reduced-motion:reduce){.cab-halo{animation:none}}
 </style>
 </head>
 <body>
@@ -801,7 +811,7 @@ function render(anim) {
   { let fab = document.getElementById("dgfab"); if (!fab) { fab = document.createElement("button"); fab.id = "dgfab"; fab.className = "dg-fab"; fab.setAttribute("aria-label", "Falar com o Didi"); fab.innerHTML = bot(60, "idle", { papel: "teia" }); document.body.appendChild(fab); fab.addEventListener("click", () => go("assistente")); } fab.hidden = SEM_DENGO.includes(TELA.nome); }
   agruparListas(app); atualizarDock(); montarBots();
 }
-const SEM_DENGO = ["assistente","boasvindas","escaneando","processando","entrar","tour","cadastro"];
+const SEM_DENGO = ["inicio","assistente","boasvindas","escaneando","processando","entrar","tour","cadastro"];
 function agruparListas(raiz) {
   raiz.querySelectorAll(".list").forEach(el => { if (el.parentElement.classList.contains("grupo")) return; const run = [el]; let n = el.nextElementSibling; while (n && n.classList.contains("list")) { run.push(n); n = n.nextElementSibling; } if (run.length < 2) return; const g = document.createElement("div"); g.className = "grupo"; el.before(g); run.forEach(x => g.appendChild(x)); });
 }
@@ -1119,7 +1129,7 @@ TELAS.inicio = () => {
   const conq = [...S.regs.items].reverse().find(r => r.conquista); const crianca = nomeCrianca();
   const estado = !sem.tot ? "começa por aqui" : sem.pct >= 70 ? "segue bem" : sem.pct >= 40 ? "vai evoluindo" : "está começando";
   const pd = prox ? parseISO(prox.data) : null;
-  return `<div class="topbar">${logo(26)}<span class="grow"></span><button class="circle" data-a="ir" data-v="assistente" aria-label="Perguntar ao Didi">${ic("ia", 20)}</button><button class="circle" data-a="ir" data-v="linha" aria-label="Linha do tempo">${ic("notificacao", 20)}</button></div>
+  return `<div class="cabeca"><span class="cab-didi" role="img" aria-label="Didi"><span class="cab-halo"></span>${bot(64, "happy", { papel: "teia" })}</span><span class="grow"></span><button class="cab-bt cab-ia" data-a="ir" data-v="assistente" aria-label="Conversar com o Didi">${ic("ia", 22)}</button><button class="cab-bt" data-a="ir" data-v="linha" aria-label="Notificações">${ic("notificacao", 22)}</button></div>
 <div class="hd" style="padding-top:20px"><div class="av" aria-hidden="true">${p.foto ? `<img src="${esc(p.foto)}" alt="">` : esc((p.mae || nomeCrianca() || "T").slice(0,1).toUpperCase())}</div><div class="grow"><h1 class="hello">Olá${p.mae ? ", " + esc(p.mae) : ""}!</h1><p class="muted" style="margin-top:2px;font-size:13px">Cuidar junto é mais leve.</p></div></div>
 <div class="pessoas" role="tablist" aria-label="Pessoas que você cuida">${S.membros.items.map(m => `<button role="tab" aria-selected="${m.id === ATIVO}" class="pessoa ${m.id === ATIVO ? "on" : ""}" data-a="membro-trocar" data-v="${m.id}"><span class="pa">${fotoDentro(m.foto, m.nome)}</span>${esc(m.nome)}</button>`).join("")}<button class="pessoa add" data-a="membro-novo" aria-label="Adicionar pessoa">${ic("mais", 16)}${S.membros.items.length < 2 ? "Adicionar" : ""}${plus() ? "" : `<span class="plus-tag" style="height:16px;font-size:9.5px;padding:0 4px">Didi+</span>`}</button></div>
 <div class="wrap stack" style="padding-top:16px;gap:16px">
