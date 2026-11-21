@@ -1,4 +1,4 @@
-// teia · resumo para o profissional (link de leitura com validade). Público: valida o token no servidor.
+// Didi · resumo para o profissional (link de leitura com validade). Público: valida o token no servidor.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "apikey, content-type", "Access-Control-Allow-Methods": "GET, OPTIONS" };

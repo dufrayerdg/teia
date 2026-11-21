@@ -1,6 +1,6 @@
-// teia · assinatura teia+
+// Didi · assinatura Didi+
 // Enquanto o pagamento real (Mercado Pago / Stripe / lojas) não está ligado, esta função só
-// simula a assinatura quando PAGAMENTOS_TESTE=true. Em produção, quem ativa o teia+ é o webhook do gateway.
+// simula a assinatura quando PAGAMENTOS_TESTE=true. Em produção, quem ativa o Didi+ é o webhook do gateway.
 import { CORS, json, contexto } from "../_shared/comum.ts";
 
 Deno.serve(async (req) => {

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
-<title>Resumo para a consulta · teia</title>
+<title>Resumo para a consulta · Didi</title>
 <link rel="icon" href="/icones/icone-192.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
 <script src="config.js"></script>
@@ -34,7 +34,7 @@ async function abrir() {
   let d; try { const r = await fetch(`${C.SUPABASE_URL}/functions/v1/resumo-publico?t=${encodeURIComponent(t)}`, { headers: { apikey: C.SUPABASE_ANON_KEY } }); d = await r.json(); if (!r.ok) throw d; }
   catch (e) { el.innerHTML = `<div class="rel"><p><b>Este link não está mais disponível.</b></p><p class="m">Ele pode ter vencido (os links valem 7 dias) ou sido cancelado pela família. Peça um novo.</p></div>`; return; }
   const p = d.pessoa || {}, rg = d.ultimos30 || {};
-  el.innerHTML = `<div class="rel"><div class="top"><span class="marca">✦ teia</span><span class="m">Gerado em ${esc(fd(d.gerado))} · válido até ${esc(fd(d.expira))}</span></div>
+  el.innerHTML = `<div class="rel"><div class="top"><span class="marca">✦ Didi</span><span class="m">Gerado em ${esc(fd(d.gerado))} · válido até ${esc(fd(d.expira))}</span></div>
   <h1>Resumo de ${esc(p.nome)}</h1><p class="m">Organizado por ${esc(d.quem || "a família")}${d.papel ? " (" + esc(d.papel) + ")" : ""} para a consulta</p>
   <h2>Quem é</h2><table>${L("Nome", esc(p.nome))}${L("Idade", p.nascimento ? esc(idade(p.nascimento)) + " (" + esc(fd(p.nascimento)) + ")" : "")}${L("Diagnósticos", esc(p.diagnosticos))}${L("Plano de saúde", esc(p.plano_saude))}</table>
   <h2>Remédios em uso</h2>${(d.remedios || []).length ? `<table>${d.remedios.map(m => L(esc(m.nome), esc([m.dose, (m.horarios || []).join(", "), m.medico ? "receitado por " + m.medico : "", m.fim ? "até " + fd(m.fim) : "uso contínuo"].filter(Boolean).join(" · ")))).join("")}</table>` : "<p>Nenhum remédio cadastrado.</p>"}
@@ -45,8 +45,8 @@ async function abrir() {
   ${(d.consultas || []).length ? `<h2>Consultas</h2><ul>${d.consultas.map(c => `<li>${esc(fd(c.data))}${c.hora ? " às " + esc(c.hora) : ""} · ${esc(c.titulo)}${c.profissional ? " · " + esc(c.profissional) : ""}</li>`).join("")}</ul>` : ""}
   ${(d.notas || []).length ? `<h2>Para conversar nesta consulta</h2><ul>${d.notas.map(n => `<li><b>${esc(n.titulo)}:</b> ${esc(n.texto)}</li>`).join("")}</ul>` : ""}
   <button class="btn" onclick="print()">Imprimir ou salvar em PDF</button>
-  <p class="aviso">Informações organizadas pela família no app teia. Não substituem a avaliação profissional. Link de leitura, válido por 7 dias.</p></div>`;
-  document.title = `Resumo de ${p.nome || ""} · teia`;
+  <p class="aviso">Informações organizadas pela família no app Didi. Não substituem a avaliação profissional. Link de leitura, válido por 7 dias.</p></div>`;
+  document.title = `Resumo de ${p.nome || ""} · Didi`;
 }
 abrir();
 </script>

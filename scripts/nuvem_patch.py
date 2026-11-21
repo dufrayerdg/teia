@@ -14,7 +14,7 @@ def rep3(a, b):
 rep3('<meta name="theme-color" content="#F8F5FE">',
      '<meta name="theme-color" content="#F8F5FE">\n<link rel="manifest" href="/manifest.webmanifest">\n'
      '<link rel="apple-touch-icon" href="/icones/apple-touch-icon.png">\n<meta name="apple-mobile-web-app-capable" content="yes">\n'
-     '<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="teia">\n'
+     '<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-title" content="Didi">\n'
      '<meta name="apple-mobile-web-app-status-bar-style" content="default">')
 
 # ---- dono dos dados: a própria conta ou a de quem convidou ----
@@ -67,7 +67,7 @@ function ligarNuvem() {
   NUVEM.convidar = async () => { const codigo = codigoConvite(); const { error } = await SB.from("convites").insert({ codigo, dono: USER.id }); if (error) throw error; await carregarAcessos(); return { codigo, link: `${location.origin}/?convite=${codigo}` }; };
   NUVEM.acessos = () => ACESSOS;
   NUVEM.aceitarConvite = async (codigo) => { const { error } = await SB.rpc("aceitar_convite", { p_codigo: codigo, p_nome: nomeUsuario() || "" });
-    if (error) { const m = error.message || ""; return /convite_proprio/.test(m) ? "Esse convite é seu." : /sem_plus/.test(m) ? "Quem convidou precisa ter o teia+." : "Código inválido ou vencido."; }
+    if (error) { const m = error.message || ""; return /convite_proprio/.test(m) ? "Esse convite é seu." : /sem_plus/.test(m) ? "Quem convidou precisa ter o Didi+." : "Código inválido ou vencido."; }
     for (const k of Object.keys(SINC)) delete SINC[k]; await carregar(); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); return true; };
   NUVEM.pushAtivo = () => PUSH_ON;
   NUVEM.pushAtivar = async () => {
@@ -101,11 +101,11 @@ rep3('go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true
 
 # instalar o app (cartão na Início)
 rep3('  <div class="qts">\n',
-     '  ${!instalado() && !SEM_INSTALAR && (INSTALAR || /iPhone|iPad/.test(navigator.userAgent)) ? `<div class="card row" style="gap:12px"><span class="ib c2">${simbolo(18)}</span><div class="grow"><p class="b small">Instale a teia no celular</p><p class="xs muted">${INSTALAR ? "Abre como app e recebe lembretes." : "Toque em Compartilhar e depois em Adicionar à Tela de Início."}</p></div>${INSTALAR ? `<button class="btn" style="height:36px;padding:0 14px;font-size:13px" data-a="instalar">Instalar</button>` : ""}<button class="circle" style="width:30px;height:30px;box-shadow:none;background:var(--soft)" data-a="instalar-nao" aria-label="Fechar">${ic("fechar", 14)}</button></div>` : ""}\n'
+     '  ${!instalado() && !SEM_INSTALAR && (INSTALAR || /iPhone|iPad/.test(navigator.userAgent)) ? `<div class="card row" style="gap:12px"><span class="ib c2">${simbolo(18)}</span><div class="grow"><p class="b small">Instale o Didi no celular</p><p class="xs muted">${INSTALAR ? "Abre como app e recebe lembretes." : "Toque em Compartilhar e depois em Adicionar à Tela de Início."}</p></div>${INSTALAR ? `<button class="btn" style="height:36px;padding:0 14px;font-size:13px" data-a="instalar">Instalar</button>` : ""}<button class="circle" style="width:30px;height:30px;box-shadow:none;background:var(--soft)" data-a="instalar-nao" aria-label="Fechar">${ic("fechar", 14)}</button></div>` : ""}\n'
      '  <div class="qts">\n')
 rep3('    case "voltar": voltar(); break;',
      '    case "voltar": voltar(); break;\n'
-     '    case "instalar": if (INSTALAR) { INSTALAR.prompt(); const r = await INSTALAR.userChoice.catch(() => null); INSTALAR = null; if (r && r.outcome === "accepted") toast("teia instalada!"); render(); } break;\n'
+     '    case "instalar": if (INSTALAR) { INSTALAR.prompt(); const r = await INSTALAR.userChoice.catch(() => null); INSTALAR = null; if (r && r.outcome === "accepted") toast("Didi instalada!"); render(); } break;\n'
      '    case "instalar-nao": SEM_INSTALAR = true; try { localStorage.setItem("teia.semInstalar", "1"); } catch (e) {} render(); break;')
 
 # arquivos no site vêm de links assinados (ligarNuvem troca obterURL)

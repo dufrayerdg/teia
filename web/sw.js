@@ -19,7 +19,7 @@ self.addEventListener("fetch", (e) => {
 });
 self.addEventListener("push", (e) => {
   let d = {}; try { d = e.data ? e.data.json() : {}; } catch (_) { d = { corpo: e.data ? e.data.text() : "" }; }
-  e.waitUntil(self.registration.showNotification(d.titulo || "teia", {
+  e.waitUntil(self.registration.showNotification(d.titulo || "Didi", {
     body: d.corpo || "", tag: d.tag || undefined, renotify: !!d.tag, icon: "/icones/icone-192.png", badge: "/icones/icone-192.png",
     data: { url: d.url || "/" }, lang: "pt-BR",
   }));

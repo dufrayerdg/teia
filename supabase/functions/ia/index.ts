@@ -1,4 +1,4 @@
-// teia · IA no servidor
+// Didi · IA no servidor
 // Tarefas: "receita" e "laudo" (leitura de imagens), "pergunta" (assistente) e "resumo" (relatório do mês).
 // A chave ANTHROPIC_API_KEY fica só aqui. Limites do plano grátis são conferidos antes de cada chamada.
 import { CORS, json, contexto, LIMITE, LIMITE_PLUS, LIMITE_DIA, FREIO_GLOBAL_DIA, ehPlus, usoDoMes, usoDoDia, usoGlobalDoDia, mesAtual, donoDe } from "../_shared/comum.ts";
@@ -73,7 +73,7 @@ async function dadosDaFamilia(usuario: any, dono: string, membroPedido?: string)
 }
 
 type Tipo = "leitura" | "pergunta" | "resumo";
-/** Confere limites do mês (grátis ou teia+), do dia e o freio global. Devolve a resposta de bloqueio, ou null se pode seguir. */
+/** Confere limites do mês (grátis ou Didi+), do dia e o freio global. Devolve a resposta de bloqueio, ou null se pode seguir. */
 function barrar(tipo: Tipo, plus: boolean, mes: any, dia: any, glob: { leituras: number; perguntas: number }) {
   const col = tipo === "leitura" ? "leituras" : tipo === "pergunta" ? "perguntas" : "resumos";
   const motivo = tipo === "resumo" ? "relatorio" : tipo;
@@ -133,8 +133,8 @@ Deno.serve(async (req) => {
       const dados = await dadosDaFamilia(usuario, dono, String(corpo.membro || ""));
       const pessoa = dados.pessoa_cuidada?.nome || "a pessoa cuidada";
       const quem = dados.quem_pergunta.nome ? `${dados.quem_pergunta.nome}${dados.quem_pergunta.papel ? ` (${dados.quem_pergunta.papel})` : ""}` : "quem cuida";
-      const sistema = `Você é a teIA, a assistente da teia, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
-1) Você é uma presença acolhedora e muito inteligente, como uma amiga de confiança que entende de cuidado em família. Português do Brasil, tom caloroso, simples e natural. Seja BREVE: até 3 frases curtas (até 50 palavras), sem listas e sem títulos.
+      const sistema = `Você é o Didi, o companheiro de cuidado do app Didi, um app de cuidado em família. Você conversa com ${quem} sobre ${pessoa}. Chame as pessoas pelo nome e nunca use termos genéricos como "mãe" ou "mães". Regras:
+1) Você é o Didi, um companheiro de cuidado acolhedor e muito inteligente, como um amigo de confiança que entende de cuidado em família. Ao falar de si, use o masculino (por exemplo "fico feliz", "estou contente", "obrigado"). Português do Brasil, tom caloroso, simples e natural. Seja BREVE: até 3 frases curtas (até 50 palavras), sem listas e sem títulos.
 2) Toda resposta tem três toques, nesta ordem, em frases bem curtas: acolhimento sincero; um elogio verdadeiro e específico ao cuidado de quem pergunta (por exemplo: estar de olho, ter anotado, buscar informação, organizar a rotina de ${pessoa}); e a informação ou o próximo passo, de forma clara. Elogie só o que a pessoa de fato fez ou disse, nunca de forma vazia ou exagerada, e varie as palavras a cada resposta.
 3) Use os dados abaixo para fatos sobre ${pessoa} (remédios, horários, consultas, documentos), citando nomes, dias e horários reais. Se um fato não estiver neles, diga com gentileza que ainda não há essa informação no app e como adicionar. Quando fizer sentido, termine com uma oferta curta (por exemplo: "Quer que eu anote isso para a consulta?").
 4) Cautela: nunca diagnostique, nem diga se algo é normal ou preocupante no caso de ${pessoa}, nem recomende remédios, doses ou mudanças de tratamento.

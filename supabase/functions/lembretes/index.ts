@@ -1,4 +1,4 @@
-// teia · lembretes no celular (web push). Chamado a cada 5 minutos pelo agendador do banco (pg_cron).
+// Didi · lembretes no celular (web push). Chamado a cada 5 minutos pelo agendador do banco (pg_cron).
 import { createClient } from "npm:@supabase/supabase-js@2";
 import webpush from "npm:web-push@3.6.7";
 import { fusoHoje, fusoHora } from "../_shared/comum.ts";
@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
         const itens = [nMeds ? `${nMeds} dose(s) de remédio` : "", ...sess, ...cs].filter(Boolean);
         if (itens.length) partes.push(`${pessoa.nome ? pessoa.nome + ": " : ""}${itens.join(", ")}`);
       }
-      if (partes.length) msgs.push({ chave: `${dono}|manha|${hoje}`, titulo: "Hoje na teia", corpo: partes.join(" · "), tag: "manha" });
+      if (partes.length) msgs.push({ chave: `${dono}|manha|${hoje}`, titulo: "Hoje no Didi", corpo: partes.join(" · "), tag: "manha" });
     }
 
     for (const m of msgs) {

@@ -119,7 +119,7 @@ with sync_playwright() as p:
     pg.evaluate("go('assistente',{},true)"); pg.wait_for_timeout(300)
     pg.fill("#pergunta", "Devo me preocupar?"); pg.press("#pergunta", "Enter"); pg.wait_for_timeout(800)
     assert pg.evaluate("__db.notas_consulta.length") == 1
-    for cod, trecho in [("limite_plus", "300 perguntas deste mês"), ("limite_dia", "limite de perguntas de hoje"), ("servico_ocupado", "muito concorrida")]:
+    for cod, trecho in [("limite_plus", "300 perguntas deste mês"), ("limite_dia", "limite de perguntas de hoje"), ("servico_ocupado", "muito ocupado")]:
         pg.evaluate(f"window.__forcaErro = '{cod}'"); pg.fill("#pergunta", "Oi " + cod); pg.press("#pergunta", "Enter"); pg.wait_for_timeout(700)
         ult = pg.evaluate("[...document.querySelectorAll('.bubble.ai')].pop().textContent"); assert trecho in ult, (cod, ult)
     pg.evaluate("window.__forcaErro = null"); assert pg.evaluate("TELA.nome") == "assistente", "limite do teia+ não deve levar ao paywall"

@@ -92,8 +92,8 @@ async function ia(tarefa, dados) {
 }
 const MSG_LIMITE = (c, t) => c === "limite_plus" ? (t === "leitura" ? "Você usou as 30 leituras deste mês. Elas voltam no mês que vem." : t === "resumo" ? "Você chegou ao limite de resumos deste mês. Volta no mês que vem." : "Você usou as 300 perguntas deste mês. Elas voltam no mês que vem.")
   : c === "limite_dia" ? (t === "leitura" ? "Você chegou ao limite de leituras de hoje. Volte amanhã." : t === "resumo" ? "Você chegou ao limite de resumos de hoje. Volte amanhã." : "Você chegou ao limite de perguntas de hoje. Volte amanhã.")
-  : c === "sem_conta" ? "Para usar a teIA, salve sua conta em Perfil. É rapidinho."
-  : c === "servico_ocupado" ? "A teIA está muito concorrida agora. Tente de novo daqui a pouco." : "";
+  : c === "sem_conta" ? "Para usar o Didi, salve sua conta em Perfil. É rapidinho."
+  : c === "servico_ocupado" ? "O Didi está muito ocupado agora. Tente de novo daqui a pouco." : "";
 const blobParaDataURL = b => new Promise((ok, erro) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = erro; fr.readAsDataURL(b); });
 let ENTRANDO = false, LOCAL = false;
 async function iniciar() {
@@ -164,9 +164,9 @@ rep('} catch (e) { ult().content = e && e.code === "rate_limited"', '} catch (e)
 rep('try { const r = await SAMPLE(prompt, { modelTier: "default", onText: ({ text }) => { const el = document.getElementById("reltxt"); if (el) el.textContent = text; } }); const el = document.getElementById("reltxt"); if (el && r.text) el.textContent = r.text; }',
     'try { const r = await ia("resumo", { membro: ATIVO, sessoes: sess }); const el = document.getElementById("reltxt"); if (el && r && r.texto) el.textContent = r.texto; }')
 rep('catch (err) { out.innerHTML = `<p class="banner">${err && err.code === "rate_limited"', 'catch (err) { if (err && err.code === "limite") { paywall("relatorio"); return; } out.innerHTML = `<p class="banner">${err && MSG_LIMITE(err.code, "resumo") ? MSG_LIMITE(err.code, "resumo") : err && err.code === "rate_limited"')
-# teia+ via servidor
-rep('    case "plus-assinar": S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; await salvar("plano").catch(() => {}); voltar(); toast("Boas-vindas ao teia+!"); break;',
-    '    case "plus-assinar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "assinar", ciclo: v } }); if (error) { toast("O pagamento ainda não está disponível."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; voltar(); toast("Boas-vindas ao teia+!"); break;')
+# Didi+ via servidor
+rep('    case "plus-assinar": S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; await salvar("plano").catch(() => {}); voltar(); toast("Boas-vindas ao Didi+!"); break;',
+    '    case "plus-assinar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "assinar", ciclo: v } }); if (error) { toast("O pagamento ainda não está disponível."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: true, ciclo: v, desde: iso(new Date()) }; voltar(); toast("Boas-vindas ao Didi+!"); break;')
 rep('    case "plus-cancelar": S.plano = { ...S.plano, plus: false }; await salvar("plano").catch(() => {}); render(); toast("Assinatura cancelada (teste)."); break;',
     '    case "plus-cancelar": if (SB) { const { error } = await SB.functions.invoke("assinatura", { body: { acao: "cancelar" } }); if (error) { toast("Não consegui cancelar agora."); break; } await atualizarPlano(); } else S.plano = { ...S.plano, plus: false }; render(); toast("Assinatura cancelada."); break;')
 # apagar tudo
