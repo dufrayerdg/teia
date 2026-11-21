@@ -113,8 +113,8 @@ with sync_playwright() as p:
     pg.click('form[data-f="consulta"] button[type="submit"]'); pg.wait_for_timeout(500)
     assert pg.evaluate("__db.consultas.length") == 1 and pg.evaluate("__db.consultas[0].hora") == "23:00"
     pg.evaluate("go('rotina',{data:'2026-11-16'},true)"); pg.wait_for_timeout(400)
-    pg.click('button.check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 1, pg.evaluate("__db.marcacoes")
-    pg.click('button.check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 0
+    pg.click('button.lt-check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 1, pg.evaluate("__db.marcacoes")
+    pg.click('button.lt-check'); pg.wait_for_timeout(400); assert pg.evaluate("__db.marcacoes.length") == 0
     # nota e chat
     pg.evaluate("go('assistente',{},true)"); pg.wait_for_timeout(300)
     pg.fill("#pergunta", "Devo me preocupar?"); pg.press("#pergunta", "Enter"); pg.wait_for_timeout(800)
