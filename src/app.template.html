@@ -658,6 +658,37 @@ h1,h2,h3,.hello,.hero-t{font-weight:500!important;letter-spacing:-.6px!important
 .mini .mt{color:#0B0B0C!important}.mini .ms{color:#71717A!important}
 .chat-av{background:none!important}
 .secao{font-size:15px!important;letter-spacing:0!important;text-transform:none!important;color:#71717A!important;font-weight:400!important}
+/* ===== referências: linha do tempo, agenda e conteúdos ===== */
+.linha-tempo{display:flex;flex-direction:column;gap:8px}
+.lt-item{display:flex;gap:12px;align-items:stretch}
+.lt-hora{width:40px;flex:none;display:flex;flex-direction:column;align-items:center;padding-top:14px;color:#71717A}
+.lt-hora b{font-size:17px;font-weight:500;color:#0B0B0C;line-height:1}
+.lt-hora span{font-size:12px;margin-top:2px}
+.lt-bloco{flex:1;display:flex;align-items:flex-start;gap:12px;border-radius:20px;padding:14px 14px 14px 16px;background:#F1F0FB}
+.lt-med{background:#E3F0FC}.lt-trat{background:#E2F4EA}.lt-cons{background:#FCEDE1}.lt-tar{background:#EEEAFB}
+.lt-titulo{font-size:16px;font-weight:500;color:#0B0B0C;letter-spacing:-.2px}
+.lt-tipo{font-size:13px;color:#71717A;margin-top:2px}
+.lt-sub{display:flex;align-items:center;gap:6px;font-size:13px;color:#3F3F46;margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
+.lt-check{width:28px;height:28px;flex:none;border-radius:8px;border:1.5px solid rgba(11,11,12,.35);background:transparent;display:flex;align-items:center;justify-content:center;color:#fff}
+.lt-check.on{background:#0B0B0C;border-color:#0B0B0C}
+.lt-bloco.feito .lt-titulo{text-decoration:line-through;opacity:.55}
+.ag-lista{padding:4px 16px!important}
+.ag-item{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid #EFEFF1}
+.ag-item:last-child{border-bottom:none}
+.ag-ic{width:32px;height:32px;flex:none;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.ag-consulta{background:#FCEDE1;color:#B4561B}.ag-terapia{background:#E2F4EA;color:#1F7A4D}.ag-receita{background:#E3F0FC;color:#1F5FA8}.ag-marco{background:#EEEAFB;color:#5B3FC4}
+.ag-tipo{font-size:13px;color:#71717A}
+.ag-titulo{font-size:16px;font-weight:500;color:#0B0B0C;margin-top:2px}
+.ag-hora{font-size:13px;color:#71717A;margin-top:4px}
+.cat{display:flex;gap:4px!important;background:#E9E9EC!important;border-radius:999px;padding:4px!important;overflow-x:auto;scrollbar-width:none}
+.cat button{flex:1 0 auto;border:none!important;background:transparent!important;color:#52525B!important;border-radius:999px!important;height:38px;padding:0 16px;font-size:14px;box-shadow:none!important}
+.cat button.on{background:#fff!important;color:#0B0B0C!important;font-weight:500}
+.artc{display:flex;flex-direction:column;gap:12px;width:100%;text-align:left;background:#fff;border:none;border-radius:24px;padding:14px;font-family:inherit;color:#0B0B0C;cursor:pointer}
+.artc-top{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#71717A}
+.artc-min{display:inline-flex;align-items:center;gap:6px}
+.artc-capa{height:132px;border-radius:16px;background:var(--g,#F4F4F5);display:flex;align-items:center;justify-content:center;color:rgba(11,11,12,.75)}
+.artc-t{font-size:17px;font-weight:500;letter-spacing:-.3px;line-height:1.3;padding:0 2px}
+.artc-pe{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#71717A;padding:0 2px}
 </style>
 </head>
 <body>
@@ -1099,7 +1130,7 @@ const GRADS = [
 const gradDe = id => { let h = 0; for (const ch of String(id)) h = (h * 31 + ch.charCodeAt(0)) >>> 0; const i = Object.keys(ART_INFO).indexOf(id); return GRADS[(i >= 0 ? i : h) % GRADS.length]; };
 const corCat = k => CAT_COR[k] || CAT_COR.artigo;
 const pilCat = k => { const [f, t] = corCat(k); return `<span class="pil" style="--f:${f};--t:${t}">${CAT_NOME[k] || ""}</span>`; };
-const cardArtigo = c => { const [f, t] = corCat(c.cat); const [i, sub] = ART_INFO[c.id] || [CAT_ICON[c.cat] || "artigo", ""]; return `<button class="art" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="th cor" style="--g:${gradDe(c.id)}">${ic(i, 20)}</span><span class="grow" style="min-width:0"><span class="t" style="display:block">${esc(c.titulo)}</span>${sub ? `<span class="sb">${esc(sub)}</span>` : ""}<span class="m" style="display:flex;align-items:center;gap:8px">${pilCat(c.cat)}<span>${c.min} min</span></span></span>${ic("seta", 16)}</button>`; };
+const cardArtigo = c => { const [i, sub] = ART_INFO[c.id] || [CAT_ICON[c.cat] || "artigo", ""]; return `<button class="artc" data-a="ir" data-v="artigo" data-id="${c.id}"><span class="artc-top"><span class="artc-min">${ic("lembrete", 14)}${c.min} min</span><span class="artc-cat">${esc(CAT_NOME[c.cat] || "")}</span></span><span class="artc-capa" style="--g:${gradDe(c.id)}">${ic(i, 34)}</span><span class="artc-t">${esc(c.titulo)}</span><span class="artc-pe"><span>${sub ? esc(sub) : "Ler mais"}</span>${ic("seta", 16)}</span></button>`; };
 const miniDireito = c => { const [f, t] = corCat("direitos"); const [i, sub, curto] = ART_INFO[c.id] || ["direitos", "", ""]; return `<button class="mini" data-a="ir" data-v="artigo" data-id="${c.id}" style="--f:${f};--t:${t}"><span class="mi" style="--g:${gradDe(c.id)}">${ic(i, 18)}</span><span class="mt">${esc(curto || c.titulo.split(":")[0])}</span><span class="ms">${esc(sub)}</span></button>`; };
 
 /* ---------- Telas ---------- */
@@ -1279,7 +1310,7 @@ TELAS.agenda = (p) => { const base = p.mes ? parseISO(p.mes + "-01") : new Date(
     <div class="cal">${["D","S","T","Q","Q","S","S"].map(d => `<span class="dw">${d}</span>`).join("")}${cel.map(d => { const dI = iso(d); const ev = eventosDoDia(dI); const tipos = [...new Set(ev.map(e => e.t))]; return `<button class="${d.getMonth() !== mo ? "fora" : ""} ${dI === hoje ? "hoje" : ""} ${dI === sel ? "sel" : ""}" data-a="agenda-dia" data-v="${dI}" aria-label="${esc(fmtLonga(dI))}${ev.length ? ", " + ev.length + " eventos" : ""}">${d.getDate()}<span class="pts">${tipos.slice(0, 4).map(t => `<i class="pt-${t}"></i>`).join("")}</span></button>`; }).join("")}</div>
     <div class="legenda" style="margin-top:12px"><span><i class="pt-consulta"></i>Consulta</span><span><i class="pt-terapia"></i>Terapia</span><span><i class="pt-receita"></i>Receita acaba</span><span><i class="pt-marco"></i>Marco</span></div></div>
   <div class="sec-title"><h2 style="text-transform:none">${esc(fmtLonga(sel))}</h2><button class="lk" data-a="rotina-dia" data-v="${sel}">Ver rotina ${ic("seta-dir", 14)}</button></div>
-  ${evSel.length ? evSel.map(e => `<div class="list"><span class="ib c2"><i class="pt-${e.t}" style="width:10px;height:10px;border-radius:50%;display:block"></i></span><div class="grow"><p class="b small">${esc(e.nome)}</p><p class="xs muted">${{ consulta: "Consulta", terapia: "Terapia", receita: "Último dia da receita", marco: "Marco" }[e.t]}${e.hora ? " · " + esc(e.hora) : ""}</p></div></div>`).join("") : `<div class="empty"><span class="ib" style="margin:0 auto 12px">${ic("rotina", 22)}</span><p class="b">Nada marcado neste dia</p><button class="btn" style="margin-top:12px" data-a="consulta-nova" data-v="${sel}">Marcar consulta</button></div>`}
+  ${evSel.length ? `<div class="card ag-lista">${evSel.map(e => `<div class="ag-item"><span class="ag-ic ag-${e.t}">${ic({ consulta: "consulta", terapia: "rotina", receita: "medicacao", marco: "conquista" }[e.t] || "rotina", 18)}</span><div class="grow"><p class="ag-tipo">${{ consulta: "Consulta", terapia: "Terapia", receita: "Último dia da receita", marco: "Marco" }[e.t]}</p><p class="ag-titulo">${esc(e.nome)}</p>${e.hora ? `<p class="ag-hora">${esc(e.hora)}</p>` : ""}</div></div>`).join("")}</div>` : `<div class="empty"><span class="ib" style="margin:0 auto 12px">${ic("rotina", 22)}</span><p class="b">Nada marcado neste dia</p><button class="btn" style="margin-top:12px" data-a="consulta-nova" data-v="${sel}">Marcar consulta</button></div>`}
 </div>`; };
 
 TELAS.crises = () => { const pc = padroesCrise(90);
@@ -1368,7 +1399,7 @@ TELAS.rotina = (p) => {
   <div class="tile au-lilas row"><div class="grow"><p class="xs b" style="opacity:.75">${esc(fmtLonga(sel))}${sel === hoje ? " · hoje" : ""}</p><p class="num" style="font-size:26px;margin-top:4px">${ok}/${itens.length}</p><p class="xs b" style="margin-top:4px">tarefas feitas</p></div>${dotsBar(ok, itens.length, 10)}</div>
   ${estoqueBaixo().map(({ m, d }) => `<div class="card row" style="background:#FFF6E6;box-shadow:none"><span class="ib" style="background:#fff">${ic("medicacao", 22)}</span><div class="grow"><p class="small b">${esc(m.nome)}: estoque para ${d} ${d === 1 ? "dia" : "dias"}</p><p class="xs muted">${esc(m.estoque)} unidade(s) em casa</p></div><button class="btn sec" style="height:36px;padding:0 12px;font-size:12.5px" data-a="estoque-repor" data-id="${m.id}">Repor</button></div>`).join("")}
   ${venc.map(m => `<div class="card row" style="background:#FFF3E9;box-shadow:none"><span class="ib" style="background:#fff">${ic("alerta", 22)}</span><div class="grow"><p class="small b">A receita de ${esc(m.nome)} vence em ${fmtData(m.fim)}</p><p class="xs muted">${esc(m.medico || "Fale com o médico para renovar")}</p></div></div>`).join("")}
-  ${itens.length ? `<div class="card" style="padding:8px 16px">${itens.map(it => { const f = feito(sel, it.key), q = f ? S.checks.d[sel][it.key] : null; return `<div class="task"><button class="check ${f ? "on" : ""}" data-a="check" data-v="${esc(it.key)}" data-d="${sel}" aria-pressed="${f}" aria-label="${f ? "Desmarcar" : "Marcar como feito"}: ${esc(it.titulo)}">${f ? ic("feito", 18) : ""}</button><div class="grow"><p class="b">${esc(it.titulo)}</p><p class="xs muted">${esc(it.sub)}${q ? ` · por ${esc(q.by)} às ${esc(q.at)}` : ""}</p></div><span class="tag ${it.cor}">${it.tag}</span></div>`; }).join("")}</div>`
+  ${itens.length ? `<div class="linha-tempo">${itens.map(it => { const f = feito(sel, it.key), q = f ? S.checks.d[sel][it.key] : null; const tipo = it.key.split(":")[0]; const [hh, mm] = it.hora === "—" ? ["—", ""] : it.hora.split(":"); return `<div class="lt-item"><div class="lt-hora"><b>${esc(hh)}</b><span>${it.hora === "—" ? "livre" : esc(mm === "00" ? "h" : "h" + mm)}</span></div><div class="lt-bloco lt-${tipo} ${f ? "feito" : ""}"><div class="grow"><p class="lt-titulo">${esc(it.titulo)}</p><p class="lt-tipo">${esc(it.tag)}</p><p class="lt-sub">${ic("lembrete", 14)}${esc(it.sub)}${q ? ` · por ${esc(q.by)}` : ""}</p></div><button class="lt-check ${f ? "on" : ""}" data-a="check" data-v="${esc(it.key)}" data-d="${sel}" aria-pressed="${f}" aria-label="${f ? "Desmarcar" : "Marcar como feito"}: ${esc(it.titulo)}">${f ? ic("feito", 16) : ""}</button></div></div>`; }).join("")}</div>`
     : `<div class="empty"><span class="ib c2" style="margin:0 auto 12px">${ic("rotina", 22)}</span><p class="b">Nada na rotina deste dia</p><p class="small muted" style="margin-top:4px">Fotografe uma receita ou cadastre terapias e tarefas.</p></div>`}
   <div class="row qa" style="gap:8px"><button class="btn sec grow" data-a="ler" data-v="receita">${ic("camera", 18)}Receita</button><button class="btn sec grow" data-a="consulta-nova">${ic("consulta", 18)}Consulta</button><button class="btn sec grow" data-a="tarefa-nova">${ic("tarefa", 18)}Tarefa</button></div>
   ${S.meds.items.length ? `<div class="sec-title"><h2>Remédios</h2></div>${S.meds.items.map((m, i) => `<div class="list"><span class="ib ${C(i)}">${ic("medicacao", 22)}</span><div class="grow"><p class="b">${esc(m.nome)}</p><p class="xs muted">${esc([m.dose, (m.horarios || []).join(", "), m.fim ? "até " + fmtData(m.fim) : "uso contínuo"].filter(Boolean).join(" · "))}</p></div><button class="circle" data-a="med-editar" data-id="${m.id}" aria-label="Editar ${esc(m.nome)}" style="width:42px;height:42px;box-shadow:none;background:var(--soft)">${ic("editar", 18)}</button></div>`).join("")}` : ""}
