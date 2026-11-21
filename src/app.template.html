@@ -549,6 +549,16 @@ html.escuro .grupo>.list{background:transparent !important}
 .scan-dg{filter:none!important}
 .grupo>.list .grow.b{font-size:15px;font-weight:500}
 
+.jornada{position:relative;margin-top:24px;height:16px}
+.jornada .hero-track{position:absolute;left:0;right:12px;top:6px;margin:0;height:4px;overflow:visible;background:#ECECF0!important}
+.jornada .hero-track i{background:linear-gradient(90deg,#232428,#7B5CE6)!important;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.marco-j{position:absolute;top:4px;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:#fff;outline:2px solid #DAD6E6;outline-offset:-2px}
+.marco-j.ok{background:#7B5CE6;outline-color:#7B5CE6}
+.fim-j{position:absolute;right:0;top:-2px;width:20px;height:20px;border-radius:50%;background:#fff;color:#9A97A6;display:flex;align-items:center;justify-content:center;outline:1px solid #DAD6E6;outline-offset:-1px}
+.fim-j.ok{background:#7B5CE6;color:#fff;outline:none}
+.didi-j{position:absolute;bottom:6px;left:calc((100% - 12px) * var(--p) / 100);width:26px;height:auto;margin-left:-13px;animation:didi-j 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes didi-j{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-4px) rotate(4deg)}}
+@media (prefers-reduced-motion:reduce){.didi-j{animation:none}}
 </style>
 </head>
 <body>
@@ -1017,7 +1027,7 @@ TELAS.inicio = () => {
   <button class="tile au-indigo hero" data-a="aba" data-v="rotina" aria-label="Rotina da semana: ${sem.pct}% concluída">
     <div class="hero-top"><span>A jornada de ${esc(crianca)}</span><span>Rotina da semana</span></div>
     <div class="hero-mid"><p class="hero-t">${estado}</p><p class="hero-pct">${sem.pct}%</p></div>
-    <div class="hero-track"><i style="width:${sem.pct}%"></i></div>
+    <div class="jornada" style="--p:${Math.max(0, Math.min(100, sem.pct))}"><div class="hero-track"><i style="width:${sem.pct}%"></i></div>${[25, 50, 75].map(m => `<span class="marco-j ${sem.pct >= m ? "ok" : ""}" style="left:calc((100% - 12px) * ${m} / 100)"></span>`).join("")}<span class="fim-j ${sem.pct >= 100 ? "ok" : ""}">${ic("conquista", 12)}</span><img class="didi-j" src="${DG_IMG}" alt="" aria-hidden="true"></div>
     <div class="hero-foot"><span>${sem.ok} de ${sem.tot} tarefas feitas</span><span style="display:inline-flex;align-items:center;gap:4px">Ver detalhes ${ic("seta-dir", 14)}</span></div>
   </button>
   ${(() => { const h = iso(new Date()), itens = itensDoDia(h), pend = itens.filter(x => !feito(h, x.key)); const meds = pend.filter(x => x.key.startsWith("med:")).length; const sess = itens.filter(x => x.key.startsWith("trat:") || x.key.startsWith("cons:")); const est = estoqueBaixo();
