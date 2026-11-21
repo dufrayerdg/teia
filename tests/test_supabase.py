@@ -36,7 +36,9 @@ window.TEIA_CONFIG_FORCE = true;
    async verifyOtp(a) { window.__verify = a; if (a.token !== '123456') return { error: { message: 'invalid' } }; window.__login(); return { error: null }; },
    async signInWithOAuth(a) { window.__oauth = a; return { error: null }; },
    async linkIdentity(a) { window.__link = a; return { error: null }; },
-   async signInAnonymously() { window.__anon = (window.__anon || 0) + 1; logged = true; sessionStorage.setItem("logado", "1"); return { data: { user, session: { user } }, error: null }; },
+   async signInAnonymously() { if (window.__semAnon) return { data: null, error: { message: 'disabled' } };
+     return this._anon(); },
+   async _anon() { window.__anon = (window.__anon || 0) + 1; logged = true; sessionStorage.setItem("logado", "1"); return { data: { user, session: { user } }, error: null }; },
    async signOut() { logged = false; sessionStorage.removeItem("logado"); cbs.forEach(c => c("SIGNED_OUT", null)); return { error: null }; },
   },
   from: q,

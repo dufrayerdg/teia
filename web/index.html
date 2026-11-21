@@ -683,15 +683,17 @@ let SEM_INSTALAR = false; try { SEM_INSTALAR = !!localStorage.getItem("teia.semI
 
 /* IA no servidor (Edge Function "ia") */
 async function ia(tarefa, dados) {
+  if (!USER) { const e0 = new Error("sem_conta"); e0.code = "sem_conta"; throw e0; }
   const { data, error } = await SB.functions.invoke("ia", { body: { tarefa, ...dados } });
   if (error) { const st = error.context && error.context.status; let b = {}; try { b = await error.context.json(); } catch (e) {} const er = new Error(b.erro || "falha"); er.code = st === 402 ? "limite" : (b.erro === "limite_plus" || b.erro === "limite_dia" || b.erro === "servico_ocupado") ? b.erro : st === 429 ? "rate_limited" : (b.erro || "falha"); er.motivo = b.motivo; throw er; }
   return data.resultado;
 }
 const MSG_LIMITE = (c, t) => c === "limite_plus" ? (t === "leitura" ? "Você usou as 30 leituras deste mês. Elas voltam no mês que vem." : t === "resumo" ? "Você chegou ao limite de resumos deste mês. Volta no mês que vem." : "Você usou as 300 perguntas deste mês. Elas voltam no mês que vem.")
   : c === "limite_dia" ? (t === "leitura" ? "Você chegou ao limite de leituras de hoje. Volte amanhã." : t === "resumo" ? "Você chegou ao limite de resumos de hoje. Volte amanhã." : "Você chegou ao limite de perguntas de hoje. Volte amanhã.")
+  : c === "sem_conta" ? "Para usar a teIA, salve sua conta em Perfil. É rapidinho."
   : c === "servico_ocupado" ? "A teIA está muito concorrida agora. Tente de novo daqui a pouco." : "";
 const blobParaDataURL = b => new Promise((ok, erro) => { const fr = new FileReader(); fr.onload = () => ok(fr.result); fr.onerror = erro; fr.readAsDataURL(b); });
-let ENTRANDO = false;
+let ENTRANDO = false, LOCAL = false;
 async function iniciar() {
   ligarNuvem();
   try { const c = new URLSearchParams(location.search).get("convite"); if (c) { localStorage.setItem("teia.convite", c.toUpperCase()); history.replaceState(null, "", location.pathname); } } catch (e) {}
@@ -702,7 +704,7 @@ async function iniciar() {
   if (data && data.session) { USER = data.session.user; await entrou(); } else go("boasvindas", {}, true);
 }
 async function entrou() {
-  if (ENTRANDO) return; ENTRANDO = true;
+  if (ENTRANDO) return; ENTRANDO = true; LOCAL = false;
   try { await carregar(); const cv = (() => { try { return localStorage.getItem("teia.convite") || ""; } catch (e) { return ""; } })();
     if (cv) { try { localStorage.removeItem("teia.convite"); } catch (e) {} const r = await NUVEM.aceitarConvite(cv.toUpperCase()); toast(r === true ? "Pronto! Agora você cuida junto." : r); if (r === true) return; }
     if (!S.perfil) { const m = USER.user_metadata || {}; const nome = m.given_name || String(m.full_name || m.name || "").trim().split(" ")[0]; if (nome && !CAD.mae) CAD.mae = nome; } carregarAcessos().catch(() => {}); estadoPush().catch(() => {}); go(S.perfil ? "inicio" : "cadastro", S.perfil ? {} : { step: 1, novo: true }, true); }
@@ -1422,7 +1424,7 @@ TELAS.perfil = () => { const p = S.perfil || {}; const m = membroAtivo() || {}; 
   <button class="card row" data-a="ir" data-v="teiaplus" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib" style="width:38px;height:38px">${ic("conquista", 18)}</span><span class="grow"><b style="display:block;font-size:14px;font-weight:600">${plus() ? "Você é teia+" : "Conheça o teia+"}</b><span class="xs muted">${plus() ? "Até 30 leituras e 300 perguntas por mês" : `Plano grátis · ${restam("leitura")} leituras e ${restam("pergunta")} perguntas restantes`}</span></span>${plus() ? `<span class="plus-tag">+</span>` : ic("seta", 16)}</button>
   <div class="card"><p class="b small" style="margin-bottom:8px">Aparência</p><div class="chips">${[["auto","Automático"],["claro","Claro"],["escuro","Escuro"]].map(([k, l]) => `<button class="chip ${TEMA === k ? "on" : ""}" data-a="tema" data-v="${k}">${l}</button>`).join("")}</div></div>
   <button class="btn sec full" data-a="exportar">${ic("upload", 18)}Baixar todos os meus dados</button>
-  ${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && USER && USER.is_anonymous ? `<button class="card row" data-a="ir" data-v="conta" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib c2">${ic("privacidade", 20)}</span><span class="grow"><b style="display:block;font-size:14px">Salve sua conta</b><span class="xs muted">Hoje seus dados estão só neste aparelho. Entre com Google ou e-mail para não perder nada.</span></span>${ic("seta", 16)}</button>` : ""}
+  ${SB && USER && !USER.is_anonymous ? `<button class="btn sec full" data-a="sair">Sair da conta</button><p class="xs muted" style="text-align:center;margin-top:-4px">${esc(USER.email || "")}</p>` : ""}${SB && (!USER || USER.is_anonymous) ? `<button class="card row" data-a="ir" data-v="conta" style="border:none;width:100%;text-align:left;gap:12px;font-family:inherit;color:var(--ink)"><span class="ib c2">${ic("privacidade", 20)}</span><span class="grow"><b style="display:block;font-size:14px">Salve sua conta</b><span class="xs muted">Hoje seus dados estão só neste aparelho. Entre com Google ou e-mail para não perder nada.</span></span>${ic("seta", 16)}</button>` : ""}
   <button class="btn danger full" data-a="apagar-tudo">Apagar todos os meus dados</button>
   <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:16px">${logo(22, "#B9A6FF")}<p class="xs muted">${SB ? "versão beta" : "demonstração"}</p></div><p class="note" style="text-align:center">Ícones com base na Phosphor Icons (licença MIT).</p>
 </div>`; };
@@ -1700,7 +1702,7 @@ document.addEventListener("click", async e => {
     case "voltar": voltar(); break;
     case "instalar": if (INSTALAR) { INSTALAR.prompt(); const r = await INSTALAR.userChoice.catch(() => null); INSTALAR = null; if (r && r.outcome === "accepted") toast("teia instalada!"); render(); } break;
     case "instalar-nao": SEM_INSTALAR = true; try { localStorage.setItem("teia.semInstalar", "1"); } catch (e) {} render(); break;
-    case "entrar-anonimo": { const { error } = await SB.auth.signInAnonymously(); if (error) toast("Não consegui abrir agora. Tente de novo."); break; }
+    case "entrar-anonimo": { const { error } = await SB.auth.signInAnonymously(); if (error) { LOCAL = true; go("cadastro", { step: 1, novo: true }, true); toast("Modo sem conta: nada fica salvo ainda."); } break; }
     case "entrar-de-novo": TELA.p = {}; render(); break;
     case "entrar-google": { const volta = location.origin + location.pathname; const { error } = USER && USER.is_anonymous ? await SB.auth.linkIdentity({ provider: "google", options: { redirectTo: volta } }) : await SB.auth.signInWithOAuth({ provider: "google", options: { redirectTo: volta, queryParams: { prompt: "select_account" } } }); if (error) toast(/already|exists/i.test(error.message || "") ? "Essa conta Google já tem um cadastro. Saia e entre com ela." : "Não consegui abrir o Google agora. Tente com o e-mail."); break; }
     case "reenviar": { const email = v; const { error } = TELA.p && TELA.p.converter ? await SB.auth.updateUser({ email }) : await SB.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } }); toast(error ? (error.status === 429 ? "Muitas tentativas. Espere um minuto." : "Não consegui reenviar. Tente de novo.") : "Código enviado de novo."); if (!error) esperarReenvio(); break; }
@@ -1743,7 +1745,7 @@ document.addEventListener("click", async e => {
     case "cont-cat": TELA.p = { cat: v }; render(); break;
     case "fechar": fecharSheet(); break;
     case "confirmar-ok": { const f = window.__ok; fecharSheet(); if (f) await f(); break; }
-    case "cad-ir": if (SB && !USER) { go("entrar"); break; } if (Number(v) < 1) { go("boasvindas", {}, true); break; } TELA.nome === "cadastro" ? (TELA.p = { step: Number(v), novo: true }, render("back")) : go("cadastro", { step: Number(v), novo: true }); break;
+    case "cad-ir": if (SB && !USER && !LOCAL) { go("entrar"); break; } if (Number(v) < 1) { go("boasvindas", {}, true); break; } TELA.nome === "cadastro" ? (TELA.p = { step: Number(v), novo: true }, render("back")) : go("cadastro", { step: Number(v), novo: true }); break;
     case "cad-editar": go("cadastro", {}); break;
     case "foto-remover": { const box = el.closest(".fotoc"); box.querySelector('input[name="foto"]').value = ""; box.querySelector(".fotoimg").innerHTML = box.dataset.ini; el.hidden = true; break; }
     case "membro-editar": go("cadastro", { membro: v || ATIVO }); break;
