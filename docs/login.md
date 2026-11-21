@@ -1,7 +1,7 @@
 # Login (Google + e-mail)
 
 Supabase (Authentication):
-1. Providers: ative Email (magic link) e Google (Client ID e Secret); desative Anonymous sign-ins.
+1. Providers: ative Email (magic link) e Google (Client ID e Secret); mantenha **Anonymous sign-ins ATIVO** (é o "Explorar sem criar conta").
 2. URL Configuration: Site URL https://minhateia.vercel.app ; Redirect URLs https://minhateia.vercel.app/**
 3. Ative Manual linking (quem usava o acesso anônimo poderá salvar a conta).
 4. SMTP próprio (o padrão é limitado e só envia a membros do time).

@@ -78,6 +78,7 @@ with sync_playwright() as p:
     assert pg.evaluate("TELA.nome") == "boasvindas", pg.evaluate("TELA.nome")
     assert pg.evaluate("window.__anon") is None and pg.evaluate("USER") is None, "não deve criar conta anônima"
     corpo = pg.evaluate("document.body.innerText"); assert "Continuar com Google" in corpo and "Continuar com e-mail" in corpo
+    assert "Explorar sem criar conta" in corpo
     pg.click("text=Continuar com Google"); pg.wait_for_timeout(300); assert pg.evaluate("window.__oauth.provider") == "google" and pg.evaluate("window.__oauth.options.redirectTo").endswith("/index.html")
     pg.click("text=Continuar com e-mail"); pg.wait_for_timeout(300); assert pg.evaluate("TELA.nome") == "entrar"
     pg.fill('input[name="email"]', "Camila@Exemplo.com"); pg.click('form[data-f="entrar"] button[type="submit"]'); pg.wait_for_timeout(400)
